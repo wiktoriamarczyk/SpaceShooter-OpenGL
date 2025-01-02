@@ -12,3 +12,5 @@ const char* WINDOW_NAME = "Space Shooter";
 
 const string VS_FILE_NAME = "shader.vs";
 const string FS_FILE_NAME = "shader.fs";
+
+bool WIREFRAME_MODE = false;
