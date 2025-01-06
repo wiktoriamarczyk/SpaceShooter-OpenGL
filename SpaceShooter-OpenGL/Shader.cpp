@@ -1,7 +1,10 @@
 #include "Shader.h"
 
-bool Shader::load(const char* vertexPath, const char* fragmentPath)
+bool Shader::initialize(const char* vertexPath, const char* fragmentPath)
 {
+    this->vertexPath = vertexPath;
+    this->fragmentPath = fragmentPath;
+
     string vertexSource, fragmentSource;
     if (!readShaderSource(vertexPath, vertexSource) || !readShaderSource(fragmentPath, fragmentSource))
     {

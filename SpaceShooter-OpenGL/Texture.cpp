@@ -1,17 +1,9 @@
 #include "Texture.h"
 
-shared_ptr<Texture> Texture::create(const char* path)
-{
-    shared_ptr<Texture> texture{ new Texture() };
-    if (!texture->doCreate(path))
-        return nullptr;
-    texture->self = texture;
-    return texture;
-}
-
-bool Texture::doCreate(const char* path)
+bool Texture::initialize(const char* path, aiTextureType type)
 {
     this->path = path;
+    this->type = type;
     unsigned char* data = stbi_load(path, &width, &height, &channels, 0);
 
     if (!data)

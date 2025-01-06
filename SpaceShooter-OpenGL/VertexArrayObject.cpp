@@ -1,48 +1,77 @@
 #include "VertexArrayObject.h"
 #include "VertexBuffer.h"
 
+
+VertexLayoutInfo VertexArrayObject::getLayoutInfo(VertexDefinitionElement elementFlags)
+{
+    VertexLayoutInfo info;
+    int shift = 0;
+
+    if ((elementFlags & POSITION) != 0)
+    {
+        int elementSize = 3 * sizeof(float);
+        info.vertexBytes += elementSize;
+        info.elements[info.elementsCount].index = VertexLayoutIndex::POSITION_INDEX;
+        info.elements[info.elementsCount].normalized = false;
+        info.elements[info.elementsCount].count = 3;
+        info.elements[info.elementsCount].bytes = elementSize;
+        info.elements[info.elementsCount].type = GL_FLOAT;
+        info.elements[info.elementsCount++].offset = shift;
+        shift += elementSize;
+    }
+    if ((elementFlags & COLOR) != 0)
+    {
+        int elementSize = 3 * sizeof(float);
+        info.vertexBytes += elementSize;
+        info.elements[info.elementsCount].index = VertexLayoutIndex::COLOR_INDEX;
+        info.elements[info.elementsCount].normalized = true;
+        info.elements[info.elementsCount].count = 3;
+        info.elements[info.elementsCount].bytes = elementSize;
+        info.elements[info.elementsCount].type = GL_FLOAT;
+        info.elements[info.elementsCount++].offset = shift;
+        shift += elementSize;
+    }
+    if ((elementFlags & TEXTURE_COORD) != 0)
+    {
+        int elementSize = 2 * sizeof(float);
+        info.vertexBytes += elementSize;
+        info.elements[info.elementsCount].index = VertexLayoutIndex::TEXTURE_COORD_INDEX;
+        info.elements[info.elementsCount].normalized = false;
+        info.elements[info.elementsCount].count = 2;
+        info.elements[info.elementsCount].bytes = elementSize;
+        info.elements[info.elementsCount].type = GL_FLOAT;
+        info.elements[info.elementsCount++].offset = shift;
+        shift += elementSize;
+    }
+    if ((elementFlags & NORMAL) != 0)
+    {
+        int elementSize = 3 * sizeof(float);
+        info.vertexBytes += elementSize;
+        info.elements[info.elementsCount].index = VertexLayoutIndex::NORMAL_INDEX;
+        info.elements[info.elementsCount].normalized = true;
+        info.elements[info.elementsCount].count = 3;
+        info.elements[info.elementsCount].bytes = elementSize;
+        info.elements[info.elementsCount].type = GL_FLOAT;
+        info.elements[info.elementsCount++].offset = shift;
+        shift += elementSize;
+    }
+    return info;
+}
+
 bool VertexArrayObject::create(const VertexBuffer& VBO, VertexDefinitionElement elementFlags)
 {
     glGenVertexArrays(1, &ID);
     glBindVertexArray(ID);
 
-    int size = 0;
-
-    if ((elementFlags & POSITION) != 0)
-    {
-        size += 3 * sizeof(float);
-    }
-    if ((elementFlags & COLOR) != 0)
-    {
-        size += 3 * sizeof(float);
-    }
-    if ((elementFlags & TEXTURE_COORD) != 0)
-    {
-        size += 2 * sizeof(float);
-    }
-
-    int shift = 0;
-    uint8_t* offset = nullptr;
+    VertexLayoutInfo layoutInfo = getLayoutInfo(elementFlags);
 
     VBO.bind();
 
-    if ((elementFlags & POSITION) != 0)
+    for (int i = 0; i < layoutInfo.elementsCount; i++)
     {
-        glVertexAttribPointer(int(VertexLayoutIndex::POSITION_INDEX), 3, GL_FLOAT, GL_FALSE, size, shift + offset);
-        glEnableVertexAttribArray(0);
-        shift += 3 * sizeof(float);
-    }
-    if ((elementFlags & COLOR) != 0)
-    {
-        glVertexAttribPointer(int(VertexLayoutIndex::COLOR_INDEX), 3, GL_FLOAT, GL_FALSE, size, shift + offset);
-        glEnableVertexAttribArray(1);
-        shift += 3 * sizeof(float);
-    }
-    if ((elementFlags & TEXTURE_COORD) != 0)
-    {
-        glVertexAttribPointer(int(VertexLayoutIndex::TEXTURE_COORD_INDEX), 2, GL_FLOAT, GL_FALSE, size, shift + offset);
-        glEnableVertexAttribArray(2);
-        shift += 2 * sizeof(float);
+        const auto& element = layoutInfo.elements[i];
+        glVertexAttribPointer(int(element.index), element.count, element.type, element.normalized, layoutInfo.vertexBytes, (void*)element.offset);
+        glEnableVertexAttribArray(int(element.index));
     }
 
     return true;

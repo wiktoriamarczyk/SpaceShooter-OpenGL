@@ -8,7 +8,7 @@ public:
     bool create(const unsigned int* indices, unsigned int size);
     void bind() const;
     void unbind() const;
-    uint16_t getSize() const { return size; }
+    uint32_t getSize() const { return size; }
 
     ~IndexBuffer();
 

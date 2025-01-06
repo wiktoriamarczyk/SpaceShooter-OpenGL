@@ -16,7 +16,7 @@ public:
 private:
     VertexArrayObject VAO;
     VertexBuffer VBO;
-    Shader shader;
+    shared_ptr<Shader> shader;
     shared_ptr<Texture> texture;
 };
 

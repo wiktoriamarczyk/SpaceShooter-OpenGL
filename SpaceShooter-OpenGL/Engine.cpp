@@ -6,10 +6,11 @@
 #include "Texture.h"
 #include "Sprite.h"
 #include "TestCube.h"
+#include "Model.h"
+#include "ModelObject.h"
+#include "Player.h"
 
 Engine Engine::instance;
-
-using VertexDefinitionElement = VertexArrayObject::VertexDefinitionElement;
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 void Engine::processInputCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -41,6 +42,11 @@ void Engine::processInput(int key, int scancode, int action, int mods)
 
 bool Engine::init()
 {
+    return instance.doInit();
+}
+
+bool Engine::doInit()
+{
     // glfw: initialize and configure
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -68,10 +74,29 @@ bool Engine::init()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
-
+    // glfw: set the callback function for key press
     glfwSetKeyCallback(window, processInputCallback);
 
-    // Create default objects
+    // Configure global opengl state
+    glEnable(GL_DEPTH_TEST);
+
+    if (WIREFRAME_MODE)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+
+
+    // Create default object
+    if (!createDefaultResources())
+        return false;
+
+    createGameObjects();
+
+    return true;
+}
+
+bool Engine::createDefaultResources()
+{
     defaultVBO = make_shared<VertexBuffer>();
 
     float vertices[] = {
@@ -95,40 +120,52 @@ bool Engine::init()
         return false;
 
     defaultVAO = make_shared<VertexArrayObject>();
-    defaultVAO->create(*defaultVBO, VertexArrayObject::POSITION | VertexArrayObject::TEXTURE_COORD);
+    defaultVAO->create(*defaultVBO, VertexDefinitionElement::POSITION | VertexDefinitionElement::TEXTURE_COORD);
 
-    defaultShader = make_shared<Shader>();
-    if (!defaultShader->load("../Data/shaders/sprite_shader.vs", "../Data/shaders/sprite_shader.fs"))
+    // Init default sprite resources
+    defaultSpriteShader = Shader::create("../Data/Shaders/sprite_shader.vs", "../Data/shaders/sprite_shader.fs");
+    if (!defaultSpriteShader)
         return false;
-    defaultShader->use();
+    defaultSpriteShader->use();
 
     // set orthographic projection matrix
     auto ortho = glm::ortho(0.0f, static_cast<float>(SCREEN_WIDTH), 0.0f, static_cast<float>(SCREEN_HEIGHT));
-    defaultShader->setMat4("projection", ortho);
+    defaultSpriteShader->setMat4("projection", ortho);
     // set identity matrix for view
-    defaultShader->setMat4("view", glm::identity<glm::mat4>());
+    defaultSpriteShader->setMat4("view", glm::identity<glm::mat4>());
 
-    // Configure global opengl state
-    glEnable(GL_DEPTH_TEST);
+    // Init default model resources
+    defaultModelShader = Shader::create("../Data/Shaders/shader.vs", "../Data/shaders/shader.fs");
+    if (!defaultModelShader)
+        return false;
+    defaultModelShader->use();
 
-    if (WIREFRAME_MODE)
-    {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    }
-
-    createGameObjects();
-
-    return true;
+    // set perspective projection matrix
+    auto projection = glm::perspective(glm::radians(60.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+    defaultModelShader->setMat4("projection", projection);
+    // set view matrix
+    defaultModelShader->setMat4("view",glm::translate(glm::identity<glm::mat4x4>(), glm::vec3(0.0f, 0.0f, -2.0f)));
 }
 
 void Engine::createGameObjects()
 {
     // TODO: Create game objects here
-    shared_ptr<TestCube> testCube = make_shared<TestCube>();
-    gameObjects.push_back(testCube);
+    //shared_ptr<TestCube> testCube = make_shared<TestCube>();
+    //gameObjects.push_back(testCube);
+
+    // Create player
+    player = make_shared<Player>();
+    shared_ptr<Model> model = getModel(PLAYER_MODEL_PATH);
+    if (model)
+    {
+        player->create(*model, *defaultModelShader);
+        player->setSize(glm::vec3(0.1f, 0.1f, 0.1f));
+        gameObjects.push_back(player);
+    }
+
 }
 
-shared_ptr<Texture> Engine::getTexture(const char* path)
+shared_ptr<Texture> Engine::getTexture(const char* path, aiTextureType type)
 {
     auto foundTexture = std::find_if(instance.textures.begin(), instance.textures.end(), [path](const shared_ptr<Texture>& texture)
         {
@@ -138,12 +175,48 @@ shared_ptr<Texture> Engine::getTexture(const char* path)
     if (foundTexture != instance.textures.end())
         return *foundTexture;
 
-    auto texture = Texture::create(path);
+    auto texture = Texture::create(path, type);
     if (!texture)
         return nullptr;
 
     instance.textures.push_back(texture);
     return texture;
+}
+
+shared_ptr<Model> Engine::getModel(const char* path)
+{
+    auto foundModel = std::find_if(instance.models.begin(), instance.models.end(), [path](const shared_ptr<Model>& model)
+        {
+            return model->getPath() == path;
+        });
+
+    if (foundModel != instance.models.end())
+        return *foundModel;
+
+    auto model = Model::create(path);
+    if (!model)
+        return nullptr;
+
+    instance.models.push_back(model);
+    return model;
+}
+
+shared_ptr<Shader> Engine::getShader(const char* vertexPath, const char* fragmentPath)
+{
+    auto foundShader = std::find_if(instance.shaders.begin(), instance.shaders.end(), [vertexPath, fragmentPath](const shared_ptr<Shader>& shader)
+        {
+            return shader->getVertexPath() == vertexPath && shader->getFragmentPath() == fragmentPath;
+        });
+
+    if (foundShader != instance.shaders.end())
+        return *foundShader;
+
+    auto shader = Shader::create(vertexPath, fragmentPath);
+    if (!shader)
+        return nullptr;
+
+    instance.shaders.push_back(shader);
+    return shader;
 }
 
 void Engine::update(float deltaTime)
@@ -169,6 +242,11 @@ void Engine::render()
 }
 
 void Engine::run()
+{
+    instance.doRun();
+}
+
+void Engine::doRun()
 {
     // Render loop
     while (!glfwWindowShouldClose(window))
@@ -202,7 +280,12 @@ shared_ptr<VertexArrayObject> Engine::GetDefaultVAO()
     return instance.defaultVAO;
 }
 
-shared_ptr<Shader> Engine::GetDefaultShader()
+shared_ptr<Shader> Engine::GetDefaultSpriteShader()
 {
-    return instance.defaultShader;
+    return instance.defaultSpriteShader;
+}
+
+shared_ptr<Shader> Engine::GetDefaultModelShader()
+{
+    return instance.defaultModelShader;
 }

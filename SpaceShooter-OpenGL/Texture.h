@@ -2,22 +2,26 @@
 
 #include "Common.h"
 
-class Texture
+class Texture : public SelfHelper<Texture>
 {
+    friend class SelfHelper<Texture>;
 public:
-    static shared_ptr<Texture> create(const char* path);
+    static shared_ptr<Texture> create(const char* path, aiTextureType type = aiTextureType::aiTextureType_DIFFUSE)
+    {
+        return SelfHelper<Texture>::create(path, type);
+    }
     void bind(unsigned int slot = 0) const;
     void unbind(unsigned int slot) const;
-    shared_ptr<Texture> getSelf() const { return self.lock(); }
     string getPath() const { return path; }
+    aiTextureType getType() const { return type; }
     ~Texture();
 
 private:
-    bool doCreate(const char* path);
     Texture() = default;
+    bool initialize(const char* path, aiTextureType type);
     unsigned int ID;
     int width, height, channels;
     string path;
-    weak_ptr<Texture> self;
+    aiTextureType type = aiTextureType::aiTextureType_DIFFUSE;
 };
 

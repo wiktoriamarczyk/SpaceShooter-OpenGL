@@ -4,8 +4,6 @@
 #include "Texture.h"
 #include "Engine.h"
 
-using VertexDefinitionElement = VertexArrayObject::VertexDefinitionElement;
-
 TestCube::TestCube()
 {
     // Vertex data
@@ -56,12 +54,9 @@ TestCube::TestCube()
     VBO.create(vertices, sizeof(vertices));
     VAO.create(VBO, VertexDefinitionElement::POSITION | VertexDefinitionElement::TEXTURE_COORD);
 
-    if (!shader.load(VS_FILE_NAME.c_str(), FS_FILE_NAME.c_str()))
-    {
-        std::cout << "Failed to load shaders" << std::endl;
-    }
+    shader = Engine::getShader(VS_FILE_NAME.c_str(), FS_FILE_NAME.c_str());
 
-    texture = Engine::getTexture("../Data/container.jpg");
+    texture = Engine::getTexture("../Data/Textures/container.jpg");
     if (texture == nullptr)
     {
         std::cout << "Failed to load texture" << std::endl;
@@ -75,7 +70,7 @@ void TestCube::update(float deltaTime)
 
 void TestCube::render()
 {
-    shader.use();
+    shader->use();
     texture->bind();
     VAO.bind();
 
@@ -85,13 +80,14 @@ void TestCube::render()
     glm::mat4 projection = glm::mat4(1.0f);
 
     model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
+    model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
     projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 
     // pass them to the shaders
-    shader.setMat4("model", model);
-    shader.setMat4("view", view);
-    shader.setMat4("projection", projection);
+    shader->setMat4("model", model);
+    shader->setMat4("view", view);
+    shader->setMat4("projection", projection);
 
     glDrawArrays(GL_TRIANGLES, 0, VBO.getSize());
 }

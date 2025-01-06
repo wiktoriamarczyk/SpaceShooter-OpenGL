@@ -2,15 +2,13 @@
 
 int main()
 {
-    Engine engine;
-
-    if (!engine.init())
+    if (!Engine::init())
     {
         std::cout << "Failed to initialize engine" << std::endl;
         return -1;
     }
 
-    engine.run();
+    Engine::run();
 
     return 0;
 }

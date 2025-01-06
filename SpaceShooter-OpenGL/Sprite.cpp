@@ -6,16 +6,17 @@
 #include "VertexArrayObject.h"
 #include "Engine.h"
 
-void Sprite::create(const Texture& texture, const glm::vec2& position, const glm::vec2& size)
+bool Sprite::initialize(const Texture& texture, const glm::vec2& position, const glm::vec2& size)
 {
     this->texture = texture.getSelf();
     this->position = position;
     this->size = size;
 
+    VAO = Engine::GetDefaultVAO();
     VBO = Engine::GetDefaultVBO();
     EBO = Engine::GetDefaultIBO();
-    shader = Engine::GetDefaultShader();
-    VAO = Engine::GetDefaultVAO();
+    shader = Engine::GetDefaultSpriteShader();
+    return true;
 }
 
 void Sprite::draw() const

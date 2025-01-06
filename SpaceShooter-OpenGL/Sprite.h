@@ -8,12 +8,15 @@ class IndexBuffer;
 class Shader;
 class VertexArrayObject;
 
-class Sprite
+class Sprite : public SelfHelper<Sprite>
 {
+    friend class SelfHelper<Sprite>;
 public:
-    void create(const Texture& Texture, const glm::vec2& position, const glm::vec2& size);
+    shared_ptr<Sprite> create(const Texture& Texture, const glm::vec2& position, const glm::vec2& size)
+    {
+        return SelfHelper<Sprite>::create(Texture, position, size);
+    }
     void draw() const;
-
     void setPosition(const glm::vec2& position) { this->position = position; }
     void setSize(const glm::vec2& size) { this->size = size; }
     void setRotation(float rotation) { this->rotation = rotation; }
@@ -21,9 +24,11 @@ public:
     ~Sprite() = default;
 
 private:
+    Sprite() = default;
+    bool initialize(const Texture& Texture, const glm::vec2& position, const glm::vec2& size);
+    shared_ptr<VertexArrayObject> VAO;
     shared_ptr<VertexBuffer> VBO;
     shared_ptr<IndexBuffer> EBO;
-    shared_ptr<VertexArrayObject> VAO;
     shared_ptr<Shader> shader;
     shared_ptr<Texture> texture;
 

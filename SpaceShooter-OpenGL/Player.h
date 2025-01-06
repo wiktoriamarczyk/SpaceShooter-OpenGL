@@ -1,14 +1,17 @@
 #pragma once
-#include "GameObject.h"
+#include "ModelObject.h"
 
-class Player : public GameObject
+class Player : public ModelObject
 {
 public:
-    Player();
+    void create(const Model& model, const Shader& shader) override;
     void update(float deltaTime) override;
     void render() override;
     void onKeyDown(int key) override;
     void onKeyUp(int key) override;
-    ~Player();
+
+private:
+    float speed = 5.f;
+    glm::vec2 movementDirection = glm::vec2(0.f);
 };
 
