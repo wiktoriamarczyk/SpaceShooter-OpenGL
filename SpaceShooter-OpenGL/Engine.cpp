@@ -9,6 +9,7 @@
 #include "Model.h"
 #include "ModelObject.h"
 #include "Player.h"
+#include "EnemyUnit.h"
 
 Engine Engine::instance;
 
@@ -161,6 +162,15 @@ void Engine::createGameObjects()
         player->create(*model, *defaultModelShader);
         player->setSize(glm::vec3(0.1f, 0.1f, 0.1f));
         gameObjects.push_back(player);
+    }
+
+    enemy = make_shared<EnemyUnit>();
+    shared_ptr<Model> modelEnemy = getModel(ENEMY_MODEL_PATH);
+    if (modelEnemy)
+    {
+        enemy->create(*modelEnemy, *defaultModelShader);
+        enemy->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
+        gameObjects.push_back(enemy);
     }
 
 }
