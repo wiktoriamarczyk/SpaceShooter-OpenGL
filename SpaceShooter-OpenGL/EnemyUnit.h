@@ -11,21 +11,19 @@ public:
     void render() override;
 
 private:
-    float speed = 5.f;
+    float speed = 2.f;
     glm::vec2 movementDirection = glm::vec2(1.0f, 0.0f);
-    float minX = -1.5f;                
-    float maxX = 1.5f;                 
-    float idleTime = 0.0f;             
+    const float minX = -1.5f;
+    const float maxX = 1.5f;
+    float idleTime = 0.0f;
     float targetX = 0.0f;
     float minDistance = 0.2f;
-    //std::vector<shared_ptr<Projectile>> projectiles;
-    //float shootCooldown;
-    //const float shootInterval = 2.0f;
-    //shared_ptr<Model> model2;
+    std::vector<shared_ptr<Projectile>> projectiles;
+    float shootCooldown;
+    const float shootInterval = 1.0f;
+    shared_ptr<Model> projectileModel;
     //shared_ptr<Projectile> projectile;
     void setRandomIdleTime();
-    //void shootProjectile();
-    //glm::vec3 position;
-    //shared_ptr<Shader> defaultModelShader;
+    void shootProjectile();
 };
 

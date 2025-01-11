@@ -18,9 +18,11 @@ public:
     glm::vec3 getSize() const { return size; }
     glm::vec3 getRotation() const { return rotation; }
     shared_ptr<Sprite> getSprite() const { return sprite; }
+    bool isAlive() const { return isObjectAlive; }
     virtual ~GameObject() = default;
 
 protected:
+    bool isObjectAlive = true;
     glm::vec3 position;
     glm::vec3 size = glm::vec3(1.0f, 1.0f, 1.0f);
     glm::vec3 rotation;

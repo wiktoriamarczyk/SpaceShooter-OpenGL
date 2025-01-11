@@ -11,6 +11,8 @@ void Projectile::create(const glm::vec3& startPosition, const glm::vec3& directi
 void Projectile::update(float deltaTime)
 {
     position += movementDirection * speed * deltaTime;
+    if (isOffScreen())
+        isObjectAlive = false;
 
     ModelObject::update(deltaTime);
 }

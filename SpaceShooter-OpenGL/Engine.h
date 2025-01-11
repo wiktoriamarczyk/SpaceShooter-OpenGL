@@ -19,6 +19,9 @@ public:
     static bool init();
     static void run();
 
+    void addGameObject(shared_ptr<GameObject> gameObject);
+    static Engine& getInstance() { return instance; }
+
     static shared_ptr<Texture> getTexture(const char* path, aiTextureType type = aiTextureType::aiTextureType_DIFFUSE);
     static shared_ptr<Model> getModel(const char* path);
     static shared_ptr<Shader> getShader(const char* vertexPath, const char* fragmentPath);

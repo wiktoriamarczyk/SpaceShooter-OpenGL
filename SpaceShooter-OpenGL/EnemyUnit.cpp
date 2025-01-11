@@ -1,46 +1,45 @@
 #include "EnemyUnit.h"
 #include "Shader.h"
+#include "Engine.h"
 
-void EnemyUnit::create(const Model& model, const Shader& shader, const Model& model2)
+void EnemyUnit::create(const Model& model, const Shader& shader, const Model& projectileModel)
 {
     ModelObject::create(model, shader);
-    //this->shader;
-    //this->model2 = model2.getSelf();
+    this->projectileModel = projectileModel.getSelf();
+
     rotation.x = 0.f;
     rotation.y = 0.f;
     position.y = 1.0f;
-
-    movementDirection = glm::vec2(1.0f, 0.0f); 
-    speed = 2.0f;  
-    minX = -1.5f;  
-    maxX = 1.5f;   
-    idleTime = 0.0f; 
+    shootCooldown = shootInterval;
 
     std::srand(static_cast<unsigned>(std::time(nullptr)));
-
 }
 
 void EnemyUnit::update(float deltaTime)
 {
+    for (int i = 0; i < projectiles.size();)
+    {
+        if (!projectiles[i]->isAlive())
+            projectiles.erase(projectiles.begin() + i);
+    }
 
     if (idleTime > 0.0f)
     {
         idleTime -= deltaTime;
         if (idleTime <= 0.0f)
         {
-            
-            speed = static_cast<float>(std::rand() % 3 + 1); 
+            speed = static_cast<float>(std::rand() % 3 + 1);
 
             movementDirection.x = (std::rand() % 2 == 0) ? 1.0f : -1.0f;
 
             float newTargetX;
             do {
                 newTargetX = static_cast<float>(std::rand() % 100) / 100.0f * (maxX - minX) + minX;
-            } while (std::abs(newTargetX - position.x) < minDistance); 
+            } while (std::abs(newTargetX - position.x) < minDistance);
 
             targetX = newTargetX;
         }
-        return; 
+        return;
     }
 
     position += glm::vec3(movementDirection.x * speed * deltaTime, 0.f, 0.f);
@@ -51,62 +50,40 @@ void EnemyUnit::update(float deltaTime)
     }
 
     // Aktualizacja cooldownu strza³u
-    //shootCooldown -= deltaTime;
-    //if (shootCooldown <= 0.0f)
-    //{
-    //    shootProjectile(); // Strzelanie pociskiem
-    //    shootCooldown = shootInterval; // Reset cooldownu
-    //}
-
-    //// Aktualizacja pocisków
-    //for (auto it = projectiles->begin(); it != projectiles.end(); )
-    //{
-    //    it->update(deltaTime);
-    //    if (it->isOffScreen())
-    //    {
-    //        it = projectiles.erase(it); // Usuwanie pocisku, gdy wyjdzie poza ekran
-    //    }
-    //    else
-    //    {
-    //        ++it;
-    //    }
-    //}
-
-   /* for (int i = 0; i < projectiles.size(); i++) {
-        projectiles[i]->update(deltaTime);
-    }*/
+    shootCooldown -= deltaTime;
+    if (shootCooldown <= 0.0f)
+    {
+        shootProjectile(); // Strzelanie pociskiem
+        shootCooldown = shootInterval; // Reset cooldownu
+    }
 
     ModelObject::update(deltaTime);
 }
 
-void EnemyUnit::render() 
+void EnemyUnit::render()
 {
-
     ModelObject::render();
-    //for (auto& projectile : projectiles)
-    //{
-    //    projectile->render();
-    //}
 }
 
 void EnemyUnit::setRandomIdleTime()
 {
-    idleTime = static_cast<float>(std::rand() % 3 + 1); 
+    idleTime = static_cast<float>(std::rand() % 3 + 1);
 }
 
-//void EnemyUnit::shootProjectile()
-//{
-//
-//    if (shader) {
-//        // Tworzenie nowego pocisku
-//        shared_ptr<Projectile> newProjectile;
-//        glm::vec3 projectileStartPos = position + glm::vec3(0.0f, -0.1f, 0.0f); // Pocz¹tkowa pozycja pocisku
-//        glm::vec3 projectileDirection = glm::vec3(0.0f, -1.0f, 0.0f);           // Kierunek - w dó³
-//
-//        newProjectile->create(projectileStartPos, projectileDirection, 1.0f, *model2, *shader);
-//        projectiles.push_back(newProjectile);
-//    }
-//    else {
-//        std::cerr << "Shader was destroyed or never initialized!" << std::endl;
-//    }
-//}
+void EnemyUnit::shootProjectile()
+{
+    if (shader) {
+        shared_ptr<Projectile> newProjectile = make_shared<Projectile>();
+        glm::vec3 projectileStartPos = position + glm::vec3(0.0f, -0.1f, 0.0f);
+        // Move projectile down
+        glm::vec3 projectileDirection = glm::vec3(0.0f, -1.0f, 0.0f);
+
+        newProjectile->create(projectileStartPos, projectileDirection, 1.0f, *projectileModel, *shader);
+        newProjectile->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
+        projectiles.push_back(newProjectile);
+        Engine::getInstance().addGameObject(newProjectile);
+    }
+    else {
+        std::cerr << "Shader was destroyed or never initialized!" << std::endl;
+    }
+}

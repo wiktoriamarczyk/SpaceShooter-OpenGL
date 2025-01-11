@@ -10,6 +10,7 @@
 #include "ModelObject.h"
 #include "Player.h"
 #include "EnemyUnit.h"
+#include "Projectile.h"
 
 Engine Engine::instance;
 
@@ -175,13 +176,18 @@ void Engine::createGameObjects()
         gameObjects.push_back(enemy);
     }
 
-    if (modelProjectile)
-    {
-        projectile->create(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, *modelProjectile, *defaultModelShader);
-        projectile->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
-        gameObjects.push_back(projectile);
-    }
+    //if (modelProjectile)
+    //{
+    //    projectile->create(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, *modelProjectile, *defaultModelShader);
+    //    projectile->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
+    //    gameObjects.push_back(projectile);
+    //}
 
+}
+
+void Engine::addGameObject(shared_ptr<GameObject> gameObject)
+{
+    gameObjects.push_back(gameObject);
 }
 
 shared_ptr<Texture> Engine::getTexture(const char* path, aiTextureType type)
@@ -240,9 +246,12 @@ shared_ptr<Shader> Engine::getShader(const char* vertexPath, const char* fragmen
 
 void Engine::update(float deltaTime)
 {
-    for (auto& gameObject : gameObjects)
+    for (int i = 0; i < gameObjects.size();)
     {
-        gameObject->update(deltaTime);
+        if (gameObjects[i]->isAlive())
+            gameObjects[i++]->update(deltaTime);
+        else
+            gameObjects.erase(gameObjects.begin() + i);
     }
 }
 
@@ -251,9 +260,9 @@ void Engine::render()
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the color buffer and depth buffer
 
-    for (auto& gameObject : gameObjects)
+    for (int i = 0; i < gameObjects.size(); ++i)
     {
-        gameObject->render();
+        gameObjects[i]->render();
     }
 
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
