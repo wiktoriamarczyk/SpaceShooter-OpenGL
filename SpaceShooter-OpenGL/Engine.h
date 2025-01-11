@@ -11,6 +11,7 @@ class Model;
 class Shader;
 class Player;
 class EnemyUnit;
+class Projectile;
 
 class Engine
 {
@@ -41,6 +42,7 @@ private:
     GLFWwindow* window = nullptr;
     shared_ptr<Player> player;
     shared_ptr<EnemyUnit> enemy;
+    shared_ptr<Projectile> projectile;
     vector<shared_ptr<GameObject>> gameObjects;
     vector<shared_ptr<Texture>> textures;
     vector<shared_ptr<Model>> models;

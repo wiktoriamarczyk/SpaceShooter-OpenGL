@@ -165,12 +165,21 @@ void Engine::createGameObjects()
     }
 
     enemy = make_shared<EnemyUnit>();
+    projectile = make_shared<Projectile>();
     shared_ptr<Model> modelEnemy = getModel(ENEMY_MODEL_PATH);
+    shared_ptr<Model> modelProjectile = getModel(PROJECTILE_MODEL_PATH);
     if (modelEnemy)
     {
-        enemy->create(*modelEnemy, *defaultModelShader);
+        enemy->create(*modelEnemy, *defaultModelShader, *modelProjectile);
         enemy->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
         gameObjects.push_back(enemy);
+    }
+
+    if (modelProjectile)
+    {
+        projectile->create(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, *modelProjectile, *defaultModelShader);
+        projectile->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
+        gameObjects.push_back(projectile);
     }
 
 }

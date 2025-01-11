@@ -1,10 +1,12 @@
 #pragma once
 #include "ModelObject.h"
+#include "Projectile.h"
+#include "Model.h"
 
 class EnemyUnit : public ModelObject
 {
 public:
-    void create(const Model& model, const Shader& shader) override;
+    void create(const Model& model, const Shader& shader, const Model& projectileModel);
     void update(float deltaTime) override;
     void render() override;
 
@@ -16,7 +18,14 @@ private:
     float idleTime = 0.0f;             
     float targetX = 0.0f;
     float minDistance = 0.2f;
-
+    //std::vector<shared_ptr<Projectile>> projectiles;
+    //float shootCooldown;
+    //const float shootInterval = 2.0f;
+    //shared_ptr<Model> model2;
+    //shared_ptr<Projectile> projectile;
     void setRandomIdleTime();
+    //void shootProjectile();
+    //glm::vec3 position;
+    //shared_ptr<Shader> defaultModelShader;
 };
 
