@@ -20,6 +20,8 @@ void EnemyUnit::update(float deltaTime)
     for (int i = 0; i < projectiles.size();)
     {
         if (!projectiles[i]->isAlive())
+            i++;
+        else
             projectiles.erase(projectiles.begin() + i);
     }
 
