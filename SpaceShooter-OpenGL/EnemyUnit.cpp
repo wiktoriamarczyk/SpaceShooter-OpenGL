@@ -156,15 +156,11 @@ void EnemyUnit::setRandomTargetPosition()
 void EnemyUnit::shootProjectile(const glm::vec3& playerPosition)
 {
     if (shader && projectileModel) {
-        std::shared_ptr<Projectile> newProjectile = std::make_shared<Projectile>();
-
         glm::vec3 projectileStartPos = position + glm::vec3(0.0f, -0.1f, 0.0f); // Startowa pozycja pocisku
 
-        // Wyznacz kierunek ruchu pocisku w stronê gracza
-        glm::vec3 projectileDirection = glm::normalize(playerPosition - projectileStartPos);
+        // Tworzymy pocisk za pomoc¹ metody statycznej z klasy Projectile
+        std::shared_ptr<Projectile> newProjectile = Projectile::createProjectile(projectileStartPos, playerPosition, 3.0f, *projectileModel, *shader);
 
-        newProjectile->create(projectileStartPos, projectileDirection, 3.0f, *projectileModel, *shader);
-        newProjectile->setSize(glm::vec3(0.01f, 0.03f, 0.01f));
         projectiles.push_back(newProjectile);
         Engine::getInstance().addGameObject(newProjectile);
     }

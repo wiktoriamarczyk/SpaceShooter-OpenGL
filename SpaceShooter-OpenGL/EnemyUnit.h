@@ -12,7 +12,6 @@ public:
 
 private:
     float speed = 2.f;
-    /*glm::vec2 movementDirection = glm::vec2(1.0f, 0.0f);*/
     glm::vec3 movementDirection;
     glm::vec3 targetPosition;;
     const float minX = -1.0f; // Minimalna granica ruchu w osi X
