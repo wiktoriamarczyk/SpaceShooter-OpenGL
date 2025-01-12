@@ -25,14 +25,14 @@ void Engine::processInput(int key, int scancode, int action, int mods)
 {
     if (action == GLFW_PRESS)
     {
-        for (auto& gameObject : instance.gameObjects)
+        for (auto& gameObject : gameObjects)
         {
             gameObject->onKeyDown(key);
         }
     }
     else if (action == GLFW_RELEASE)
     {
-        for (auto& gameObject : instance.gameObjects)
+        for (auto& gameObject : gameObjects)
         {
             gameObject->onKeyUp(key);
         }
@@ -40,6 +40,25 @@ void Engine::processInput(int key, int scancode, int action, int mods)
         if (key == GLFW_KEY_ESCAPE)
             glfwSetWindowShouldClose(window, true);
     }
+}
+
+void Engine::processMouseInput(GLFWwindow* window, int button, int action, int mods)
+{
+    if (action == GLFW_PRESS)
+    {
+        // move light to the position of the cursor
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        int width, height;
+        glfwGetWindowSize(window, &width, &height);
+        glm::vec3 lightPos = glm::vec3((xpos / width) * 2 - 1, 1 - (ypos / height) * 2, 0.0f);
+        instance.lightCube->setPosition(lightPos);
+    }
+    else if (action == GLFW_RELEASE)
+    {
+
+    }
+
 }
 
 bool Engine::init()
@@ -78,6 +97,7 @@ bool Engine::doInit()
     }
     // glfw: set the callback function for key press
     glfwSetKeyCallback(window, processInputCallback);
+    glfwSetMouseButtonCallback(window, processMouseInput);
 
     // Configure global opengl state
     glEnable(GL_DEPTH_TEST);
@@ -90,7 +110,10 @@ bool Engine::doInit()
 
     // Create default object
     if (!createDefaultResources())
+    {
+        std::cout << "Failed to create default resources" << std::endl;
         return false;
+    }
 
     createGameObjects();
 
@@ -124,6 +147,7 @@ bool Engine::createDefaultResources()
     defaultVAO = make_shared<VertexArrayObject>();
     defaultVAO->create(*defaultVBO, VertexDefinitionElement::POSITION | VertexDefinitionElement::TEXTURE_COORD);
 
+
     // Init default sprite resources
     defaultSpriteShader = Shader::create("../Data/Shaders/sprite_shader.vs", "../Data/shaders/sprite_shader.fs");
     if (!defaultSpriteShader)
@@ -133,8 +157,8 @@ bool Engine::createDefaultResources()
     // set orthographic projection matrix
     auto ortho = glm::ortho(0.0f, static_cast<float>(SCREEN_WIDTH), 0.0f, static_cast<float>(SCREEN_HEIGHT));
     defaultSpriteShader->setMat4("projection", ortho);
-    // set identity matrix for view
     defaultSpriteShader->setMat4("view", glm::identity<glm::mat4>());
+
 
     // Init default model resources
     defaultModelShader = Shader::create("../Data/Shaders/shader.vs", "../Data/shaders/shader.fs");
@@ -145,16 +169,23 @@ bool Engine::createDefaultResources()
     // set perspective projection matrix
     auto projection = glm::perspective(glm::radians(60.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
     defaultModelShader->setMat4("projection", projection);
-    // set view matrix
     defaultModelShader->setMat4("view",glm::translate(glm::identity<glm::mat4x4>(), glm::vec3(0.0f, 0.0f, -2.0f)));
+    defaultModelShader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+    defaultModelShader->setVec3("viewPos", glm::vec3(0.0f, 0.0f, 0.0f));
+
+
+    // Init default lighting shader
+    defaultLightingShader = Shader::create("../Data/Shaders/light_source_shader.vs", "../Data/shaders/light_source_shader.fs");
+    if (!defaultLightingShader)
+        return false;
+
+    defaultLightingShader->use();
+    defaultLightingShader->setMat4("projection", projection);
+    defaultLightingShader->setMat4("view", glm::translate(glm::identity<glm::mat4x4>(), glm::vec3(0.0f, 0.0f, -2.0f)));
 }
 
 void Engine::createGameObjects()
 {
-    // TODO: Create game objects here
-    //shared_ptr<TestCube> testCube = make_shared<TestCube>();
-    //gameObjects.push_back(testCube);
-
     // Create player
     player = make_shared<Player>();
     shared_ptr<Model> model = getModel(PLAYER_MODEL_PATH);
@@ -165,8 +196,8 @@ void Engine::createGameObjects()
         gameObjects.push_back(player);
     }
 
+    // Create basic enemy
     enemy = make_shared<EnemyUnit>();
-    projectile = make_shared<Projectile>();
     shared_ptr<Model> modelEnemy = getModel(ENEMY_MODEL_PATH);
     shared_ptr<Model> modelProjectile = getModel(PROJECTILE_MODEL_PATH);
     if (modelEnemy)
@@ -176,13 +207,16 @@ void Engine::createGameObjects()
         gameObjects.push_back(enemy);
     }
 
-    //if (modelProjectile)
-    //{
-    //    projectile->create(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, *modelProjectile, *defaultModelShader);
-    //    projectile->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
-    //    gameObjects.push_back(projectile);
-    //}
-
+    // Create light source
+    lightCube = make_shared<ModelObject>();
+    shared_ptr<Model> modelLight = getModel(PROJECTILE_MODEL_PATH);
+    if (modelLight)
+    {
+        lightCube->create(*modelLight, *defaultLightingShader);
+        lightCube->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
+        lightCube->setPosition(glm::vec3(0.0f, -0.5f, 1.0f));
+        gameObjects.push_back(lightCube);
+    }
 }
 
 void Engine::addGameObject(shared_ptr<GameObject> gameObject)
@@ -264,6 +298,9 @@ void Engine::render()
     {
         gameObjects[i]->render();
     }
+
+    // update light position in the shader
+    defaultModelShader->setVec3("lightPos", lightCube->getPosition());
 
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     glfwSwapBuffers(window);

@@ -14,7 +14,6 @@ void ModelObject::update(float deltaTime)
 
 void ModelObject::render()
 {
-
     glm::mat4 modelTransform = glm::identity<glm::mat4>();
     modelTransform = glm::translate(modelTransform, position);
     modelTransform = glm::rotate(modelTransform, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -25,6 +24,11 @@ void ModelObject::render()
 
     shader->use();
     shader->setMat4("model", modelTransform);
+
+    // calculate normal matrix
+    glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelTransform)));
+    shader->setMat3("normalMatrix", normalMatrix);
+
     model->draw(*shader);
 }
 

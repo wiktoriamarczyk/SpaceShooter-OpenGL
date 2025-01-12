@@ -12,6 +12,7 @@ class Shader;
 class Player;
 class EnemyUnit;
 class Projectile;
+class ModelObject;
 
 class Engine
 {
@@ -41,6 +42,7 @@ private:
     shared_ptr<VertexArrayObject> defaultVAO;
     shared_ptr<Shader> defaultSpriteShader;
     shared_ptr<Shader> defaultModelShader;
+    shared_ptr<Shader> defaultLightingShader;
 
     GLFWwindow* window = nullptr;
     shared_ptr<Player> player;
@@ -54,6 +56,7 @@ private:
     double lastFrame = 0;
 
     static void processInputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    static void processMouseInput(GLFWwindow* window, int button, int action, int mods);
     void processInput(int key, int scancode, int action, int mods);
     void render();
     void update(float deltaTime);
@@ -61,6 +64,9 @@ private:
     bool createDefaultResources();
     bool doInit();
     void doRun();
+
+    // debug
+    shared_ptr<ModelObject> lightCube;
 
 };
 

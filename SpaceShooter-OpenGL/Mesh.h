@@ -29,6 +29,7 @@ private:
     shared_ptr<IndexBuffer> EBO;
 
     // mesh data
+
     vector<uint8_t> verticesData;
     vector<unsigned int> indices;
     vector<shared_ptr<Texture>> textures;

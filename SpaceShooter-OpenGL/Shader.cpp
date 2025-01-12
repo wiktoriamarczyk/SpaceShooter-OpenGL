@@ -5,12 +5,6 @@ bool Shader::initialize(const char* vertexPath, const char* fragmentPath)
     this->vertexPath = vertexPath;
     this->fragmentPath = fragmentPath;
 
-    string vertexSource, fragmentSource;
-    if (!readShaderSource(vertexPath, vertexSource) || !readShaderSource(fragmentPath, fragmentSource))
-    {
-        return false;
-    }
-
     unsigned int vertexShader = initVertexShader();
     unsigned int fragmentShader = initFragmentShader();
 
@@ -47,6 +41,17 @@ void Shader::setFloat(const std::string& name, float value) const
     glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 
+void Shader::setVec3(const std::string& name, const glm::vec3& value) const
+{
+    glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
+}
+
+void Shader::setMat3(const std::string& name, const glm::mat3& mat) const
+{
+    auto loc = glGetUniformLocation(ID, name.c_str());
+    glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(mat));
+}
+
 void Shader::setMat4(const std::string& name, const glm::mat4& mat) const
 {
     auto loc = glGetUniformLocation(ID, name.c_str());
@@ -56,7 +61,7 @@ void Shader::setMat4(const std::string& name, const glm::mat4& mat) const
 unsigned int Shader::initVertexShader()
 {
     string vertexShaderSource;
-    if (!readShaderSource(VS_FILE_NAME.c_str(), vertexShaderSource))
+    if (!readShaderSource(vertexPath.c_str(), vertexShaderSource))
     {
         std::cout << "Failed to read vertex shader source" << std::endl;
         return -1;
@@ -86,7 +91,7 @@ unsigned int Shader::initVertexShader()
 unsigned int Shader::initFragmentShader()
 {
     string fragmentShaderSource;
-    if (!readShaderSource(FS_FILE_NAME.c_str(), fragmentShaderSource))
+    if (!readShaderSource(fragmentPath.c_str(), fragmentShaderSource))
     {
         std::cout << "Failed to read fragment shader source" << std::endl;
         return -1;
