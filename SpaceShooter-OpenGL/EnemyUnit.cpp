@@ -12,6 +12,8 @@ void EnemyUnit::create(const Model& model, const Shader& shader, const Model& pr
     position = glm::vec3(0.0f, 1.0f, -2.0f);
     shootCooldown = shootInterval;
 
+    setSize(glm::vec3(0.1f, 0.1f, 0.1f));
+
     std::srand(static_cast<unsigned>(std::time(nullptr)));
     remainingShots = 0;
     setRandomIdleTime();
@@ -31,77 +33,70 @@ void EnemyUnit::update(float deltaTime)
             i++;
     }
 
-    // Jeœli przeciwnik odpoczywa (idle)
     if (idleTime > 0.0f)
     {
         idleTime -= deltaTime;
 
-        if (idleTime <= 0.0f) // Po zakoñczeniu pauzy
+        if (idleTime <= 0.0f)
         {
-            setRandomTargetPosition();  // Losowanie celu
-            remainingShots = std::rand() % 10 + 1; // Losowa liczba strza³ów (od 1 do 10)
-            shootCooldown = shootInterval; // Resetujemy cooldown strza³ów
+            setRandomTargetPosition(); 
+            remainingShots = std::rand() % 10 + 1; 
+            shootCooldown = shootInterval; 
         }
 
-        // Strzelanie tylko podczas odpoczynku
         if (remainingShots > 0)
         {
             shootCooldown -= deltaTime;
 
-            if (shootCooldown <= 0.0f) // Kiedy cooldown osi¹gnie zero, oddajemy strza³
+            if (shootCooldown <= 0.0f) 
             {
-                shootProjectile(playerPosition); // Strzelanie do gracza
-                shootCooldown = shootInterval; // Resetujemy cooldown
-                remainingShots--; // Zmniejszamy liczbê pozosta³ych strza³ów
+                shootProjectile(playerPosition); 
+                shootCooldown = shootInterval;
+                remainingShots--;
             }
         }
 
-        return; // Jeœli przeciwnik odpoczywa, nie rusza siê
+        return; 
     }
 
-    // Jeœli przeciwnik nie odpoczywa, sprawdzamy czas oczekiwania po strza³ach
     if (remainingShots == 0 && postShotCooldown > 0.0f)
     {
         postShotCooldown -= deltaTime;
 
         if (postShotCooldown <= 0.0f)
         {
-            // Po up³ywie czasu oczekiwania, przeciwnik zacznie siê ruszaæ
-            setRandomTargetPosition(); // Losowanie celu po oczekiwaniu
-            currentSpeed = 0.0f;  // Startujemy od zerowej prêdkoœci
+
+            setRandomTargetPosition(); 
+            currentSpeed = 0.0f;  
         }
 
-        return; // Jeœli czas oczekiwania nie min¹³, nie rusza siê
+        return; 
     }
 
-    // Jeœli pozosta³y strza³y, to strzelamy
     if (remainingShots > 0)
     {
         shootCooldown -= deltaTime;
 
-        if (shootCooldown <= 0.0f) // Kiedy cooldown osi¹gnie zero, oddajemy strza³
+        if (shootCooldown <= 0.0f) 
         {
-            shootProjectile(playerPosition); // Strzelanie do gracza
-            shootCooldown = shootInterval; // Resetujemy cooldown
-            remainingShots--; // Zmniejszamy liczbê pozosta³ych strza³ów
+            shootProjectile(playerPosition);
+            shootCooldown = shootInterval;
+            remainingShots--; 
         }
     }
     else
     {
-        // Jeœli strza³y zosta³y zakoñczone, wprowadzamy czas oczekiwania przed ruszeniem siê
+  
         if (postShotCooldown <= 0.0f)
         {
-            // Jeœli czas oczekiwania min¹³, przeciwnik rusza siê w kierunku celu
-            glm::vec3 direction = glm::normalize(targetPosition - position); // Kierunek ruchu
+            glm::vec3 direction = glm::normalize(targetPosition - position); 
 
-            // Przyspieszanie na pocz¹tku ruchu (prêdkoœæ roœnie od 0 do docelowej)
             if (currentSpeed < speed)
             {
-                currentSpeed += acceleration * deltaTime; // Przyspieszanie
-                currentSpeed = glm::min(currentSpeed, speed); // Osi¹gamy docelow¹ prêdkoœæ
+                currentSpeed += acceleration * deltaTime; 
+                currentSpeed = glm::min(currentSpeed, speed); 
             }
 
-            // Zwalnianie na koñcu ruchu (gdy przeciwnik jest blisko celu)
             float distanceToTarget = glm::distance(position, targetPosition);
             if (distanceToTarget < decelerationDistance)
             {
@@ -110,23 +105,20 @@ void EnemyUnit::update(float deltaTime)
 
             position += direction * currentSpeed * deltaTime;
 
-            // Jeœli przeciwnik dotrze do celu, przechodzi w tryb odpoczynku (idle)
             if (distanceToTarget < 0.05f)
             {
-                setRandomIdleTime(); // Zatrzymanie na chwilê
+                setRandomIdleTime(); 
             }
 
-            // Ograniczenie pozycji do granic [-1, 1] w osiach X i Y
             position.x = glm::clamp(position.x, minX, maxX);
             position.y = glm::clamp(position.y, minY, maxY);
         }
         else
         {
-            // Jeœli nadal czeka, nie rusza siê
+
             postShotCooldown -= deltaTime;
         }
     }
-
 
     ModelObject::update(deltaTime);
 }
@@ -147,19 +139,18 @@ void EnemyUnit::setRandomTargetPosition()
     float newTargetX, newTargetY;
 
     do {
-        newTargetX = static_cast<float>(std::rand() % 200 - 100) / 100.0f; // Losowy cel w X
-        newTargetY = static_cast<float>(std::rand() % 200 - 100) / 100.0f; // Losowy cel w Y
+        newTargetX = static_cast<float>(std::rand() % 200 - 100) / 100.0f; 
+        newTargetY = static_cast<float>(std::rand() % 200 - 100) / 100.0f;
     } while (glm::distance(glm::vec3(newTargetX, newTargetY, 0.0f), position) < minDistance);
 
-    targetPosition = glm::vec3(newTargetX, newTargetY, position.z); // Z zachowaniem sta³ej pozycji Z
+    targetPosition = glm::vec3(newTargetX, newTargetY, position.z);
 }
 
 void EnemyUnit::shootProjectile(const glm::vec3& playerPosition)
 {
     if (shader && projectileModel) {
-        glm::vec3 projectileStartPos = position + glm::vec3(0.0f, -0.1f, 0.0f); // Startowa pozycja pocisku
+        glm::vec3 projectileStartPos = position + glm::vec3(0.0f, -0.1f, 0.0f); 
 
-        // Tworzymy pocisk za pomoc¹ metody statycznej z klasy Projectile
         std::shared_ptr<Projectile> newProjectile = Projectile::createProjectile(projectileStartPos, playerPosition, 3.0f, *projectileModel, *shader);
 
         projectiles.push_back(newProjectile);

@@ -13,6 +13,7 @@
 #include "Projectile.h"
 #include "Asteroid.h"
 #include "AsteroidSpawner.h"
+#include "EnemySpawner.h"
 
 Engine Engine::instance;
 
@@ -170,20 +171,28 @@ void Engine::createGameObjects()
         player->create(*model, *defaultModelShader, *modelProjectile);
         player->setSize(glm::vec3(0.1f, 0.1f, 0.1f));
         gameObjects.push_back(player);
-    }
+    }/*
     if (modelEnemy)
     {
         enemy->create(*modelEnemy, *defaultModelShader, *modelProjectile);
         enemy->setSize(glm::vec3(0.1f, 0.1f, 0.1f));
         gameObjects.push_back(enemy);
-    }
-    asteroidSpawner = std::make_shared<AsteroidSpawner>();;
+    }*/
+    asteroidSpawner = std::make_shared<AsteroidSpawner>();
     shared_ptr<Model> modelAsteroid = getModel(ASTEROID_MODEL_PATH);
     if (modelAsteroid)
     {
         asteroidSpawner->create(*modelAsteroid, *defaultModelShader);
         gameObjects.push_back(asteroidSpawner);
     }
+
+    enemySpawner = std::make_shared<EnemySpawner>();
+    if (modelEnemy && modelProjectile)
+    {
+        enemySpawner->create(*modelEnemy, *defaultModelShader, *modelProjectile);
+        gameObjects.push_back(enemySpawner);
+    }
+
     //if (modelProjectile)
     //{
     //    projectile->create(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, *modelProjectile, *defaultModelShader);

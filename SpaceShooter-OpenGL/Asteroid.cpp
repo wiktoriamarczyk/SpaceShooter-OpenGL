@@ -14,7 +14,6 @@ void Asteroid::create(const Model& model, const Shader& shader, const glm::vec3&
 void Asteroid::update(float deltaTime) {
     if (!isObjectAlive) return;
 
-    // Przesuwanie asteroidy w kierunku gracza
     position += direction * speed * deltaTime;
 
 }

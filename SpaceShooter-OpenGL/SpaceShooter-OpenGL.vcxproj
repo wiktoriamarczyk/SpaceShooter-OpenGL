@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="AsteroidSpawner.cpp" />
+    <ClCompile Include="EnemySpawner.cpp" />
     <ClCompile Include="EnemyUnit.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="AsteroidSpawner.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="EnemySpawner.h" />
     <ClInclude Include="EnemyUnit.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GameObject.h" />
