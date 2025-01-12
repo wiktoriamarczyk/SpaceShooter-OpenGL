@@ -29,7 +29,9 @@ private:
     shared_ptr<Model> projectileModel;
     int remainingShots;
     float postShotCooldown = 0.0f;
-    //shared_ptr<Projectile> projectile;
+    float currentSpeed = 0.0f; // Aktualna prêdkoœæ, która roœnie od 0
+    float acceleration = 1.0f; // Przyspieszenie (mo¿esz dostosowaæ wartoœæ)
+    float decelerationDistance = 0.2f; // Odleg³oœæ, przy której zaczynamy zwalniaæ
     void setRandomIdleTime();
     void setRandomTargetPosition();
     void shootProjectile(const glm::vec3& playerPosition);

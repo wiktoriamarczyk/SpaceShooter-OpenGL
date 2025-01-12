@@ -38,7 +38,6 @@ void EnemyUnit::update(float deltaTime)
         if (idleTime <= 0.0f) // Po zakoñczeniu pauzy
         {
             setRandomTargetPosition();  // Losowanie celu
-            speed = 2.0f;
             remainingShots = std::rand() % 10 + 1; // Losowa liczba strza³ów (od 1 do 10)
             shootCooldown = shootInterval; // Resetujemy cooldown strza³ów
         }
@@ -68,7 +67,7 @@ void EnemyUnit::update(float deltaTime)
         {
             // Po up³ywie czasu oczekiwania, przeciwnik zacznie siê ruszaæ
             setRandomTargetPosition(); // Losowanie celu po oczekiwaniu
-            speed = 2.0f;  // Przywrócenie prêdkoœci
+            currentSpeed = 0.0f;  // Startujemy od zerowej prêdkoœci
         }
 
         return; // Jeœli czas oczekiwania nie min¹³, nie rusza siê
@@ -91,12 +90,27 @@ void EnemyUnit::update(float deltaTime)
         // Jeœli strza³y zosta³y zakoñczone, wprowadzamy czas oczekiwania przed ruszeniem siê
         if (postShotCooldown <= 0.0f)
         {
-            // Kiedy czas oczekiwania min¹³, przeciwnik rusza siê w kierunku celu
+            // Jeœli czas oczekiwania min¹³, przeciwnik rusza siê w kierunku celu
             glm::vec3 direction = glm::normalize(targetPosition - position); // Kierunek ruchu
-            position += direction * speed * deltaTime;
+
+            // Przyspieszanie na pocz¹tku ruchu (prêdkoœæ roœnie od 0 do docelowej)
+            if (currentSpeed < speed)
+            {
+                currentSpeed += acceleration * deltaTime; // Przyspieszanie
+                currentSpeed = glm::min(currentSpeed, speed); // Osi¹gamy docelow¹ prêdkoœæ
+            }
+
+            // Zwalnianie na koñcu ruchu (gdy przeciwnik jest blisko celu)
+            float distanceToTarget = glm::distance(position, targetPosition);
+            if (distanceToTarget < decelerationDistance)
+            {
+                currentSpeed = glm::max(currentSpeed * (distanceToTarget / decelerationDistance), 0.5f);
+            }
+
+            position += direction * currentSpeed * deltaTime;
 
             // Jeœli przeciwnik dotrze do celu, przechodzi w tryb odpoczynku (idle)
-            if (glm::distance(position, targetPosition) < 0.05f)
+            if (distanceToTarget < 0.05f)
             {
                 setRandomIdleTime(); // Zatrzymanie na chwilê
             }
@@ -111,6 +125,7 @@ void EnemyUnit::update(float deltaTime)
             postShotCooldown -= deltaTime;
         }
     }
+
 
     ModelObject::update(deltaTime);
 }
