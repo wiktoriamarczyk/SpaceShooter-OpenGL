@@ -42,7 +42,7 @@ void Player::onKeyDown(int key)
     else if (key == GLFW_KEY_SPACE)
     {
         // Shoot
-        shootProjectile(glm::vec3(0.0f, 0.0f, -1.0f));
+       /* shootProjectile(glm::vec3(0.0f, 0.0f, -1.0f));*/
     }
 }
 

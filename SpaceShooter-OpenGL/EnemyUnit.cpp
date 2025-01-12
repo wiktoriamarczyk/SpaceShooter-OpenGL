@@ -20,6 +20,7 @@ void EnemyUnit::create(const Model& model, const Shader& shader, const Model& pr
 
 void EnemyUnit::update(float deltaTime)
 {
+
     glm::vec3 playerPosition = Engine::getInstance().getPlayerPosition();
 
     for (int i = 0; i < projectiles.size();)

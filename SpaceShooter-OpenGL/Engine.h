@@ -12,6 +12,8 @@ class Shader;
 class Player;
 class EnemyUnit;
 class Projectile;
+class Asteroid;
+class AsteroidSpawner;
 
 class Engine
 {
@@ -47,6 +49,7 @@ private:
     shared_ptr<Player> player;
     shared_ptr<EnemyUnit> enemy;
     shared_ptr<Projectile> projectile;
+    shared_ptr<AsteroidSpawner> asteroidSpawner;
     vector<shared_ptr<GameObject>> gameObjects;
     vector<shared_ptr<Texture>> textures;
     vector<shared_ptr<Model>> models;

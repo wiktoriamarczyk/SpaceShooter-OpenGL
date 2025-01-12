@@ -9,7 +9,6 @@ public:
     void create(const Model& model, const Shader& shader, const Model& projectileModel);
     void update(float deltaTime) override;
     void render() override;
-
 private:
     float speed = 2.f;
     glm::vec3 movementDirection;
