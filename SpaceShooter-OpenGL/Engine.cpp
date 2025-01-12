@@ -11,6 +11,9 @@
 #include "Player.h"
 #include "EnemyUnit.h"
 #include "Projectile.h"
+#include "Asteroid.h"
+#include "AsteroidSpawner.h"
+#include "EnemySpawner.h"
 
 Engine Engine::instance;
 
@@ -189,22 +192,36 @@ void Engine::createGameObjects()
     // Create player
     player = make_shared<Player>();
     shared_ptr<Model> model = getModel(PLAYER_MODEL_PATH);
-    if (model)
-    {
-        player->create(*model, *defaultModelShader);
-        player->setSize(glm::vec3(0.1f, 0.1f, 0.1f));
-        gameObjects.push_back(player);
-    }
 
     // Create basic enemy
     enemy = make_shared<EnemyUnit>();
     shared_ptr<Model> modelEnemy = getModel(ENEMY_MODEL_PATH);
     shared_ptr<Model> modelProjectile = getModel(PROJECTILE_MODEL_PATH);
+    if (model)
+    {
+        player->create(*model, *defaultModelShader, *modelProjectile);
+        player->setSize(glm::vec3(0.1f, 0.1f, 0.1f));
+        gameObjects.push_back(player);
+    }/*
     if (modelEnemy)
     {
         enemy->create(*modelEnemy, *defaultModelShader, *modelProjectile);
-        enemy->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
+        enemy->setSize(glm::vec3(0.1f, 0.1f, 0.1f));
         gameObjects.push_back(enemy);
+    }*/
+    asteroidSpawner = std::make_shared<AsteroidSpawner>();
+    shared_ptr<Model> modelAsteroid = getModel(ASTEROID_MODEL_PATH);
+    if (modelAsteroid)
+    {
+        asteroidSpawner->create(*modelAsteroid, *defaultModelShader);
+        gameObjects.push_back(asteroidSpawner);
+    }
+
+    enemySpawner = std::make_shared<EnemySpawner>();
+    if (modelEnemy && modelProjectile)
+    {
+        enemySpawner->create(*modelEnemy, *defaultModelShader, *modelProjectile);
+        gameObjects.push_back(enemySpawner);
     }
 
     // Create light source
@@ -222,6 +239,13 @@ void Engine::createGameObjects()
 void Engine::addGameObject(shared_ptr<GameObject> gameObject)
 {
     gameObjects.push_back(gameObject);
+}
+
+glm::vec3 Engine::getPlayerPosition() const {
+    if (player) {
+        return player->getPosition();  // Zwraca pozycjê gracza
+    }
+    return glm::vec3(0.0f);  // W przypadku, gdy gracz nie jest ustawiony, zwraca domyœln¹ pozycjê (0, 0, 0)
 }
 
 shared_ptr<Texture> Engine::getTexture(const char* path, aiTextureType type)

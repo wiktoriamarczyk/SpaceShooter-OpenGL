@@ -35,8 +35,9 @@ constexpr const char* WINDOW_NAME = "Space Shooter";
 const string VS_FILE_NAME = "../Data/Shaders/shader.vs";
 const string FS_FILE_NAME = "../Data/Shaders/shader.fs";
 constexpr const char* PLAYER_MODEL_PATH = "../Data/Models/Camo Stellar Jet/Package/CamoStellarJet.obj";
-constexpr const char* ENEMY_MODEL_PATH = "../Data/Models/Meteor Slice/Package/MeteorSlicer.obj";
+constexpr const char* ENEMY_MODEL_PATH = "../Data/Models/Infrared Furtive/Package/InfraredFurtive.obj";
 constexpr const char* PROJECTILE_MODEL_PATH = "../Data/Models/Cube/Cube.obj";
+constexpr const char* ASTEROID_MODEL_PATH = "../Data/Models/Sphere/Sphere.obj";
 
 constexpr bool WIREFRAME_MODE = false;
 

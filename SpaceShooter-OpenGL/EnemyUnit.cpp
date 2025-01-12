@@ -9,14 +9,22 @@ void EnemyUnit::create(const Model& model, const Shader& shader, const Model& pr
 
     rotation.x = 0.f;
     rotation.y = 0.f;
-    position.y = 1.0f;
+    position = glm::vec3(0.0f, 1.0f, -2.0f);
     shootCooldown = shootInterval;
 
+    setSize(glm::vec3(0.1f, 0.1f, 0.1f));
+
     std::srand(static_cast<unsigned>(std::time(nullptr)));
+    remainingShots = 0;
+    setRandomIdleTime();
+    postShotCooldown = 0.0f;
 }
 
 void EnemyUnit::update(float deltaTime)
 {
+
+    glm::vec3 playerPosition = Engine::getInstance().getPlayerPosition();
+
     for (int i = 0; i < projectiles.size();)
     {
         if (!projectiles[i]->isAlive())
@@ -28,35 +36,88 @@ void EnemyUnit::update(float deltaTime)
     if (idleTime > 0.0f)
     {
         idleTime -= deltaTime;
+
         if (idleTime <= 0.0f)
         {
-            speed = static_cast<float>(std::rand() % 3 + 1);
-
-            movementDirection.x = (std::rand() % 2 == 0) ? 1.0f : -1.0f;
-
-            float newTargetX;
-            do {
-                newTargetX = static_cast<float>(std::rand() % 100) / 100.0f * (maxX - minX) + minX;
-            } while (std::abs(newTargetX - position.x) < minDistance);
-
-            targetX = newTargetX;
+            setRandomTargetPosition(); 
+            remainingShots = std::rand() % 10 + 1; 
+            shootCooldown = shootInterval; 
         }
-        return;
+
+        if (remainingShots > 0)
+        {
+            shootCooldown -= deltaTime;
+
+            if (shootCooldown <= 0.0f) 
+            {
+                shootProjectile(playerPosition); 
+                shootCooldown = shootInterval;
+                remainingShots--;
+            }
+        }
+
+        return; 
     }
 
-    position += glm::vec3(movementDirection.x * speed * deltaTime, 0.f, 0.f);
-
-    if ((movementDirection.x > 0 && position.x >= targetX) || (movementDirection.x < 0 && position.x <= targetX))
+    if (remainingShots == 0 && postShotCooldown > 0.0f)
     {
-        setRandomIdleTime();
+        postShotCooldown -= deltaTime;
+
+        if (postShotCooldown <= 0.0f)
+        {
+
+            setRandomTargetPosition(); 
+            currentSpeed = 0.0f;  
+        }
+
+        return; 
     }
 
-    // Aktualizacja cooldownu strza³u
-    shootCooldown -= deltaTime;
-    if (shootCooldown <= 0.0f)
+    if (remainingShots > 0)
     {
-        shootProjectile(); // Strzelanie pociskiem
-        shootCooldown = shootInterval; // Reset cooldownu
+        shootCooldown -= deltaTime;
+
+        if (shootCooldown <= 0.0f) 
+        {
+            shootProjectile(playerPosition);
+            shootCooldown = shootInterval;
+            remainingShots--; 
+        }
+    }
+    else
+    {
+  
+        if (postShotCooldown <= 0.0f)
+        {
+            glm::vec3 direction = glm::normalize(targetPosition - position); 
+
+            if (currentSpeed < speed)
+            {
+                currentSpeed += acceleration * deltaTime; 
+                currentSpeed = glm::min(currentSpeed, speed); 
+            }
+
+            float distanceToTarget = glm::distance(position, targetPosition);
+            if (distanceToTarget < decelerationDistance)
+            {
+                currentSpeed = glm::max(currentSpeed * (distanceToTarget / decelerationDistance), 0.5f);
+            }
+
+            position += direction * currentSpeed * deltaTime;
+
+            if (distanceToTarget < 0.05f)
+            {
+                setRandomIdleTime(); 
+            }
+
+            position.x = glm::clamp(position.x, minX, maxX);
+            position.y = glm::clamp(position.y, minY, maxY);
+        }
+        else
+        {
+
+            postShotCooldown -= deltaTime;
+        }
     }
 
     ModelObject::update(deltaTime);
@@ -70,22 +131,32 @@ void EnemyUnit::render()
 void EnemyUnit::setRandomIdleTime()
 {
     idleTime = static_cast<float>(std::rand() % 3 + 1);
+    postShotCooldown = 1.0f;
 }
 
-void EnemyUnit::shootProjectile()
+void EnemyUnit::setRandomTargetPosition()
 {
-    if (shader) {
-        shared_ptr<Projectile> newProjectile = make_shared<Projectile>();
-        glm::vec3 projectileStartPos = position + glm::vec3(0.0f, -0.1f, 0.0f);
-        // Move projectile down
-        glm::vec3 projectileDirection = glm::vec3(0.0f, -1.0f, 0.0f);
+    float newTargetX, newTargetY;
 
-        newProjectile->create(projectileStartPos, projectileDirection, 1.0f, *projectileModel, *shader);
-        newProjectile->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
+    do {
+        newTargetX = static_cast<float>(std::rand() % 200 - 100) / 100.0f; 
+        newTargetY = static_cast<float>(std::rand() % 200 - 100) / 100.0f;
+    } while (glm::distance(glm::vec3(newTargetX, newTargetY, 0.0f), position) < minDistance);
+
+    targetPosition = glm::vec3(newTargetX, newTargetY, position.z);
+}
+
+void EnemyUnit::shootProjectile(const glm::vec3& playerPosition)
+{
+    if (shader && projectileModel) {
+        glm::vec3 projectileStartPos = position /*+ glm::vec3(0.0f, 0.0f, 0.0f)*/; 
+
+        std::shared_ptr<Projectile> newProjectile = Projectile::createProjectile(projectileStartPos, playerPosition, 3.0f, *projectileModel, *shader);
+
         projectiles.push_back(newProjectile);
         Engine::getInstance().addGameObject(newProjectile);
     }
     else {
-        std::cerr << "Shader was destroyed or never initialized!" << std::endl;
+        std::cerr << "Shader or model was destroyed or never initialized!" << std::endl;
     }
 }
