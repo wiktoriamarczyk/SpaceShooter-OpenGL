@@ -12,18 +12,26 @@ public:
 
 private:
     float speed = 2.f;
-    glm::vec2 movementDirection = glm::vec2(1.0f, 0.0f);
-    const float minX = -1.5f;
-    const float maxX = 1.5f;
+    /*glm::vec2 movementDirection = glm::vec2(1.0f, 0.0f);*/
+    glm::vec3 movementDirection;
+    glm::vec3 targetPosition;;
+    const float minX = -1.0f; // Minimalna granica ruchu w osi X
+    const float maxX = 1.0f;  // Maksymalna granica ruchu w osi X
+    const float minY = -1.0f; // Minimalna granica ruchu w osi Y
+    const float maxY = 1.0f;  // Maksymalna granica ruchu w osi Y
     float idleTime = 0.0f;
     float targetX = 0.0f;
     float minDistance = 0.2f;
     std::vector<shared_ptr<Projectile>> projectiles;
     float shootCooldown;
-    const float shootInterval = 1.0f;
+    const float shootInterval = 0.1f;
+    float postShotIdleTime;
     shared_ptr<Model> projectileModel;
+    int remainingShots;
+    float postShotCooldown = 0.0f;
     //shared_ptr<Projectile> projectile;
     void setRandomIdleTime();
-    void shootProjectile();
+    void setRandomTargetPosition();
+    void shootProjectile(const glm::vec3& playerPosition);
 };
 

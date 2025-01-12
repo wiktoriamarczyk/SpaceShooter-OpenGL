@@ -9,6 +9,7 @@ public:
     void render() override;
     void onKeyDown(int key) override;
     void onKeyUp(int key) override;
+    glm::vec3 getPosition() const;
 
 private:
     float speed = 5.f;

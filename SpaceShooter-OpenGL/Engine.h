@@ -20,6 +20,7 @@ public:
     static void run();
 
     void addGameObject(shared_ptr<GameObject> gameObject);
+    glm::vec3 getPlayerPosition() const;
     static Engine& getInstance() { return instance; }
 
     static shared_ptr<Texture> getTexture(const char* path, aiTextureType type = aiTextureType::aiTextureType_DIFFUSE);

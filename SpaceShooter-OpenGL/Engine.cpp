@@ -172,7 +172,7 @@ void Engine::createGameObjects()
     if (modelEnemy)
     {
         enemy->create(*modelEnemy, *defaultModelShader, *modelProjectile);
-        enemy->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
+        enemy->setSize(glm::vec3(0.1f, 0.1f, 0.1f));
         gameObjects.push_back(enemy);
     }
 
@@ -188,6 +188,13 @@ void Engine::createGameObjects()
 void Engine::addGameObject(shared_ptr<GameObject> gameObject)
 {
     gameObjects.push_back(gameObject);
+}
+
+glm::vec3 Engine::getPlayerPosition() const {
+    if (player) {
+        return player->getPosition();  // Zwraca pozycjê gracza
+    }
+    return glm::vec3(0.0f);  // W przypadku, gdy gracz nie jest ustawiony, zwraca domyœln¹ pozycjê (0, 0, 0)
 }
 
 shared_ptr<Texture> Engine::getTexture(const char* path, aiTextureType type)

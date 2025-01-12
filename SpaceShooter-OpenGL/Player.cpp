@@ -63,3 +63,8 @@ void Player::onKeyUp(int key)
         movementDirection.x = 0.f;
     }
 }
+
+glm::vec3 Player::getPosition() const
+{
+    return position;
+}
