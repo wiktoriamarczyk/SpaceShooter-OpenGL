@@ -149,7 +149,7 @@ void EnemyUnit::setRandomTargetPosition()
 void EnemyUnit::shootProjectile(const glm::vec3& playerPosition)
 {
     if (shader && projectileModel) {
-        glm::vec3 projectileStartPos = position + glm::vec3(0.0f, -0.1f, 0.0f); 
+        glm::vec3 projectileStartPos = position /*+ glm::vec3(0.0f, 0.0f, 0.0f)*/; 
 
         std::shared_ptr<Projectile> newProjectile = Projectile::createProjectile(projectileStartPos, playerPosition, 3.0f, *projectileModel, *shader);
 

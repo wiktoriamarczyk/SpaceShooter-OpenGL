@@ -73,7 +73,7 @@ glm::vec3 EnemySpawner::getRandomSpawnPosition() const
         break;
     }
 
-    return glm::vec3(x, y, -2.0f); 
+    return glm::vec3(x, y, -1.0f); 
 }
 
 void EnemySpawner::render()
