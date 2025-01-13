@@ -176,6 +176,25 @@ bool Engine::createDefaultResources()
     defaultModelShader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
     defaultModelShader->setVec3("viewPos", glm::vec3(0.0f, 0.0f, 0.0f));
 
+    // set material properties
+    defaultModelShader->setVec3("material.ambient", glm::vec3(1.0f, 1.0f, 1.0f));
+    defaultModelShader->setVec3("material.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+    defaultModelShader->setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+    defaultModelShader->setFloat("material.shininess", 32.0f);
+
+    // set light properties
+    defaultModelShader->setVec3("dirLight.direction", glm::vec3(0.f, -1.0f, 0.f));
+    defaultModelShader->setVec3("dirLight.ambient", glm::vec3(0.5f, 0.5f, 0.5f));
+    defaultModelShader->setVec3("dirLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+    defaultModelShader->setVec3("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+    defaultModelShader->setVec3("pointLights[0].ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    defaultModelShader->setVec3("pointLights[0].diffuse", glm::vec3(1.0f, 0.85f, 0.0f));
+    defaultModelShader->setVec3("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    defaultModelShader->setFloat("pointLights[0].constant", 1.0f);
+    defaultModelShader->setFloat("pointLights[0].linear", 0.22f);
+    defaultModelShader->setFloat("pointLights[0].quadratic", 0.20f);
+
 
     // Init default lighting shader
     defaultLightingShader = Shader::create("../Data/Shaders/light_source_shader.vs", "../Data/shaders/light_source_shader.fs");
@@ -242,10 +261,11 @@ void Engine::addGameObject(shared_ptr<GameObject> gameObject)
 }
 
 glm::vec3 Engine::getPlayerPosition() const {
-    if (player) {
-        return player->getPosition();  // Zwraca pozycjê gracza
+    if (player)
+    {
+        return player->getPosition();
     }
-    return glm::vec3(0.0f);  // W przypadku, gdy gracz nie jest ustawiony, zwraca domyœln¹ pozycjê (0, 0, 0)
+    return glm::vec3(0.0f);
 }
 
 shared_ptr<Texture> Engine::getTexture(const char* path, aiTextureType type)
@@ -324,7 +344,7 @@ void Engine::render()
     }
 
     // update light position in the shader
-    defaultModelShader->setVec3("lightPos", lightCube->getPosition());
+    defaultModelShader->setVec3("pointLights[0].position", lightCube->getPosition());
 
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     glfwSwapBuffers(window);
