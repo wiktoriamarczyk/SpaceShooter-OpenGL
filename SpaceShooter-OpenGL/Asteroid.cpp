@@ -13,6 +13,8 @@ void Asteroid::create(const Model& model, const Shader& shader, const glm::vec3&
 void Asteroid::update(float deltaTime)
 {
     position.z += direction.z * speed * deltaTime;
+    rotation.x += 20.f * deltaTime;
+    rotation.y += 20.f * deltaTime;
 }
 
 void Asteroid::render() {

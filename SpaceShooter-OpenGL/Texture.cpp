@@ -8,7 +8,7 @@ bool Texture::initialize(const char* path, aiTextureType type)
 
     if (!data)
     {
-        std::cout << "Failed to load texture" << std::endl;
+        std::cout << "Failed to load texture: " << path << std::endl;
         return false;
     }
 

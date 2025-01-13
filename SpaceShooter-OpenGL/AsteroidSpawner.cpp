@@ -2,9 +2,9 @@
 #include "Engine.h"
 #include "Shader.h"
 
-void AsteroidSpawner::create(const Model& model, const Shader& shader)
+void AsteroidSpawner::create(const vector<shared_ptr<Model>> models, const Shader& shader)
 {
-    this->model = std::make_shared<Model>(model);
+    this->models = models;
     this->shader = std::make_shared<Shader>(shader);
 
     std::srand(static_cast<unsigned>(std::time(nullptr)));
@@ -36,7 +36,7 @@ void AsteroidSpawner::update(float deltaTime)
 
 void AsteroidSpawner::createAsteroid(const float spawnDistanceZ)
 {
-    const float randomOffsetRangeXY = 2.0;
+    const float randomOffsetRangeXY = 1.0;
 
     glm::vec3 startPos;
     glm::vec3 cameraPosition = glm::vec3(0, 0, 0);
@@ -49,6 +49,9 @@ void AsteroidSpawner::createAsteroid(const float spawnDistanceZ)
     startPos.x = cameraPosition.x + randX;
     startPos.y = cameraPosition.y + randY;
     startPos.z = cameraPosition.z + spawnDistanceZ;
+
+    int randomModelIndex = std::rand() % models.size();
+    std::shared_ptr<Model> model = models[randomModelIndex];
 
     if (model)
     {

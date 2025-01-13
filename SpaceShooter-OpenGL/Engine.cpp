@@ -225,12 +225,18 @@ void Engine::createGameObjects()
     }
 
     shared_ptr<AsteroidSpawner> asteroidSpawner = std::make_shared<AsteroidSpawner>();
-    shared_ptr<Model> modelAsteroid = getModel(ASTEROID_MODEL_PATH);
-    if (modelAsteroid)
-    {
-        asteroidSpawner->create(*modelAsteroid, *defaultModelShader);
-        gameObjects.push_back(asteroidSpawner);
-    }
+
+    const char* asteroidModelPath1 = "../Data/Models/Asteroids/asteroid/scene.gltf";
+    const char* asteroidModelPath2 = "../Data/Models/Asteroids/asteroid_01/scene.gltf";
+    const char* asteroidModelPath3 = "../Data/Models/Asteroids/asteroid-1a-game-model/source/Asteroid_1a.glb";
+
+    vector<shared_ptr<Model>> asteroidModels;
+    asteroidModels.push_back(getModel(asteroidModelPath1));
+    asteroidModels.push_back(getModel(asteroidModelPath2));
+    asteroidModels.push_back(getModel(asteroidModelPath3));
+
+    asteroidSpawner->create(asteroidModels, *defaultModelShader);
+    gameObjects.push_back(asteroidSpawner);
 
     shared_ptr<EnemySpawner> enemySpawner = std::make_shared<EnemySpawner>();
     if (modelEnemy && modelProjectile)
