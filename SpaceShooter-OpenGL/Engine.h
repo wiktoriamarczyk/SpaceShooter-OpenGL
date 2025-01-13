@@ -49,10 +49,6 @@ private:
 
     GLFWwindow* window = nullptr;
     shared_ptr<Player> player;
-    shared_ptr<EnemyUnit> enemy;
-    shared_ptr<Projectile> projectile;
-    shared_ptr<AsteroidSpawner> asteroidSpawner;
-    shared_ptr<EnemySpawner> enemySpawner;
     vector<shared_ptr<GameObject>> gameObjects;
     vector<shared_ptr<Texture>> textures;
     vector<shared_ptr<Model>> models;

@@ -6,7 +6,7 @@ class GameObject
 {
 public:
     GameObject() = default;
-    virtual void update(float deltaTime) = 0;
+    virtual void update(float deltaTime);
     virtual void render() = 0;
     virtual void onKeyDown(int key) {};
     virtual void onKeyUp(int key) {};
@@ -18,11 +18,13 @@ public:
     glm::vec3 getSize() const { return size; }
     glm::vec3 getRotation() const { return rotation; }
     shared_ptr<Sprite> getSprite() const { return sprite; }
-    bool isAlive() const { return isObjectAlive; }
+    bool isAlive() const { return alive; }
+    bool isOffScreen() const;
     virtual ~GameObject() = default;
 
 protected:
-    bool isObjectAlive = true;
+    bool alive = true;
+    bool offScreenDeathEnabled = false;
     glm::vec3 position;
     glm::vec3 size = glm::vec3(1.0f, 1.0f, 1.0f);
     glm::vec3 rotation;

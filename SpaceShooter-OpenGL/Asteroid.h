@@ -8,8 +8,7 @@ public:
     void update(float deltaTime) override;
     void render() override;
 private:
-    glm::vec3 playerPosition;
     glm::vec3 direction;
-    float speed = 0.5f;
+    float speed = 3.0f;
 };
 

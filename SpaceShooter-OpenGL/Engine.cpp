@@ -50,12 +50,12 @@ void Engine::processMouseInput(GLFWwindow* window, int button, int action, int m
     if (action == GLFW_PRESS)
     {
         // move light to the position of the cursor
-        double xpos, ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
-        int width, height;
-        glfwGetWindowSize(window, &width, &height);
-        glm::vec3 lightPos = glm::vec3((xpos / width) * 2 - 1, 1 - (ypos / height) * 2, 0.0f);
-        instance.lightCube->setPosition(lightPos);
+        //double xpos, ypos;
+        //glfwGetCursorPos(window, &xpos, &ypos);
+        //int width, height;
+        //glfwGetWindowSize(window, &width, &height);
+        //glm::vec3 lightPos = glm::vec3((xpos / width) * 2 - 1, 1 - (ypos / height) * 2, 0.0f);
+        //instance.lightCube->setPosition(lightPos);
     }
     else if (action == GLFW_RELEASE)
     {
@@ -210,25 +210,21 @@ void Engine::createGameObjects()
 {
     // Create player
     player = make_shared<Player>();
-    shared_ptr<Model> model = getModel(PLAYER_MODEL_PATH);
+    shared_ptr<Model> playerModel = getModel(PLAYER_MODEL_PATH);
 
     // Create basic enemy
-    enemy = make_shared<EnemyUnit>();
+    shared_ptr<EnemyUnit> enemy = make_shared<EnemyUnit>();
     shared_ptr<Model> modelEnemy = getModel(ENEMY_MODEL_PATH);
     shared_ptr<Model> modelProjectile = getModel(PROJECTILE_MODEL_PATH);
-    if (model)
+
+    if (playerModel)
     {
-        player->create(*model, *defaultModelShader, *modelProjectile);
+        player->create(*playerModel, *defaultModelShader, *modelProjectile);
         player->setSize(glm::vec3(0.1f, 0.1f, 0.1f));
         gameObjects.push_back(player);
-    }/*
-    if (modelEnemy)
-    {
-        enemy->create(*modelEnemy, *defaultModelShader, *modelProjectile);
-        enemy->setSize(glm::vec3(0.1f, 0.1f, 0.1f));
-        gameObjects.push_back(enemy);
-    }*/
-    asteroidSpawner = std::make_shared<AsteroidSpawner>();
+    }
+
+    shared_ptr<AsteroidSpawner> asteroidSpawner = std::make_shared<AsteroidSpawner>();
     shared_ptr<Model> modelAsteroid = getModel(ASTEROID_MODEL_PATH);
     if (modelAsteroid)
     {
@@ -236,7 +232,7 @@ void Engine::createGameObjects()
         gameObjects.push_back(asteroidSpawner);
     }
 
-    enemySpawner = std::make_shared<EnemySpawner>();
+    shared_ptr<EnemySpawner> enemySpawner = std::make_shared<EnemySpawner>();
     if (modelEnemy && modelProjectile)
     {
         enemySpawner->create(*modelEnemy, *defaultModelShader, *modelProjectile);
@@ -335,7 +331,7 @@ void Engine::update(float deltaTime)
 
 void Engine::render()
 {
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.f, 0.f, 0.f, 0.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the color buffer and depth buffer
 
     for (int i = 0; i < gameObjects.size(); ++i)

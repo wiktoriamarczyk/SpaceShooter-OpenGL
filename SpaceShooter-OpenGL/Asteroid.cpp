@@ -1,24 +1,20 @@
 #include "Asteroid.h"
 
-void Asteroid::create(const Model& model, const Shader& shader, const glm::vec3& startPos, const glm::vec3& playerPos) {
+void Asteroid::create(const Model& model, const Shader& shader, const glm::vec3& startPos, const glm::vec3& direction) {
 
     ModelObject::create(model, shader);
 
     position = startPos;
-    playerPosition = playerPos;
     setSize(glm::vec3(0.05f, 0.05f, 0.05f));
-
-    direction = glm::normalize(playerPosition - position);
+    offScreenDeathEnabled = true;
+    this->direction = direction;
 }
 
-void Asteroid::update(float deltaTime) {
-    if (!isObjectAlive) return;
-
-    position += direction * speed * deltaTime;
-
+void Asteroid::update(float deltaTime)
+{
+    position.z += direction.z * speed * deltaTime;
 }
 
 void Asteroid::render() {
-    if (!isObjectAlive) return;
     ModelObject::render();
 }
