@@ -1,43 +1,35 @@
 #include "EnemySpawner.h"
 #include "Engine.h"
 
-void EnemySpawner::create(const Model& enemyModel, const Shader& enemyShader, const Model& projectileModel) {
-    this->enemyModel = std::make_shared<Model>(enemyModel);
-    this->enemyShader = std::make_shared<Shader>(enemyShader);
-    this->projectileModel = std::make_shared<Model>(projectileModel);
+void EnemySpawner::create(const vector<shared_ptr<Model>> models, const Shader& shader, const Model& projectileModel)
+{
+    this->projectileModel = projectileModel.getSelf();
 
-    std::srand(static_cast<unsigned>(std::time(nullptr)));
+    spawnInterval = 3.0f;
+    maxActiveObjects = 3;
+
+    Spawner::create(models, shader);
 }
 
-void EnemySpawner::update(float deltaTime) {
-
-    timeSinceLastSpawn += deltaTime;
-
-    if (timeSinceLastSpawn >= spawnInterval && activeEnemies.size() < maxEnemies) {
-        spawnEnemy();
-        timeSinceLastSpawn = 0.0f;
-    }
-
-    for (int i = 0; i < activeEnemies.size();) {
-        if (!activeEnemies[i]->isAlive()) {
-            activeEnemies.erase(activeEnemies.begin() + i);
-        }
-        else {
-            i++;
-        }
-    }
+void EnemySpawner::update(float deltaTime)
+{
+    Spawner::update(deltaTime);
 }
 
-void EnemySpawner::spawnEnemy() {
-    if (enemyModel && enemyShader && projectileModel) {
+void EnemySpawner::spawn()
+{
+    int randomModelIndex = std::rand() % models.size();
+    std::shared_ptr<Model> model = models[randomModelIndex];
+
+    if (model && projectileModel) {
 
         glm::vec3 spawnPosition = getRandomSpawnPosition();
 
         std::shared_ptr<EnemyUnit> newEnemy = std::make_shared<EnemyUnit>();
-        newEnemy->create(*enemyModel, *enemyShader, *projectileModel);
+        newEnemy->create(*model, *shader, *projectileModel);
         newEnemy->setPosition(spawnPosition);
 
-        activeEnemies.push_back(newEnemy);
+        activeObjects.push_back(newEnemy);
         Engine::getInstance().addGameObject(newEnemy);
     }
     else {
@@ -75,9 +67,3 @@ glm::vec3 EnemySpawner::getRandomSpawnPosition() const
 
     return glm::vec3(x, y, -3.0f);
 }
-
-void EnemySpawner::render()
-{
-
-}
-

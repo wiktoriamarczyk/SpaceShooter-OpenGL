@@ -214,7 +214,6 @@ void Engine::createGameObjects()
     player = make_shared<Player>();
 
     shared_ptr<Model> playerModel = getModel(PLAYER_MODEL_PATH);
-    shared_ptr<Model> modelEnemy = getModel(ENEMY_MODEL_PATH);
     shared_ptr<Model> modelProjectile = getModel(PROJECTILE_MODEL_PATH);
 
     if (playerModel && modelProjectile)
@@ -238,25 +237,20 @@ void Engine::createGameObjects()
     asteroidModels.push_back(getModel(asteroidModelPath3));
     //asteroidModels.push_back(getModel(asteroidModelPath4));
 
-    asteroidSpawner->create(asteroidModels, *defaultModelShader);
-    gameObjects.push_back(asteroidSpawner);
-
-    shared_ptr<EnemySpawner> enemySpawner = std::make_shared<EnemySpawner>();
-    if (modelEnemy && modelProjectile)
+    if (!asteroidModels.empty())
     {
-        enemySpawner->create(*modelEnemy, *defaultModelShader, *modelProjectile);
-        gameObjects.push_back(enemySpawner);
+        asteroidSpawner->create(asteroidModels, *defaultModelShader);
+        gameObjects.push_back(asteroidSpawner);
     }
 
-    // create billboard
-    shared_ptr<Billboard> billboard = std::make_shared<Billboard>();
-    shared_ptr<Texture> texture = getTexture("../Data/Textures/star1.png");
-    if (texture)
+    shared_ptr<EnemySpawner> enemySpawner = std::make_shared<EnemySpawner>();
+    vector<shared_ptr<Model>> enemyModels;
+    enemyModels.push_back(getModel(ENEMY_MODEL_PATH));
+
+    if (!enemyModels.empty() && modelProjectile)
     {
-        billboard->create(*texture, *defaultLightingShader, cameraPosition);
-        billboard->setPosition(glm::vec3(0.5f, 0.5f, -30.0f));
-        billboard->setSize(glm::vec3(0.5f, 0.5f, 0.5f));
-        gameObjects.push_back(billboard);
+        enemySpawner->create(enemyModels, *defaultModelShader, *modelProjectile);
+        gameObjects.push_back(enemySpawner);
     }
 }
 

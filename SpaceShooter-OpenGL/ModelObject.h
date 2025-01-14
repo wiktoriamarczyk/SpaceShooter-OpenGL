@@ -14,9 +14,8 @@ public:
     void onKeyUp(int key) override;
 
 protected:
-    shared_ptr<Model> model;
     shared_ptr<Shader> shader;
-
+    shared_ptr<Model> model;
     shared_ptr<Texture> texture;
 };
 

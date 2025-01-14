@@ -9,6 +9,6 @@ public:
     void render() override;
 private:
     glm::vec3 direction;
-    float speed = 3.0f;
+    float speed = 5.0f;
 };
 

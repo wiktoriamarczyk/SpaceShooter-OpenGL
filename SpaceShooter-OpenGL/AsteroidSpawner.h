@@ -1,23 +1,17 @@
 #pragma once
-#include "GameObject.h"
-#include "Model.h"
+#include "Spawner.h"
 #include "Asteroid.h"
 
-class AsteroidSpawner : public GameObject
+class AsteroidSpawner : public Spawner<Asteroid>
 {
 public:
     void create(const vector<shared_ptr<Model>> models, const Shader& shader);
     void update(float deltaTime) override;
-    void createAsteroid(const float spawnDistanceZ);
-    void render() override;
+    void render() override {};
 
-private:
-    std::vector<std::shared_ptr<Asteroid>> activeAsteroids;
-    float spawnInterval = 5.0f;
-    float timeSinceLastSpawn;
-    vector<shared_ptr<Model>> models;
-    std::shared_ptr<Shader> shader;
-    int initialAsteroidCount = 5;
-    int maxAsteroidsPerSpawn = 3;
+protected:
+    void spawn() override;
+    glm::vec3 getRandomSpawnPosition() const override;
+    glm::vec3 getRandomInitialSpawnPosition() const override;
 };
 

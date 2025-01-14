@@ -20,9 +20,7 @@ void Billboard::update(float deltaTime)
     glm::quat rotationQuat = glm::quatLookAt(-direction, up);
     rotation = glm::degrees(glm::eulerAngles(rotationQuat));
 
-    position.z += deltaTime * 4;
-
-    Engine::GetDefaultModelShader()->setVec3("pointLights[0].position", position);
+    //Engine::GetDefaultModelShader()->setVec3("pointLights[0].position", position);
 
     ModelObject::update(deltaTime);
 }

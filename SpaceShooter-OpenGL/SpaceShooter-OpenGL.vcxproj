@@ -157,7 +157,9 @@
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Spawner.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Star.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="TestCube.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -180,7 +182,9 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Spawner.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="Star.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="TestCube.h" />
     <ClInclude Include="Texture.h" />

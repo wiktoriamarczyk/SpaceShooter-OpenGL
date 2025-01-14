@@ -24,6 +24,7 @@ public:
 
     void addGameObject(shared_ptr<GameObject> gameObject);
     glm::vec3 getPlayerPosition() const;
+    glm::vec3 getCameraPosition() const { return cameraPosition; };
     static Engine& getInstance() { return instance; }
 
     static shared_ptr<Texture> getTexture(const char* path, aiTextureType type = aiTextureType::aiTextureType_DIFFUSE);
@@ -55,7 +56,7 @@ private:
     vector<shared_ptr<Shader>> shaders;
 
     double lastFrame = 0;
-    glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+    const glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 
     static void processInputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void processMouseInput(GLFWwindow* window, int button, int action, int mods);

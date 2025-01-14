@@ -18,6 +18,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <optional>
 
 using std::string;
 using std::shared_ptr;
@@ -26,6 +27,10 @@ using std::weak_ptr;
 using std::vector;
 using std::to_string;
 using std::move;
+using std::optional;
+using std::nullopt;
+using std::srand;
+using std::time;
 
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;

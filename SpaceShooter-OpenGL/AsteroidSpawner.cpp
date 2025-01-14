@@ -1,70 +1,42 @@
 #include "AsteroidSpawner.h"
 #include "Engine.h"
-#include "Shader.h"
 
 void AsteroidSpawner::create(const vector<shared_ptr<Model>> models, const Shader& shader)
 {
-    this->models = models;
-    this->shader = std::make_shared<Shader>(shader);
+    initialObjectCount = 5;
+    maxObjectsPerSpawn = 3;
 
-    std::srand(static_cast<unsigned>(std::time(nullptr)));
-
-    // Create initial asteroids
-    for (int i = 0; i < initialAsteroidCount; i++)
-    {
-        // [-50.0, -15.0]
-        float spawnDistanceZ = -50.0f + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / 35.0f);
-        createAsteroid(spawnDistanceZ);
-    }
+    Spawner::create(models, shader);
 }
 
 void AsteroidSpawner::update(float deltaTime)
 {
-    timeSinceLastSpawn += deltaTime;
-
-    if (timeSinceLastSpawn >= spawnInterval)
-    {
-        timeSinceLastSpawn = 0.0f;
-        // [-70.0, -50.0]
-        float spawnDistanceZ = -70.0f + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / 20.0f);
-        int asteroidCount = std::rand() % maxAsteroidsPerSpawn + 1;
-
-        for (int i = 0; i < asteroidCount; i++)
-            createAsteroid(spawnDistanceZ);
-    }
-
-    for (auto& asteroid : activeAsteroids)
-    {
-        asteroid->update(deltaTime);
-    }
+    Spawner::update(deltaTime);
 }
 
-void AsteroidSpawner::createAsteroid(const float spawnDistanceZ)
+void AsteroidSpawner::spawn()
 {
-    const float randomOffsetRangeXY = 1.0;
-
-    glm::vec3 startPos;
-    glm::vec3 cameraPosition = glm::vec3(0, 0, 0);
-
-    // [-1.0, 1.0]
-    float randX = -randomOffsetRangeXY + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / (2 * randomOffsetRangeXY));
-    float randY = -randomOffsetRangeXY + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / (2 * randomOffsetRangeXY));
-
-    startPos.x = cameraPosition.x + randX;
-    startPos.y = cameraPosition.y + randY;
-    startPos.z = cameraPosition.z + spawnDistanceZ;
-
     int randomModelIndex = std::rand() % models.size();
     std::shared_ptr<Model> model = models[randomModelIndex];
 
     if (model)
     {
+        glm::vec3 spawnPosition = getRandomSpawnPosition();
+        if (!initialized)
+        {
+            spawnPosition = getRandomInitialSpawnPosition();
+        }
+
+        glm::vec3 cameraPosition = Engine::getInstance().getCameraPosition();
+
         std::shared_ptr<Asteroid> newAsteroid = std::make_shared<Asteroid>();
         newAsteroid->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
-        newAsteroid->setPosition(startPos);
-        glm::vec3 direction = glm::normalize(cameraPosition - startPos);
+        newAsteroid->setPosition(spawnPosition);
+
+        glm::vec3 direction = glm::normalize(cameraPosition - spawnPosition);
         newAsteroid->create(*model, *shader, direction);
-        activeAsteroids.push_back(newAsteroid);
+
+        activeObjects.push_back(newAsteroid);
         Engine::getInstance().addGameObject(newAsteroid);
     }
     else
@@ -73,7 +45,26 @@ void AsteroidSpawner::createAsteroid(const float spawnDistanceZ)
     }
 }
 
-void AsteroidSpawner::render()
+glm::vec3 AsteroidSpawner::getRandomSpawnPosition() const
 {
+    const float randomOffsetRangeXY = 1.0;
+    // [-1.0, 1.0]
+    float randX = -randomOffsetRangeXY + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / (2 * randomOffsetRangeXY));
+    float randY = -randomOffsetRangeXY + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / (2 * randomOffsetRangeXY));
+    // [-70.0, -50.0]
+    float randZ = -70.0f + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / 20.0f);
 
+    return glm::vec3(randX, randY, randZ);
+}
+
+glm::vec3 AsteroidSpawner::getRandomInitialSpawnPosition() const
+{
+    const float randomOffsetRangeXY = 1.0;
+    // [-1.0, 1.0]
+    float randX = -randomOffsetRangeXY + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / (2 * randomOffsetRangeXY));
+    float randY = -randomOffsetRangeXY + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / (2 * randomOffsetRangeXY));
+    // [-50.0, -15.0]
+    float randZ = -50.0f + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / 35.0f);
+
+    return glm::vec3(randX, randY, randZ);
 }
