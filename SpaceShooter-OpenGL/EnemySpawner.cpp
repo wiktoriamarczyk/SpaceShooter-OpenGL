@@ -6,7 +6,7 @@ void EnemySpawner::create(const Model& enemyModel, const Shader& enemyShader, co
     this->enemyShader = std::make_shared<Shader>(enemyShader);
     this->projectileModel = std::make_shared<Model>(projectileModel);
 
-    std::srand(static_cast<unsigned>(std::time(nullptr))); 
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
 }
 
 void EnemySpawner::update(float deltaTime) {
@@ -47,33 +47,33 @@ void EnemySpawner::spawnEnemy() {
 
 glm::vec3 EnemySpawner::getRandomSpawnPosition() const
 {
-    int side = std::rand() % 4;  
+    int side = std::rand() % 4;
     float x, y;
 
     switch (side)
     {
-    case 0: 
-        x = static_cast<float>(std::rand() % 200 - 100) / 100.0f * windowHalfSize;  
-        y = windowHalfSize + spawnMargin; 
+    case 0:
+        x = static_cast<float>(std::rand() % 200 - 100) / 100.0f * windowHalfSize;
+        y = windowHalfSize + spawnMargin;
         break;
 
-    case 1: 
-        x = static_cast<float>(std::rand() % 200 - 100) / 100.0f * windowHalfSize; 
-        y = -windowHalfSize - spawnMargin;  
+    case 1:
+        x = static_cast<float>(std::rand() % 200 - 100) / 100.0f * windowHalfSize;
+        y = -windowHalfSize - spawnMargin;
         break;
 
-    case 2: 
-        x = -windowHalfSize - spawnMargin;  
-        y = static_cast<float>(std::rand() % 200 - 100) / 100.0f * windowHalfSize;  
+    case 2:
+        x = -windowHalfSize - spawnMargin;
+        y = static_cast<float>(std::rand() % 200 - 100) / 100.0f * windowHalfSize;
         break;
 
     case 3:
-        x = windowHalfSize + spawnMargin; 
-        y = static_cast<float>(std::rand() % 200 - 100) / 100.0f * windowHalfSize; 
+        x = windowHalfSize + spawnMargin;
+        y = static_cast<float>(std::rand() % 200 - 100) / 100.0f * windowHalfSize;
         break;
     }
 
-    return glm::vec3(x, y, -1.0f); 
+    return glm::vec3(x, y, -3.0f);
 }
 
 void EnemySpawner::render()

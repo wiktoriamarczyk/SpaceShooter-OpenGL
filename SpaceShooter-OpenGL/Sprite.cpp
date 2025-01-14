@@ -16,6 +16,7 @@ bool Sprite::initialize(const Texture& texture, const glm::vec2& position, const
     VBO = Engine::GetDefaultVBO();
     EBO = Engine::GetDefaultIBO();
     shader = Engine::GetDefaultSpriteShader();
+
     return true;
 }
 
@@ -23,6 +24,7 @@ void Sprite::draw() const
 {
     if (!texture || !shader)
         return;
+
     if (!VAO)
         return;
 

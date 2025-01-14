@@ -14,6 +14,7 @@
 #include "Asteroid.h"
 #include "AsteroidSpawner.h"
 #include "EnemySpawner.h"
+#include "Billboard.h"
 
 Engine Engine::instance;
 
@@ -110,7 +111,6 @@ bool Engine::doInit()
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
-
     // Create default object
     if (!createDefaultResources())
     {
@@ -125,15 +125,19 @@ bool Engine::doInit()
 
 bool Engine::createDefaultResources()
 {
-    defaultVBO = make_shared<VertexBuffer>();
-
+    // Create quad for sprite rendering
     float vertices[] = {
-        0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-        1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-        0.0f, 1.0f, 0.0f, 0.0f, 1.0f
+        // positions          // texture coords
+        0.5f,   0.5f, 0.0f,   1.0f, 1.0f,        // top right
+        0.5f,  -0.5f, 0.0f,   1.0f, 0.0f,        // bottom right
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f,        // bottom left
+
+        -0.5f,  0.5f, 0.0f,   0.0f, 1.0f,        // top left
+        0.5f,   0.5f, 0.0f,   1.0f, 1.0f,        // top right
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f,        // bottom left
     };
 
+    defaultVBO = make_shared<VertexBuffer>();
     if (!defaultVBO->create(vertices, sizeof(vertices)))
         return false;
 
@@ -172,7 +176,7 @@ bool Engine::createDefaultResources()
     // set perspective projection matrix
     auto projection = glm::perspective(glm::radians(60.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
     defaultModelShader->setMat4("projection", projection);
-    defaultModelShader->setMat4("view",glm::translate(glm::identity<glm::mat4x4>(), glm::vec3(0.0f, 0.0f, -2.0f)));
+    defaultModelShader->setMat4("view",glm::identity<glm::mat4x4>());
     defaultModelShader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
     defaultModelShader->setVec3("viewPos", glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -188,39 +192,36 @@ bool Engine::createDefaultResources()
     defaultModelShader->setVec3("dirLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
     defaultModelShader->setVec3("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
-    defaultModelShader->setVec3("pointLights[0].ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-    defaultModelShader->setVec3("pointLights[0].diffuse", glm::vec3(1.0f, 0.85f, 0.0f));
-    defaultModelShader->setVec3("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    defaultModelShader->setVec3("pointLights[0].ambient", glm::vec3(0.24725f, 0.1995f, 0.0745f));
+    defaultModelShader->setVec3("pointLights[0].diffuse", glm::vec3(0.75164f, 0.60648f, 0.22648f));
+    defaultModelShader->setVec3("pointLights[0].specular", glm::vec3(0.628281f, 0.555802f, 0.366065f));
     defaultModelShader->setFloat("pointLights[0].constant", 1.0f);
-    defaultModelShader->setFloat("pointLights[0].linear", 0.22f);
-    defaultModelShader->setFloat("pointLights[0].quadratic", 0.20f);
+    defaultModelShader->setFloat("pointLights[0].linear", 0.09f);
+    defaultModelShader->setFloat("pointLights[0].quadratic", 0.032f);
 
 
     // Init default lighting shader
     defaultLightingShader = Shader::create("../Data/Shaders/light_source_shader.vs", "../Data/shaders/light_source_shader.fs");
     if (!defaultLightingShader)
         return false;
-
     defaultLightingShader->use();
     defaultLightingShader->setMat4("projection", projection);
-    defaultLightingShader->setMat4("view", glm::translate(glm::identity<glm::mat4x4>(), glm::vec3(0.0f, 0.0f, -2.0f)));
+    defaultLightingShader->setMat4("view", glm::identity<glm::mat4x4>());
 }
 
 void Engine::createGameObjects()
 {
-    // Create player
     player = make_shared<Player>();
-    shared_ptr<Model> playerModel = getModel(PLAYER_MODEL_PATH);
 
-    // Create basic enemy
-    shared_ptr<EnemyUnit> enemy = make_shared<EnemyUnit>();
+    shared_ptr<Model> playerModel = getModel(PLAYER_MODEL_PATH);
     shared_ptr<Model> modelEnemy = getModel(ENEMY_MODEL_PATH);
     shared_ptr<Model> modelProjectile = getModel(PROJECTILE_MODEL_PATH);
 
-    if (playerModel)
+    if (playerModel && modelProjectile)
     {
         player->create(*playerModel, *defaultModelShader, *modelProjectile);
         player->setSize(glm::vec3(0.1f, 0.1f, 0.1f));
+        player->setPosition(glm::vec3(0.0f, 0.0f, -2.0f));
         gameObjects.push_back(player);
     }
 
@@ -229,11 +230,13 @@ void Engine::createGameObjects()
     const char* asteroidModelPath1 = "../Data/Models/Asteroids/asteroid/scene.gltf";
     const char* asteroidModelPath2 = "../Data/Models/Asteroids/asteroid_01/scene.gltf";
     const char* asteroidModelPath3 = "../Data/Models/Asteroids/asteroid-1a-game-model/source/Asteroid_1a.glb";
+    //const char* asteroidModelPath4 = "../Data/Models/Asteroids/metal_asteroid/scene.gltf";
 
     vector<shared_ptr<Model>> asteroidModels;
     asteroidModels.push_back(getModel(asteroidModelPath1));
     asteroidModels.push_back(getModel(asteroidModelPath2));
     asteroidModels.push_back(getModel(asteroidModelPath3));
+    //asteroidModels.push_back(getModel(asteroidModelPath4));
 
     asteroidSpawner->create(asteroidModels, *defaultModelShader);
     gameObjects.push_back(asteroidSpawner);
@@ -245,15 +248,15 @@ void Engine::createGameObjects()
         gameObjects.push_back(enemySpawner);
     }
 
-    // Create light source
-    lightCube = make_shared<ModelObject>();
-    shared_ptr<Model> modelLight = getModel(PROJECTILE_MODEL_PATH);
-    if (modelLight)
+    // create billboard
+    shared_ptr<Billboard> billboard = std::make_shared<Billboard>();
+    shared_ptr<Texture> texture = getTexture("../Data/Textures/star1.png");
+    if (texture)
     {
-        lightCube->create(*modelLight, *defaultLightingShader);
-        lightCube->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
-        lightCube->setPosition(glm::vec3(0.0f, -0.5f, 1.0f));
-        gameObjects.push_back(lightCube);
+        billboard->create(*texture, *defaultLightingShader, cameraPosition);
+        billboard->setPosition(glm::vec3(0.5f, 0.5f, -30.0f));
+        billboard->setSize(glm::vec3(0.5f, 0.5f, 0.5f));
+        gameObjects.push_back(billboard);
     }
 }
 
@@ -344,9 +347,6 @@ void Engine::render()
     {
         gameObjects[i]->render();
     }
-
-    // update light position in the shader
-    defaultModelShader->setVec3("pointLights[0].position", lightCube->getPosition());
 
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     glfwSwapBuffers(window);

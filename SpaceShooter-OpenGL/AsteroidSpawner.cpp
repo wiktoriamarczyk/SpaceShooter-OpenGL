@@ -12,7 +12,8 @@ void AsteroidSpawner::create(const vector<shared_ptr<Model>> models, const Shade
     // Create initial asteroids
     for (int i = 0; i < initialAsteroidCount; i++)
     {
-        float spawnDistanceZ = -50.0f + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / 35.0f); // [-50.0, -15.0]
+        // [-50.0, -15.0]
+        float spawnDistanceZ = -50.0f + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / 35.0f);
         createAsteroid(spawnDistanceZ);
     }
 }
@@ -24,8 +25,12 @@ void AsteroidSpawner::update(float deltaTime)
     if (timeSinceLastSpawn >= spawnInterval)
     {
         timeSinceLastSpawn = 0.0f;
-        const float spawnDistanceZ = -50.0f;
-        createAsteroid(spawnDistanceZ);
+        // [-70.0, -50.0]
+        float spawnDistanceZ = -70.0f + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / 20.0f);
+        int asteroidCount = std::rand() % maxAsteroidsPerSpawn + 1;
+
+        for (int i = 0; i < asteroidCount; i++)
+            createAsteroid(spawnDistanceZ);
     }
 
     for (auto& asteroid : activeAsteroids)
@@ -41,10 +46,9 @@ void AsteroidSpawner::createAsteroid(const float spawnDistanceZ)
     glm::vec3 startPos;
     glm::vec3 cameraPosition = glm::vec3(0, 0, 0);
 
-    float randX = -randomOffsetRangeXY + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / (2* randomOffsetRangeXY));
+    // [-1.0, 1.0]
+    float randX = -randomOffsetRangeXY + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / (2 * randomOffsetRangeXY));
     float randY = -randomOffsetRangeXY + static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / (2 * randomOffsetRangeXY));
-
-    std::cout << "Asteroid randX: " << randX << " randY: " << randY << std::endl;
 
     startPos.x = cameraPosition.x + randX;
     startPos.y = cameraPosition.y + randY;
@@ -56,8 +60,10 @@ void AsteroidSpawner::createAsteroid(const float spawnDistanceZ)
     if (model)
     {
         std::shared_ptr<Asteroid> newAsteroid = std::make_shared<Asteroid>();
+        newAsteroid->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
+        newAsteroid->setPosition(startPos);
         glm::vec3 direction = glm::normalize(cameraPosition - startPos);
-        newAsteroid->create(*model, *shader, startPos, direction);
+        newAsteroid->create(*model, *shader, direction);
         activeAsteroids.push_back(newAsteroid);
         Engine::getInstance().addGameObject(newAsteroid);
     }

@@ -18,5 +18,6 @@ private:
     vector<shared_ptr<Model>> models;
     std::shared_ptr<Shader> shader;
     int initialAsteroidCount = 5;
+    int maxAsteroidsPerSpawn = 3;
 };
 

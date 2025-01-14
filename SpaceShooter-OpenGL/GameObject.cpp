@@ -5,6 +5,8 @@ void GameObject::update(float deltaTime)
     if (isOffScreen() && offScreenDeathEnabled)
     {
         alive = false;
+        std::cout << "Object off screen" << std::endl;
+        // NOT WORKING?
     }
 }
 

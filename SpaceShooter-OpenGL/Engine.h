@@ -55,6 +55,7 @@ private:
     vector<shared_ptr<Shader>> shaders;
 
     double lastFrame = 0;
+    glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 
     static void processInputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void processMouseInput(GLFWwindow* window, int button, int action, int mods);
@@ -65,9 +66,5 @@ private:
     bool createDefaultResources();
     bool doInit();
     void doRun();
-
-    // debug
-    shared_ptr<ModelObject> lightCube;
-
 };
 
