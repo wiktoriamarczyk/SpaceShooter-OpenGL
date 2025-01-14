@@ -17,6 +17,6 @@ protected:
     vector<shared_ptr<Texture>> textures;
 
 private:
-    void updateShaderData(int index);
+    void updatePointLightsCount();
 };
 

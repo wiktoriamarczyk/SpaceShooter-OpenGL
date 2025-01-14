@@ -50,6 +50,19 @@ static float randomFloat(float min, float max)
     return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
 }
 
+static glm::vec2 randomCelesticalBodyPosition(float min, float max)
+{
+    float x = 0;
+    float y = 0;
+    do
+    {
+        x = randomFloat(min, max);
+        y = randomFloat(min, max);
+    } while (x > -1.0f && x < 1.0f && y > -1.0f && y < 1.0f);
+
+    return glm::vec2(x, y);
+}
+
 template<typename T>
 class SelfHelper
 {

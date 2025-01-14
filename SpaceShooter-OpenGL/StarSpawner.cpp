@@ -5,9 +5,10 @@ void StarSpawner::create(const vector<shared_ptr<Texture>> textures, const Shade
 {
     this->textures = textures;
 
-    initialObjectCount = 30;
-    maxObjectsPerSpawn = 15;
-    spawnInterval = 0.02f;
+    maxActiveObjects = 128;
+    initialObjectCount = 64;
+    maxObjectsPerSpawn = 32;
+    spawnInterval = 0.5f;
 
     Spawner::create(shader);
 }
@@ -23,11 +24,12 @@ void StarSpawner::update(float deltaTime)
             int shaderIndex = activeObjects[i]->getIndex();
             activeObjects.erase(activeObjects.begin() + i);
 
+            updatePointLightsCount();
+
             // Move indices of objects that are rendered after the deleted object
             for (int j = shaderIndex; j < activeObjects.size(); ++j)
             {
                 activeObjects[j]->setIndex(j);
-                activeObjects[j]->updateShaderData();
             }
         }
         else
@@ -53,7 +55,9 @@ void StarSpawner::spawn()
         glm::vec3 cameraPosition = Engine::getInstance().getCameraPosition();
 
         std::shared_ptr<Star> newStar = std::make_shared<Star>();
-        newStar->setSize(glm::vec3(0.5f, 0.5f, 0.5f));
+
+        float size = randomFloat(0.03f, 0.1f);
+        newStar->setSize(glm::vec3(size, size, size));
         newStar->setPosition(spawnPosition);
 
         int starIndex = activeObjects.size();
@@ -62,30 +66,35 @@ void StarSpawner::spawn()
         activeObjects.push_back(newStar);
         Engine::getInstance().addGameObject(newStar);
 
-        // Update shader data
-        shader->use();
-        shader->setInt("pointLightsCount", activeObjects.size());
+        updatePointLightsCount();
     }
     else
     {
         std::cerr << "Nie uda³o siê za³adowaæ modelu asteroidy!" << std::endl;
     }
+
+
+    std::cout << "Active objects: " << activeObjects.size() << std::endl;
 }
 
 glm::vec3 StarSpawner::getRandomSpawnPosition() const
 {
-    float randX = randomFloat(-1.f, 1.f);
-    float randY = randomFloat(-1.f, 1.f);
     float randZ = randomFloat(-50.0f, -30.0f);
 
-    return glm::vec3(randX, randY, randZ);
+    return glm::vec3(randomCelesticalBodyPosition(-2.f, 2.f), randZ);
 }
 
 glm::vec3 StarSpawner::getRandomInitialSpawnPosition() const
 {
-    float randX = randomFloat(-1.f, 1.f);
-    float randY = randomFloat(-1.f, 1.f);
     float randZ = randomFloat(-20.0f, 0.0f);
 
-    return glm::vec3(randX, randY, randZ);
+    return glm::vec3(randomCelesticalBodyPosition(-2.f, 2.f), randZ);
+}
+
+void StarSpawner::updatePointLightsCount()
+{
+    // Update shader lights count in model shader
+    auto modelShader = Engine::GetDefaultModelShader();
+    modelShader->use();
+    modelShader->setInt("pointLightsCount", activeObjects.size());
 }

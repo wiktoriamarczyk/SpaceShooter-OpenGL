@@ -54,6 +54,7 @@ private:
     vector<shared_ptr<Texture>> textures;
     vector<shared_ptr<Model>> models;
     vector<shared_ptr<Shader>> shaders;
+    shared_ptr<Sprite> background;
 
     double lastFrame = 0;
     const glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);

@@ -14,5 +14,6 @@ public:
 private:
     int shaderArrayIndex;
     float speed = 5.0f;
+    shared_ptr<Shader> modelShader;
 };
 

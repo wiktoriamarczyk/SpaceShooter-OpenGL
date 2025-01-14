@@ -33,7 +33,8 @@ void AsteroidSpawner::spawn()
         glm::vec3 cameraPosition = Engine::getInstance().getCameraPosition();
 
         shared_ptr<Asteroid> newAsteroid = std::make_shared<Asteroid>();
-        newAsteroid->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
+        float size = randomFloat(0.05f, 0.1f);
+        newAsteroid->setSize(glm::vec3(size, size, size));
         newAsteroid->setPosition(spawnPosition);
 
         glm::vec3 direction = glm::normalize(cameraPosition - spawnPosition);
@@ -50,18 +51,14 @@ void AsteroidSpawner::spawn()
 
 glm::vec3 AsteroidSpawner::getRandomSpawnPosition() const
 {
-    float randX = randomFloat(-1.0f, 1.0f);
-    float randY = randomFloat(-1.0f, 1.0f);
     float randZ = randomFloat(-70.0f, -50.0f);
 
-    return glm::vec3(randX, randY, randZ);
+    return glm::vec3(randomCelesticalBodyPosition(-2.f, 2.f), randZ);
 }
 
 glm::vec3 AsteroidSpawner::getRandomInitialSpawnPosition() const
 {
-    float randX = randomFloat(-1.0f, 1.0f);
-    float randY = randomFloat(-1.0f, 1.0f);
     float randZ = randomFloat(-50.0f, -15.0f);
 
-    return glm::vec3(randX, randY, randZ);
+    return glm::vec3(randomCelesticalBodyPosition(-2.f, 2.f), randZ);
 }

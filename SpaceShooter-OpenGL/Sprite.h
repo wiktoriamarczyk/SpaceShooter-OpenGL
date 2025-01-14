@@ -12,7 +12,7 @@ class Sprite : public SelfHelper<Sprite>
 {
     friend class SelfHelper<Sprite>;
 public:
-    shared_ptr<Sprite> create(const Texture& Texture, const glm::vec2& position, const glm::vec2& size)
+    static shared_ptr<Sprite> create(const Texture& Texture, const glm::vec2& position, const glm::vec2& size)
     {
         return SelfHelper<Sprite>::create(Texture, position, size);
     }

@@ -177,8 +177,8 @@ bool Engine::createDefaultResources()
     auto projection = glm::perspective(glm::radians(60.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
     defaultModelShader->setMat4("projection", projection);
     defaultModelShader->setMat4("view",glm::identity<glm::mat4x4>());
-    defaultModelShader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
     defaultModelShader->setVec3("viewPos", glm::vec3(0.0f, 0.0f, 0.0f));
+    defaultModelShader->setVec3("ambient", glm::vec3(0.2f, 0.2f, 0.2f));
 
     // set material properties
     defaultModelShader->setVec3("material.ambient", glm::vec3(1.0f, 1.0f, 1.0f));
@@ -187,10 +187,9 @@ bool Engine::createDefaultResources()
     defaultModelShader->setFloat("material.shininess", 32.0f);
 
     // set light properties
-    defaultModelShader->setVec3("dirLight.direction", glm::vec3(0.f, -1.0f, -2.f));
-    defaultModelShader->setVec3("dirLight.ambient", glm::vec3(0.5f, 0.5f, 0.5f));
-    defaultModelShader->setVec3("dirLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-    defaultModelShader->setVec3("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    defaultModelShader->setVec3("dirLight.direction", glm::vec3(0.f, -1.0f, 0.f));
+    defaultModelShader->setVec3("dirLight.diffuse", glm::vec3(0.3f, 0.3f, 0.3f));
+    defaultModelShader->setVec3("dirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));
 
 
     // Init default lighting shader
@@ -204,6 +203,11 @@ bool Engine::createDefaultResources()
 
 void Engine::createGameObjects()
 {
+    // draw background sprite
+    shared_ptr<Texture> backgroundTexture = getTexture("../Data/Textures/background.png");
+    background = Sprite::create(*backgroundTexture, glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
+
+
     player = make_shared<Player>();
 
     shared_ptr<Model> playerModel = getModel(PLAYER_MODEL_PATH);
@@ -221,14 +225,10 @@ void Engine::createGameObjects()
 
     const char* asteroidModelPath1 = "../Data/Models/Asteroids/asteroid/scene.gltf";
     const char* asteroidModelPath2 = "../Data/Models/Asteroids/asteroid_01/scene.gltf";
-    const char* asteroidModelPath3 = "../Data/Models/Asteroids/asteroid-1a-game-model/source/Asteroid_1a.glb";
-    //const char* asteroidModelPath4 = "../Data/Models/Asteroids/metal_asteroid/scene.gltf";
 
     vector<shared_ptr<Model>> asteroidModels;
     asteroidModels.push_back(getModel(asteroidModelPath1));
     asteroidModels.push_back(getModel(asteroidModelPath2));
-    asteroidModels.push_back(getModel(asteroidModelPath3));
-    //asteroidModels.push_back(getModel(asteroidModelPath4));
 
     if (!asteroidModels.empty())
     {
@@ -240,7 +240,7 @@ void Engine::createGameObjects()
     vector<shared_ptr<Texture>> starTextures = loadStarsTextures();
     if (!starTextures.empty())
     {
-        starSpawner->create(starTextures, *defaultSpriteShader);
+        starSpawner->create(starTextures, *defaultLightingShader);
         gameObjects.push_back(starSpawner);
     }
 
@@ -260,7 +260,8 @@ void Engine::addGameObject(shared_ptr<GameObject> gameObject)
     gameObjects.push_back(gameObject);
 }
 
-glm::vec3 Engine::getPlayerPosition() const {
+glm::vec3 Engine::getPlayerPosition() const
+{
     if (player)
     {
         return player->getPosition();
@@ -335,8 +336,11 @@ void Engine::update(float deltaTime)
 
 void Engine::render()
 {
-    glClearColor(0.f, 0.f, 0.f, 0.f);
+    //glClearColor(0.f, 0.f, 0.f, 0.f);
+    //glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the color buffer and depth buffer
+    background->draw();
+    glClear(GL_DEPTH_BUFFER_BIT); // clear the depth buffer
 
     for (int i = 0; i < gameObjects.size(); ++i)
     {

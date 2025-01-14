@@ -23,8 +23,12 @@ public:
 protected:
     bool alive = true;
     bool offScreenDeathEnabled = false;
+    glm::vec2 screenBoundsX = glm::vec2(-1.5f, 1.5f);
+    glm::vec2 screenBoundsY = glm::vec2(-1.5f, 1.5f);
+    float screenBoundZ = 2.0f;
     glm::vec3 position;
     glm::vec3 size = glm::vec3(1.0f, 1.0f, 1.0f);
     glm::vec3 rotation;
+    string name = "GameObject";
 };
 

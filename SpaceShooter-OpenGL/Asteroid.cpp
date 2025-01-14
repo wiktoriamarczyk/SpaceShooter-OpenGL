@@ -3,7 +3,9 @@
 void Asteroid::create(const Model& model, const Shader& shader, const glm::vec3& direction) {
 
     ModelObject::create(model, shader);
+
     offScreenDeathEnabled = true;
+    name = "Asteroid";
     this->direction = direction;
 }
 
