@@ -1,6 +1,6 @@
 #version 330 core
 
-#define MAX_POINT_LIGHTS 1
+#define MAX_POINT_LIGHTS 128
 
 out vec4 FragColor;
 
@@ -43,6 +43,7 @@ uniform sampler2D texture_diffuse0;
 uniform vec3 viewPos;
 uniform Material material;
 uniform DirLight dirLight;
+uniform int pointLightsCount;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
@@ -57,7 +58,7 @@ void main()
     vec3 result = CalcDirLight(dirLight, norm, viewDir);
 
     // do the same for all point lights
-    for (int i = 0; i < MAX_POINT_LIGHTS; i++)
+    for (int i = 0; i < pointLightsCount; i++)
     {
         result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
     }

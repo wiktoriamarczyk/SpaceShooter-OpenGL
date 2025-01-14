@@ -7,7 +7,7 @@ template <class T>
 class Spawner : public GameObject
 {
 public:
-    void create(const vector<shared_ptr<Model>> models, const Shader& shader);
+    void create(const Shader& shader);
     void update(float deltaTime) override;
     void render() override {};
 
@@ -16,9 +16,9 @@ protected:
     virtual glm::vec3 getRandomSpawnPosition() const = 0;
     virtual glm::vec3 getRandomInitialSpawnPosition() const { return glm::vec3(0, 0, 0); };
     virtual void spawnInitialObjects();
+    void eraseInactiveObjects();
 
     vector<shared_ptr<T>> activeObjects;
-    vector<shared_ptr<Model>> models;
     shared_ptr<Shader> shader;
 
     float spawnInterval = 2.0f;
@@ -30,10 +30,9 @@ protected:
 };
 
 template<class T>
-void Spawner<T>::create(const vector<shared_ptr<Model>> models, const Shader& shader)
+void Spawner<T>::create(const Shader& shader)
 {
-    this->models = models;
-    this->shader = std::make_shared<Shader>(shader);
+    this->shader = shader.getSelf();
 
     srand(static_cast<unsigned>(time(nullptr)));
 
@@ -61,7 +60,11 @@ void Spawner<T>::update(float deltaTime)
         }
     }
 
-    // erase inactive objects
+}
+
+template<class T>
+void Spawner<T>::eraseInactiveObjects()
+{
     for (int i = 0; i < activeObjects.size();)
     {
         if (!activeObjects[i]->isAlive())

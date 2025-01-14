@@ -67,5 +67,6 @@ private:
     bool createDefaultResources();
     bool doInit();
     void doRun();
+    vector<shared_ptr<Texture>> loadStarsTextures();
 };
 

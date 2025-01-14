@@ -11,7 +11,7 @@ void Asteroid::update(float deltaTime)
 {
     const float rotationFactor = 20.f;
 
-    position.z += direction.z * speed * deltaTime;
+    position.z += speed * deltaTime;
     rotation.x += rotationFactor * deltaTime;
     rotation.y += rotationFactor * deltaTime;
 

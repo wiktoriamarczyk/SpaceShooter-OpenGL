@@ -13,7 +13,8 @@ private:
     void spawn() override;
     glm::vec3 getRandomSpawnPosition() const override;
 
-    std::shared_ptr<Model> projectileModel;
+    shared_ptr<Model> projectileModel;
+    vector<shared_ptr<Model>> models;
 
     const float spawnMargin = 0.5f;
     const float windowHalfSize = 3.5f;

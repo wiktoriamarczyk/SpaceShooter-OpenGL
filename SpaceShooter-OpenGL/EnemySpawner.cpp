@@ -4,16 +4,18 @@
 void EnemySpawner::create(const vector<shared_ptr<Model>> models, const Shader& shader, const Model& projectileModel)
 {
     this->projectileModel = projectileModel.getSelf();
+    this->models = models;
 
     spawnInterval = 3.0f;
     maxActiveObjects = 3;
 
-    Spawner::create(models, shader);
+    Spawner::create(shader);
 }
 
 void EnemySpawner::update(float deltaTime)
 {
     Spawner::update(deltaTime);
+    eraseInactiveObjects();
 }
 
 void EnemySpawner::spawn()

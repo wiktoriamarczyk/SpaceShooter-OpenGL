@@ -160,6 +160,7 @@
     <ClCompile Include="Spawner.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Star.cpp" />
+    <ClCompile Include="StarSpawner.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="TestCube.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="Spawner.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Star.h" />
+    <ClInclude Include="StarSpawner.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="TestCube.h" />
     <ClInclude Include="Texture.h" />

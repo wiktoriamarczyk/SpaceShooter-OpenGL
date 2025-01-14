@@ -11,8 +11,8 @@
 #include "Player.h"
 #include "EnemyUnit.h"
 #include "Projectile.h"
-#include "Asteroid.h"
 #include "AsteroidSpawner.h"
+#include "StarSpawner.h"
 #include "EnemySpawner.h"
 #include "Billboard.h"
 
@@ -187,17 +187,10 @@ bool Engine::createDefaultResources()
     defaultModelShader->setFloat("material.shininess", 32.0f);
 
     // set light properties
-    defaultModelShader->setVec3("dirLight.direction", glm::vec3(0.f, -1.0f, 0.f));
+    defaultModelShader->setVec3("dirLight.direction", glm::vec3(0.f, -1.0f, -2.f));
     defaultModelShader->setVec3("dirLight.ambient", glm::vec3(0.5f, 0.5f, 0.5f));
     defaultModelShader->setVec3("dirLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
     defaultModelShader->setVec3("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-
-    defaultModelShader->setVec3("pointLights[0].ambient", glm::vec3(0.24725f, 0.1995f, 0.0745f));
-    defaultModelShader->setVec3("pointLights[0].diffuse", glm::vec3(0.75164f, 0.60648f, 0.22648f));
-    defaultModelShader->setVec3("pointLights[0].specular", glm::vec3(0.628281f, 0.555802f, 0.366065f));
-    defaultModelShader->setFloat("pointLights[0].constant", 1.0f);
-    defaultModelShader->setFloat("pointLights[0].linear", 0.09f);
-    defaultModelShader->setFloat("pointLights[0].quadratic", 0.032f);
 
 
     // Init default lighting shader
@@ -224,7 +217,7 @@ void Engine::createGameObjects()
         gameObjects.push_back(player);
     }
 
-    shared_ptr<AsteroidSpawner> asteroidSpawner = std::make_shared<AsteroidSpawner>();
+    shared_ptr<AsteroidSpawner> asteroidSpawner = make_shared<AsteroidSpawner>();
 
     const char* asteroidModelPath1 = "../Data/Models/Asteroids/asteroid/scene.gltf";
     const char* asteroidModelPath2 = "../Data/Models/Asteroids/asteroid_01/scene.gltf";
@@ -243,7 +236,15 @@ void Engine::createGameObjects()
         gameObjects.push_back(asteroidSpawner);
     }
 
-    shared_ptr<EnemySpawner> enemySpawner = std::make_shared<EnemySpawner>();
+    shared_ptr<StarSpawner> starSpawner = make_shared<StarSpawner>();
+    vector<shared_ptr<Texture>> starTextures = loadStarsTextures();
+    if (!starTextures.empty())
+    {
+        starSpawner->create(starTextures, *defaultSpriteShader);
+        gameObjects.push_back(starSpawner);
+    }
+
+    shared_ptr<EnemySpawner> enemySpawner = make_shared<EnemySpawner>();
     vector<shared_ptr<Model>> enemyModels;
     enemyModels.push_back(getModel(ENEMY_MODEL_PATH));
 
@@ -368,6 +369,28 @@ void Engine::doRun()
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     glfwTerminate();
+}
+
+vector<shared_ptr<Texture>> Engine::loadStarsTextures()
+{
+    vector<shared_ptr<Texture>> textures;
+    const char* path1 = "../Data/Textures/star1.png";
+    const char* path2 = "../Data/Textures/star2.png";
+    const char* path3 = "../Data/Textures/star3.png";
+    const char* path4 = "../Data/Textures/star4.png";
+    const char* path5 = "../Data/Textures/star5.png";
+    const char* path6 = "../Data/Textures/star6.png";
+    const char* path7 = "../Data/Textures/star7.png";
+
+    textures.push_back(getTexture(path1));
+    textures.push_back(getTexture(path2));
+    textures.push_back(getTexture(path3));
+    textures.push_back(getTexture(path4));
+    textures.push_back(getTexture(path5));
+    textures.push_back(getTexture(path6));
+    textures.push_back(getTexture(path7));
+
+    return textures;
 }
 
 shared_ptr<VertexBuffer> Engine::GetDefaultVBO()

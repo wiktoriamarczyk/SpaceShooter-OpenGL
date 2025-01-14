@@ -1,11 +1,11 @@
 #pragma once
 #include "Spawner.h"
-#include "Asteroid.h"
+#include "Star.h"
 
-class AsteroidSpawner : public Spawner<Asteroid>
+class StarSpawner : public Spawner<Star>
 {
 public:
-    void create(const vector<shared_ptr<Model>> models, const Shader& shader);
+    void create(const vector<shared_ptr<Texture>> textures, const Shader& shader);
     void update(float deltaTime) override;
     void render() override {};
 
@@ -14,6 +14,9 @@ protected:
     glm::vec3 getRandomSpawnPosition() const override;
     glm::vec3 getRandomInitialSpawnPosition() const override;
 
-    vector<shared_ptr<Model>> models;
+    vector<shared_ptr<Texture>> textures;
+
+private:
+    void updateShaderData(int index);
 };
 

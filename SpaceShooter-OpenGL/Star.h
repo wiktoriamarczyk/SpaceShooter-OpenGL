@@ -4,11 +4,12 @@
 class Star : public Billboard
 {
 public:
-    void create(int ID, const Texture& texture, const Shader& shader, glm::vec3 cameraPosition);
+    void create(int index, const Texture& texture, const Shader& shader, glm::vec3 cameraPosition);
     void update(float deltaTime) override;
     void render() override;
-    int getID() const { return shaderArrayIndex; }
-    void setID(int ID) { shaderArrayIndex = ID; }
+    void updateShaderData();
+    int getIndex() const { return shaderArrayIndex; }
+    void setIndex(int index);
 
 private:
     int shaderArrayIndex;
