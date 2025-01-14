@@ -41,31 +41,8 @@ void EnemySpawner::spawn()
 
 glm::vec3 EnemySpawner::getRandomSpawnPosition() const
 {
-    int side = std::rand() % 4;
-    float x, y;
+    float x = static_cast<float>(std::rand() % 200 - 100) / 100.0f;  
+    float y = static_cast<float>(std::rand() % 200 - 100) / 100.0f;  
 
-    switch (side)
-    {
-    case 0:
-        x = static_cast<float>(std::rand() % 200 - 100) / 100.0f * windowHalfSize;
-        y = windowHalfSize + spawnMargin;
-        break;
-
-    case 1:
-        x = static_cast<float>(std::rand() % 200 - 100) / 100.0f * windowHalfSize;
-        y = -windowHalfSize - spawnMargin;
-        break;
-
-    case 2:
-        x = -windowHalfSize - spawnMargin;
-        y = static_cast<float>(std::rand() % 200 - 100) / 100.0f * windowHalfSize;
-        break;
-
-    case 3:
-        x = windowHalfSize + spawnMargin;
-        y = static_cast<float>(std::rand() % 200 - 100) / 100.0f * windowHalfSize;
-        break;
-    }
-
-    return glm::vec3(x, y, -3.0f);
+    return glm::vec3(x, y, -30.0f);
 }

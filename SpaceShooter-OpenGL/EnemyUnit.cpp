@@ -18,6 +18,8 @@ void EnemyUnit::create(const Model& model, const Shader& shader, const Model& pr
     remainingShots = 0;
     setRandomIdleTime();
     postShotCooldown = 0.0f;
+
+    targetPosition = glm::vec3(position.x, position.y, 0.0f);
 }
 
 void EnemyUnit::update(float deltaTime)
@@ -32,6 +34,8 @@ void EnemyUnit::update(float deltaTime)
         else
             i++;
     }
+
+    
 
     if (idleTime > 0.0f)
     {
@@ -136,14 +140,15 @@ void EnemyUnit::setRandomIdleTime()
 
 void EnemyUnit::setRandomTargetPosition()
 {
-    float newTargetX, newTargetY;
+    float newTargetX, newTargetY, newTargetZ;
 
     do {
         newTargetX = static_cast<float>(std::rand() % 200 - 100) / 100.0f; 
         newTargetY = static_cast<float>(std::rand() % 200 - 100) / 100.0f;
+        newTargetZ = static_cast<float>(std::rand() % 5 + 3) * -1.0f;
     } while (glm::distance(glm::vec3(newTargetX, newTargetY, 0.0f), position) < minDistance);
 
-    targetPosition = glm::vec3(newTargetX, newTargetY, position.z);
+    targetPosition = glm::vec3(newTargetX, newTargetY, newTargetZ);
 }
 
 void EnemyUnit::shootProjectile(const glm::vec3& playerPosition)
