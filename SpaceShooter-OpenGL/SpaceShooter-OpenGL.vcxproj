@@ -156,6 +156,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelObject.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelObject.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PointLight.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Spawner.h" />

@@ -15,7 +15,7 @@ public:
 private:
     float speed = 5.f;
     glm::vec2 movementDirection = glm::vec2(0.f);
-    void shootProjectile(const glm::vec3& positionToShoot);
+    void shootProjectile(const glm::vec3& targetPosition);
     shared_ptr<Model> projectileModel;
     std::vector<shared_ptr<Projectile>> projectiles;
 };

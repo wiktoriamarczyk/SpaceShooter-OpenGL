@@ -16,6 +16,8 @@ class ModelObject;
 class Asteroid;
 class AsteroidSpawner;
 class EnemySpawner;
+class PointLight;
+
 class Engine
 {
 public:
@@ -23,6 +25,8 @@ public:
     static void run();
 
     void addGameObject(shared_ptr<GameObject> gameObject);
+    void addPointLight(shared_ptr<PointLight> pointLight);
+    void removePointLight(PointLight& pointLight);
     glm::vec3 getPlayerPosition() const;
     glm::vec3 getCameraPosition() const { return cameraPosition; };
     static Engine& getInstance() { return instance; }
@@ -35,6 +39,7 @@ public:
     static shared_ptr<IndexBuffer> GetDefaultIBO();
     static shared_ptr<Shader> GetDefaultSpriteShader();
     static shared_ptr<Shader> GetDefaultModelShader();
+    static shared_ptr<Shader> GetDefaultLightShader();
     static shared_ptr<VertexArrayObject> GetDefaultVAO();
 
 private:
@@ -54,6 +59,7 @@ private:
     vector<shared_ptr<Texture>> textures;
     vector<shared_ptr<Model>> models;
     vector<shared_ptr<Shader>> shaders;
+    vector<weak_ptr<PointLight>> pointLights;
     shared_ptr<Sprite> background;
 
     double lastFrame = 0;

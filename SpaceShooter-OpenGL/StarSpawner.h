@@ -15,8 +15,5 @@ protected:
     glm::vec3 getRandomInitialSpawnPosition() const override;
 
     vector<shared_ptr<Texture>> textures;
-
-private:
-    void updatePointLightsCount();
 };
 

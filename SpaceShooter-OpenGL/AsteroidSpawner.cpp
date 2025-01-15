@@ -45,7 +45,7 @@ void AsteroidSpawner::spawn()
     }
     else
     {
-        std::cerr << "Nie uda³o siê za³adowaæ modelu asteroidy!" << std::endl;
+        std::cerr << "Couldn't load asteroid model!" << std::endl;
     }
 }
 

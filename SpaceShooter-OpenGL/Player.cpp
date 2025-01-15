@@ -39,11 +39,6 @@ void Player::onKeyDown(int key)
     {
         movementDirection.x = 1.f;
     }
-    else if (key == GLFW_KEY_SPACE)
-    {
-        // Shoot
-       /* shootProjectile(glm::vec3(0.0f, 0.0f, -1.0f));*/
-    }
 }
 
 void Player::onKeyUp(int key)
@@ -64,6 +59,10 @@ void Player::onKeyUp(int key)
     {
         movementDirection.x = 0.f;
     }
+    else if (key == GLFW_KEY_SPACE)
+    {
+        shootProjectile(glm::vec3(position.x, position.y, -20.0f));
+    }
 }
 
 glm::vec3 Player::getPosition() const
@@ -71,13 +70,15 @@ glm::vec3 Player::getPosition() const
     return position;
 }
 
-void Player::shootProjectile(const glm::vec3& positionToShoot)
+void Player::shootProjectile(const glm::vec3& targetPosition)
 {
-    if (shader && projectileModel) {
+    if (shader && projectileModel)
+    {
         glm::vec3 projectileStartPos = position + glm::vec3(0.0f, 0.1f, 0.0f);
-
-        std::shared_ptr<Projectile> newProjectile = Projectile::createProjectile(projectileStartPos, positionToShoot, 3.0f, *projectileModel, *shader);
-
+        shared_ptr<Projectile> newProjectile = make_shared<Projectile>();
+        newProjectile->create(projectileStartPos, targetPosition, 0.1f, *projectileModel, *shader);
+        newProjectile->setScreenBoundZ(-20.0f);
+        newProjectile->setSize(glm::vec3(0.05f, 0.05f, 0.05f));
         projectiles.push_back(newProjectile);
         Engine::getInstance().addGameObject(newProjectile);
     }

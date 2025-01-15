@@ -4,8 +4,7 @@ void ChargingStationSpawner::create(const vector<shared_ptr<Model>> models, cons
 {
     this->models = models;
 
-    std::srand(static_cast<unsigned>(std::time(nullptr)));
-    spawnInterval = static_cast<float>((std::rand() % 91) + 60);
+    spawnInterval = randomFloat(60, 150);
 
     Spawner::create(shader);
 }
@@ -21,11 +20,17 @@ void ChargingStationSpawner::spawn()
     int randomModelIndex = std::rand() % models.size();
     shared_ptr<Model> selectedModel = models[randomModelIndex];
 
+    if (!selectedModel)
+    {
+        std::cerr << "Couldn't load charging station model!" << std::endl;
+        return;
+    }
+
     shared_ptr<ChargingStation> station = std::make_shared<ChargingStation>();
     station->create(*selectedModel, *shader);
 
     activeObjects.push_back(station);
     Engine::getInstance().addGameObject(station);
 
-    spawnInterval = static_cast<float>((std::rand() % 91) + 60);
+    spawnInterval = randomFloat(60, 150);
 }

@@ -52,19 +52,12 @@ void Engine::processMouseInput(GLFWwindow* window, int button, int action, int m
 {
     if (action == GLFW_PRESS)
     {
-        // move light to the position of the cursor
-        //double xpos, ypos;
-        //glfwGetCursorPos(window, &xpos, &ypos);
-        //int width, height;
-        //glfwGetWindowSize(window, &width, &height);
-        //glm::vec3 lightPos = glm::vec3((xpos / width) * 2 - 1, 1 - (ypos / height) * 2, 0.0f);
-        //instance.lightCube->setPosition(lightPos);
+
     }
     else if (action == GLFW_RELEASE)
     {
 
     }
-
 }
 
 bool Engine::init()
@@ -272,6 +265,43 @@ void Engine::addGameObject(shared_ptr<GameObject> gameObject)
     gameObjects.push_back(gameObject);
 }
 
+void Engine::addPointLight(shared_ptr<PointLight> pointLight)
+{
+    assert(pointLight->getIndex() == -1);
+
+    int newIndex = pointLights.size();
+    pointLight->create(newIndex);
+
+    pointLights.push_back(pointLight);
+
+    auto modelShader = GetDefaultModelShader();
+    modelShader->setInt("pointLightsCount", pointLights.size());
+}
+
+void Engine::removePointLight(PointLight& pointLight)
+{
+    int shaderIndex = pointLight.getIndex();
+
+    // TODO: Fix error when closing the app
+    if (pointLights.size() > 0)
+        pointLights.erase(pointLights.begin() + shaderIndex);
+
+    // Update shader lights count in model shader
+    auto modelShader = pointLight.getModelShader();
+    modelShader->use();
+    modelShader->setInt("pointLightsCount", pointLights.size());
+
+    // Move indices of objects that are rendered after the deleted object
+    for (int i = shaderIndex; i < pointLights.size(); ++i)
+    {
+        auto light = pointLights[i].lock();
+        if (light)
+        {
+            light->setNewIndex(i);
+        }
+    }
+}
+
 glm::vec3 Engine::getPlayerPosition() const
 {
     if (player)
@@ -279,6 +309,36 @@ glm::vec3 Engine::getPlayerPosition() const
         return player->getPosition();
     }
     return glm::vec3(0.0f);
+}
+
+void Engine::update(float deltaTime)
+{
+    // Update game objects
+    for (int i = 0; i < gameObjects.size();)
+    {
+        if (gameObjects[i]->isAlive())
+            gameObjects[i++]->update(deltaTime);
+        else
+            gameObjects.erase(gameObjects.begin() + i);
+    }
+}
+
+void Engine::render()
+{
+    //glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    // clear the color buffer and depth buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    background->draw();
+    // clear the depth buffer after drawing the background
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    for (int i = 0; i < gameObjects.size(); ++i)
+    {
+        gameObjects[i]->render();
+    }
+
+    // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+    glfwSwapBuffers(window);
 }
 
 shared_ptr<Texture> Engine::getTexture(const char* path, aiTextureType type)
@@ -333,34 +393,6 @@ shared_ptr<Shader> Engine::getShader(const char* vertexPath, const char* fragmen
 
     instance.shaders.push_back(shader);
     return shader;
-}
-
-void Engine::update(float deltaTime)
-{
-    for (int i = 0; i < gameObjects.size();)
-    {
-        if (gameObjects[i]->isAlive())
-            gameObjects[i++]->update(deltaTime);
-        else
-            gameObjects.erase(gameObjects.begin() + i);
-    }
-}
-
-void Engine::render()
-{
-    //glClearColor(0.f, 0.f, 0.f, 0.f);
-    //glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the color buffer and depth buffer
-    background->draw();
-    glClear(GL_DEPTH_BUFFER_BIT); // clear the depth buffer
-
-    for (int i = 0; i < gameObjects.size(); ++i)
-    {
-        gameObjects[i]->render();
-    }
-
-    // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-    glfwSwapBuffers(window);
 }
 
 void Engine::run()
@@ -432,4 +464,9 @@ shared_ptr<Shader> Engine::GetDefaultSpriteShader()
 shared_ptr<Shader> Engine::GetDefaultModelShader()
 {
     return instance.defaultModelShader;
+}
+
+shared_ptr<Shader> Engine::GetDefaultLightShader()
+{
+    return instance.defaultLightingShader;
 }

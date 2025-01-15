@@ -157,11 +157,12 @@ void EnemyUnit::setRandomTargetPosition()
 
 void EnemyUnit::shootProjectile(const glm::vec3& playerPosition)
 {
-    if (shader && projectileModel) {
-        glm::vec3 projectileStartPos = position /*+ glm::vec3(0.0f, 0.0f, 0.0f)*/;
-
-        std::shared_ptr<Projectile> newProjectile = Projectile::createProjectile(projectileStartPos, playerPosition, 3.0f, *projectileModel, *shader);
-
+    if (shader && projectileModel)
+    {
+        glm::vec3 projectileStartPos = position;
+        shared_ptr<Projectile> newProjectile = make_shared<Projectile>();
+        newProjectile->create(projectileStartPos, playerPosition, 5.0f, *projectileModel, *shader);
+        newProjectile->setSize(glm::vec3(0.01f, 0.01f, 0.01f));
         projectiles.push_back(newProjectile);
         Engine::getInstance().addGameObject(newProjectile);
     }

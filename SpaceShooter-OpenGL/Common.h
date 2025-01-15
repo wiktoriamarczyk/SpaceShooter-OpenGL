@@ -31,6 +31,7 @@ using std::optional;
 using std::nullopt;
 using std::srand;
 using std::time;
+using std::enable_shared_from_this;
 
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;

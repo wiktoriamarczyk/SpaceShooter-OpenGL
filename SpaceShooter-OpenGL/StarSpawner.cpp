@@ -17,20 +17,12 @@ void StarSpawner::update(float deltaTime)
 {
     Spawner::update(deltaTime);
 
+    // Erase inactive stars
     for (int i = 0; i < activeObjects.size();)
     {
         if (!activeObjects[i]->isAlive())
         {
-            int shaderIndex = activeObjects[i]->getIndex();
             activeObjects.erase(activeObjects.begin() + i);
-
-            updatePointLightsCount();
-
-            // Move indices of objects that are rendered after the deleted object
-            for (int j = shaderIndex; j < activeObjects.size(); ++j)
-            {
-                activeObjects[j]->setIndex(j);
-            }
         }
         else
         {
@@ -53,28 +45,18 @@ void StarSpawner::spawn()
         }
 
         glm::vec3 cameraPosition = Engine::getInstance().getCameraPosition();
-
-        std::shared_ptr<Star> newStar = std::make_shared<Star>();
-
+        shared_ptr<Star> newStar = make_shared<Star>();
         float size = randomFloat(0.03f, 0.1f);
         newStar->setSize(glm::vec3(size, size, size));
         newStar->setPosition(spawnPosition);
-
-        int starIndex = activeObjects.size();
-        newStar->create(starIndex, *texture, *shader, cameraPosition);
-
+        newStar->create(*texture, *shader, cameraPosition);
         activeObjects.push_back(newStar);
         Engine::getInstance().addGameObject(newStar);
-
-        updatePointLightsCount();
     }
     else
     {
-        std::cerr << "Nie uda³o siê za³adowaæ modelu asteroidy!" << std::endl;
+        std::cerr << "Couldn't load star texture!" << std::endl;
     }
-
-
-    std::cout << "Active objects: " << activeObjects.size() << std::endl;
 }
 
 glm::vec3 StarSpawner::getRandomSpawnPosition() const
@@ -89,12 +71,4 @@ glm::vec3 StarSpawner::getRandomInitialSpawnPosition() const
     float randZ = randomFloat(-20.0f, 0.0f);
 
     return glm::vec3(randomCelesticalBodyPosition(-2.f, 2.f), randZ);
-}
-
-void StarSpawner::updatePointLightsCount()
-{
-    // Update shader lights count in model shader
-    auto modelShader = Engine::GetDefaultModelShader();
-    modelShader->use();
-    modelShader->setInt("pointLightsCount", activeObjects.size());
 }

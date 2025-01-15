@@ -18,6 +18,7 @@ public:
     glm::vec3 getRotation() const { return rotation; }
     bool isAlive() const { return alive; }
     bool isOffScreen() const;
+    void setScreenBoundZ(float z) { screenBoundZ = z; }
     virtual ~GameObject() = default;
 
 protected:
