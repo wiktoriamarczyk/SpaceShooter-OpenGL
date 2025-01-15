@@ -13,7 +13,7 @@ public:
 
 protected:
     virtual void spawn() = 0;
-    virtual glm::vec3 getRandomSpawnPosition() const = 0;
+    virtual glm::vec3 getRandomSpawnPosition() const { return glm::vec3(0, 0, 0); };
     virtual glm::vec3 getRandomInitialSpawnPosition() const { return glm::vec3(0, 0, 0); };
     virtual void spawnInitialObjects();
     void eraseInactiveObjects();

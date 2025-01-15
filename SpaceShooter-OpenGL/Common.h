@@ -41,7 +41,8 @@ const string VS_FILE_NAME = "../Data/Shaders/shader.vs";
 const string FS_FILE_NAME = "../Data/Shaders/shader.fs";
 constexpr const char* PLAYER_MODEL_PATH = "../Data/Models/Camo Stellar Jet/Package/CamoStellarJet.obj";
 constexpr const char* ENEMY_MODEL_PATH = "../Data/Models/Infrared Furtive/Package/InfraredFurtive.obj";
-constexpr const char* PROJECTILE_MODEL_PATH = "../Data/Models/Cube/Cube.obj";
+constexpr const char* PROJECTILE_MODEL_PATH = "../Data/Models/Sphere/Sphere.obj";
+constexpr const char* STATION_MODEL_PATH = "../Data/Models/round_platform/scene.gltf";
 
 constexpr bool WIREFRAME_MODE = false;
 

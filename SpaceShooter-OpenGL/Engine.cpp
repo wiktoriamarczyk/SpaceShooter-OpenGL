@@ -15,6 +15,8 @@
 #include "StarSpawner.h"
 #include "EnemySpawner.h"
 #include "Billboard.h"
+#include "ChargingStation.h"
+#include "ChargingStationSpawner.h"
 
 Engine Engine::instance;
 
@@ -252,6 +254,16 @@ void Engine::createGameObjects()
     {
         enemySpawner->create(enemyModels, *defaultModelShader, *modelProjectile);
         gameObjects.push_back(enemySpawner);
+    }
+
+    shared_ptr<ChargingStationSpawner> stationSpawner = make_shared<ChargingStationSpawner>();
+    vector<shared_ptr<Model>> stationModels;
+    stationModels.push_back(getModel(STATION_MODEL_PATH));
+
+    if (!stationModels.empty())
+    {
+        stationSpawner->create(stationModels, *defaultModelShader);
+        gameObjects.push_back(stationSpawner);
     }
 }
 
