@@ -24,8 +24,15 @@ void EnemyUnit::create(const Model& model, const Shader& shader, const Model& pr
 
 void EnemyUnit::update(float deltaTime)
 {
-
     glm::vec3 playerPosition = Engine::getInstance().getPlayerPosition();
+
+    glm::vec3 directionToPlayer = glm::normalize(playerPosition - position);
+
+    float angleY = std::atan2(directionToPlayer.x, directionToPlayer.z);
+    float angleX = std::atan2(directionToPlayer.y, glm::length(glm::vec2(directionToPlayer.x, directionToPlayer.z)));
+
+    rotation.y = glm::mix(rotation.y, angleY * 5.0f, deltaTime * 2.0f);  
+    rotation.x = glm::mix(rotation.x, -angleX * 5.0f, deltaTime * 2.0f);  
 
     for (int i = 0; i < projectiles.size();)
     {
@@ -34,8 +41,6 @@ void EnemyUnit::update(float deltaTime)
         else
             i++;
     }
-
-    
 
     if (idleTime > 0.0f)
     {
