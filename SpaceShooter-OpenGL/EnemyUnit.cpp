@@ -28,11 +28,11 @@ void EnemyUnit::update(float deltaTime)
 
     glm::vec3 directionToPlayer = glm::normalize(playerPosition - position);
 
-    float angleY = std::atan2(directionToPlayer.x, directionToPlayer.z);
-    float angleX = std::atan2(directionToPlayer.y, glm::length(glm::vec2(directionToPlayer.x, directionToPlayer.z)));
+    float angleY = glm::degrees(atan2(directionToPlayer.x, directionToPlayer.z));
+    float angleX = glm::degrees(atan2(directionToPlayer.y, glm::length(glm::vec2(directionToPlayer.x, directionToPlayer.z))));
 
-    rotation.y = glm::mix(rotation.y, angleY * 5.0f, deltaTime * 2.0f);  
-    rotation.x = glm::mix(rotation.x, -angleX * 5.0f, deltaTime * 2.0f);  
+    rotation.y = glm::mix(rotation.y, angleY, deltaTime * 2.0f);
+    rotation.x = glm::mix(rotation.x, -angleX, deltaTime * 2.0f);
 
     for (int i = 0; i < projectiles.size();)
     {
@@ -48,24 +48,24 @@ void EnemyUnit::update(float deltaTime)
 
         if (idleTime <= 0.0f)
         {
-            setRandomTargetPosition(); 
-            remainingShots = std::rand() % 10 + 1; 
-            shootCooldown = shootInterval; 
+            setRandomTargetPosition();
+            remainingShots = std::rand() % 10 + 1;
+            shootCooldown = shootInterval;
         }
 
         if (remainingShots > 0)
         {
             shootCooldown -= deltaTime;
 
-            if (shootCooldown <= 0.0f) 
+            if (shootCooldown <= 0.0f)
             {
-                shootProjectile(playerPosition); 
+                shootProjectile(playerPosition);
                 shootCooldown = shootInterval;
                 remainingShots--;
             }
         }
 
-        return; 
+        return;
     }
 
     if (remainingShots == 0 && postShotCooldown > 0.0f)
@@ -75,35 +75,34 @@ void EnemyUnit::update(float deltaTime)
         if (postShotCooldown <= 0.0f)
         {
 
-            setRandomTargetPosition(); 
-            currentSpeed = 0.0f;  
+            setRandomTargetPosition();
+            currentSpeed = 0.0f;
         }
 
-        return; 
+        return;
     }
 
     if (remainingShots > 0)
     {
         shootCooldown -= deltaTime;
 
-        if (shootCooldown <= 0.0f) 
+        if (shootCooldown <= 0.0f)
         {
             shootProjectile(playerPosition);
             shootCooldown = shootInterval;
-            remainingShots--; 
+            remainingShots--;
         }
     }
     else
     {
-  
         if (postShotCooldown <= 0.0f)
         {
-            glm::vec3 direction = glm::normalize(targetPosition - position); 
+            glm::vec3 direction = glm::normalize(targetPosition - position);
 
             if (currentSpeed < speed)
             {
-                currentSpeed += acceleration * deltaTime; 
-                currentSpeed = glm::min(currentSpeed, speed); 
+                currentSpeed += acceleration * deltaTime;
+                currentSpeed = glm::min(currentSpeed, speed);
             }
 
             float distanceToTarget = glm::distance(position, targetPosition);
@@ -116,7 +115,7 @@ void EnemyUnit::update(float deltaTime)
 
             if (distanceToTarget < 0.05f)
             {
-                setRandomIdleTime(); 
+                setRandomIdleTime();
             }
 
             position.x = glm::clamp(position.x, minX, maxX);
@@ -148,7 +147,7 @@ void EnemyUnit::setRandomTargetPosition()
     float newTargetX, newTargetY, newTargetZ;
 
     do {
-        newTargetX = static_cast<float>(std::rand() % 200 - 100) / 100.0f; 
+        newTargetX = static_cast<float>(std::rand() % 200 - 100) / 100.0f;
         newTargetY = static_cast<float>(std::rand() % 200 - 100) / 100.0f;
         newTargetZ = static_cast<float>(std::rand() % 5 + 3) * -1.0f;
     } while (glm::distance(glm::vec3(newTargetX, newTargetY, 0.0f), position) < minDistance);
@@ -159,7 +158,7 @@ void EnemyUnit::setRandomTargetPosition()
 void EnemyUnit::shootProjectile(const glm::vec3& playerPosition)
 {
     if (shader && projectileModel) {
-        glm::vec3 projectileStartPos = position /*+ glm::vec3(0.0f, 0.0f, 0.0f)*/; 
+        glm::vec3 projectileStartPos = position /*+ glm::vec3(0.0f, 0.0f, 0.0f)*/;
 
         std::shared_ptr<Projectile> newProjectile = Projectile::createProjectile(projectileStartPos, playerPosition, 3.0f, *projectileModel, *shader);
 
