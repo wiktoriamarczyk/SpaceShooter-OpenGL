@@ -7,7 +7,7 @@ void Projectile::create(const glm::vec3& startPosition, const glm::vec3& targetP
 
     light = make_shared<PointLight>();
     Engine::getInstance().addPointLight(light);
-    light->setParameters(glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.7f, 0.6f, 0.6f), 0.22, 0.20);
+    light->setParameters(glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.0f, 1.0f, 1.0f), 0.22, 0.20);
 
     position = startPosition;
     this->speed = speed;

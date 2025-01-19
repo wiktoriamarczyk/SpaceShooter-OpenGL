@@ -198,10 +198,9 @@ bool Engine::createDefaultResources()
 
 void Engine::createGameObjects()
 {
-    // draw background sprite
+    // Draw background sprite
     shared_ptr<Texture> backgroundTexture = getTexture("../Data/Textures/background.png");
     background = Sprite::create(*backgroundTexture, glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
-
 
     player = make_shared<Player>();
 

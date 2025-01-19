@@ -12,7 +12,21 @@ void Player::create(const Model& model, const Shader& shader, const Model& proje
 void Player::update(float deltaTime)
 {
     // movement
-    position += glm::vec3(movementDirection * speed * deltaTime, 0.f);
+    const glm::vec2 boundHorizontal = glm::vec2(-1.25f, 1.25f);
+    const glm::vec2 boundVertical = glm::vec2(-0.8f, 1.0f);
+
+    position += movementDirection * speed * deltaTime;
+
+    if (position.x < boundHorizontal.x)
+        position.x = boundHorizontal.x;
+    else if (position.x > boundHorizontal.y)
+        position.x = boundHorizontal.y;
+
+    if (position.y < boundVertical.x)
+        position.y = boundVertical.x;
+    else if (position.y > boundVertical.y)
+        position.y = boundVertical.y;
+
     ModelObject::update(deltaTime);
 }
 
@@ -39,6 +53,10 @@ void Player::onKeyDown(int key)
     {
         movementDirection.x = 1.f;
     }
+    else if (key == GLFW_KEY_SPACE)
+    {
+        shootProjectile(glm::vec3(position.x, position.y, -20.0f));
+    }
 }
 
 void Player::onKeyUp(int key)
@@ -58,10 +76,6 @@ void Player::onKeyUp(int key)
     else if (key == GLFW_KEY_D)
     {
         movementDirection.x = 0.f;
-    }
-    else if (key == GLFW_KEY_SPACE)
-    {
-        shootProjectile(glm::vec3(position.x, position.y, -20.0f));
     }
 }
 
