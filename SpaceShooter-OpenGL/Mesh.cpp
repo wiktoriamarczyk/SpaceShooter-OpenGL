@@ -4,7 +4,7 @@
 #include "IndexBuffer.h"
 #include "Shader.h"
 
-bool Mesh::load(vector<uint8_t> verticesData, vector<unsigned int> indices, vector<shared_ptr<Texture>> textures, VertexDefinitionElement flags)
+bool Mesh::load(vector<uint8_t> verticesData, uint16_t vertexSize, vector<unsigned int> indices, vector<shared_ptr<Texture>> textures, VertexDefinitionElement flags)
 {
     if (verticesData.empty())
     {
@@ -16,6 +16,7 @@ bool Mesh::load(vector<uint8_t> verticesData, vector<unsigned int> indices, vect
     this->indices = indices;
     this->textures = move(textures);
     this->flags = flags;
+    this->vertexSize = vertexSize;
 
     setupMesh();
 
@@ -28,8 +29,8 @@ void Mesh::setupMesh()
     VBO = make_shared<VertexBuffer>();
     EBO = make_shared<IndexBuffer>();
 
-    VBO->create(verticesData.data(), verticesData.size());
-    EBO->create(indices.data(), indices.size()*sizeof(indices[0]));
+    VBO->create(verticesData.data(), vertexSize, verticesData.size()/vertexSize);
+    EBO->create(indices.data(), true, indices.size());
 
     VAO->create(*VBO, this->flags );
 }

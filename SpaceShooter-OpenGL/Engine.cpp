@@ -31,16 +31,16 @@ void Engine::processInput(int key, int scancode, int action, int mods)
 {
     if (action == GLFW_PRESS)
     {
-        for (auto& gameObject : gameObjects)
+        for (int i=0; i<gameObjects.size(); i++)
         {
-            gameObject->onKeyDown(key);
+            gameObjects[i]->onKeyDown(key);
         }
     }
     else if (action == GLFW_RELEASE)
     {
-        for (auto& gameObject : gameObjects)
+        for (int i=0; i<gameObjects.size(); i++)
         {
-            gameObject->onKeyUp(key);
+            gameObjects[i]->onKeyUp(key);
         }
         // If the escape key is pressed, close the window
         if (key == GLFW_KEY_ESCAPE)
@@ -133,7 +133,7 @@ bool Engine::createDefaultResources()
     };
 
     defaultVBO = make_shared<VertexBuffer>();
-    if (!defaultVBO->create(vertices, sizeof(vertices)))
+    if (!defaultVBO->create(vertices, 20, sizeof(vertices)/20))
         return false;
 
     defaultIBO = make_shared<IndexBuffer>();
@@ -143,7 +143,7 @@ bool Engine::createDefaultResources()
         0, 2, 3
     };
 
-    if (!defaultIBO->create(indices, sizeof(indices)))
+    if (!defaultIBO->create(indices, true, sizeof(indices)/4))
         return false;
 
     defaultVAO = make_shared<VertexArrayObject>();
@@ -173,17 +173,17 @@ bool Engine::createDefaultResources()
     defaultModelShader->setMat4("projection", projection);
     defaultModelShader->setMat4("view",glm::identity<glm::mat4x4>());
     defaultModelShader->setVec3("viewPos", glm::vec3(0.0f, 0.0f, 0.0f));
-    defaultModelShader->setVec3("ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    defaultModelShader->setVec3("ambient", glm::vec3(0.15f, 0.15f, 0.15f));
 
     // set material properties
     defaultModelShader->setVec3("material.ambient", glm::vec3(1.0f, 1.0f, 1.0f));
     defaultModelShader->setVec3("material.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
-    defaultModelShader->setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
-    defaultModelShader->setFloat("material.shininess", 32.0f);
+    defaultModelShader->setVec3("material.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    defaultModelShader->setFloat("material.shininess", 64.0f);
 
     // set light properties
     defaultModelShader->setVec3("dirLight.direction", glm::vec3(0.f, -1.0f, 0.f));
-    defaultModelShader->setVec3("dirLight.diffuse", glm::vec3(0.3f, 0.3f, 0.3f));
+    defaultModelShader->setVec3("dirLight.diffuse", glm::vec3(0.2f, 0.2f, 0.2f));
     defaultModelShader->setVec3("dirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));
 
 

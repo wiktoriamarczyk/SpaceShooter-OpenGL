@@ -5,15 +5,16 @@
 class IndexBuffer
 {
 public:
-    bool create(const unsigned int* indices, unsigned int size);
+    bool create(const unsigned int* indices, bool is32Bit, unsigned int count);
     void bind() const;
     void unbind() const;
-    uint32_t getSize() const { return size; }
+    uint32_t getCount() const { return count; }
 
     ~IndexBuffer();
 
 private:
     unsigned int ID;
-    uint32_t size = 0;
+    uint32_t is32Bit = 0;
+    uint32_t count = 0;
 };
 

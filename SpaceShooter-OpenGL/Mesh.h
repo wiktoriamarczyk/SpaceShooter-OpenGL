@@ -20,7 +20,7 @@ class Mesh
 {
 public:
     Mesh() = default;
-    bool load(vector<uint8_t> verticesData, vector<unsigned int> indices, vector<shared_ptr<Texture>> textures, VertexDefinitionElement flags);
+    bool load(vector<uint8_t> verticesData, uint16_t vertexSize, vector<unsigned int> indices, vector<shared_ptr<Texture>> textures, VertexDefinitionElement flags);
     void draw(const Shader& shader);
 private:
     //  render data
@@ -33,6 +33,7 @@ private:
     vector<unsigned int> indices;
     vector<shared_ptr<Texture>> textures;
     VertexDefinitionElement flags;
+    uint16_t vertexSize;
 
     void setupMesh();
 };

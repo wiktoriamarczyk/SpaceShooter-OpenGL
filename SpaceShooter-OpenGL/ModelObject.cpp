@@ -52,7 +52,7 @@ void ModelObject::render()
     texture->bind();
     VAO->bind();
 
-    glDrawArrays(GL_TRIANGLES, 0, VBO->getSize());
+    glDrawArrays(GL_TRIANGLES, 0, VBO->getCount());
 }
 
 void ModelObject::onKeyDown(int key)

@@ -17,6 +17,5 @@ private:
     glm::vec3 movementDirection = glm::vec3(0.f);
     void shootProjectile(const glm::vec3& targetPosition);
     shared_ptr<Model> projectileModel;
-    std::vector<shared_ptr<Projectile>> projectiles;
 };
 

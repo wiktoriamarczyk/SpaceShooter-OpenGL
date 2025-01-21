@@ -51,7 +51,7 @@ TestCube::TestCube()
             -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
-    VBO.create(vertices, sizeof(vertices));
+    VBO.create(vertices, sizeof(vertices[0]) , sizeof(vertices) / sizeof(vertices[0]));
     VAO.create(VBO, VertexDefinitionElement::POSITION | VertexDefinitionElement::TEXTURE_COORD);
 
     shader = Engine::getShader(VS_FILE_NAME.c_str(), FS_FILE_NAME.c_str());
@@ -89,5 +89,5 @@ void TestCube::render()
     shader->setMat4("view", view);
     shader->setMat4("projection", projection);
 
-    glDrawArrays(GL_TRIANGLES, 0, VBO.getSize());
+    glDrawArrays(GL_TRIANGLES, 0, VBO.getCount());
 }

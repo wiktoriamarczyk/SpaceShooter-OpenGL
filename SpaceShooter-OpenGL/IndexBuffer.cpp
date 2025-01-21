@@ -1,11 +1,12 @@
 #include "IndexBuffer.h"
 
-bool IndexBuffer::create(const unsigned int* indices, unsigned int size)
+bool IndexBuffer::create(const unsigned int* indices, bool is32Bit, unsigned int count)
 {
     glGenBuffers(1, &ID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
-    this->size = size;
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, count*(is32Bit?4:2), indices, GL_STATIC_DRAW);
+    this->is32Bit = is32Bit;
+    this->count = count;
     return true;
 }
 

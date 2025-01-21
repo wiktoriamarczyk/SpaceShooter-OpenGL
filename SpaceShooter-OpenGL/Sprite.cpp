@@ -42,10 +42,10 @@ void Sprite::draw() const
     if (EBO)
     {
         EBO->bind();
-        glDrawElements(GL_TRIANGLES, EBO->getSize(), GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, EBO->getCount(), GL_UNSIGNED_INT, nullptr);
     }
     else
     {
-        glDrawArrays(GL_TRIANGLES, 0, VBO->getSize());
+        glDrawArrays(GL_TRIANGLES, 0, VBO->getCount());
     }
 }
