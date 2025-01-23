@@ -46,7 +46,7 @@ void StarSpawner::spawn()
 
         glm::vec3 cameraPosition = Engine::getInstance().getCameraPosition();
         shared_ptr<Star> newStar = make_shared<Star>();
-        float size = randomFloat(0.03f, 0.1f);
+        float size = randomFloat(0.03f, 0.05f);
         newStar->setSize(glm::vec3(size, size, size));
         newStar->setPosition(spawnPosition);
         newStar->create(*texture, *shader, cameraPosition);

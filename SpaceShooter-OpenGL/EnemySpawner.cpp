@@ -35,14 +35,14 @@ void EnemySpawner::spawn()
         Engine::getInstance().addGameObject(newEnemy);
     }
     else {
-        std::cerr << "Model, shader lub projectileModel nie zosta³y poprawnie zainicjalizowane!" << std::endl;
+        std::cerr << "Enemy or projectile model initialization failed" << std::endl;
     }
 }
 
 glm::vec3 EnemySpawner::getRandomSpawnPosition() const
 {
-    float x = static_cast<float>(std::rand() % 200 - 100) / 100.0f;  
-    float y = static_cast<float>(std::rand() % 200 - 100) / 100.0f;  
+    float x = static_cast<float>(std::rand() % 200 - 100) / 100.0f;
+    float y = static_cast<float>(std::rand() % 200 - 100) / 100.0f;
 
-    return glm::vec3(x, y, -30.0f);
+    return glm::vec3(x, y, -50.0f);
 }

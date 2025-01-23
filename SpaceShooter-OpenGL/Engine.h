@@ -83,5 +83,6 @@ private:
     bool doInit();
     void doRun();
     vector<shared_ptr<Texture>> loadStarsTextures();
+    vector<shared_ptr<Model>> loadAsteroidModels();
 };
 

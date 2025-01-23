@@ -15,5 +15,6 @@ protected:
     glm::vec3 getRandomInitialSpawnPosition() const override;
 
     vector<shared_ptr<Model>> models;
+    int lastModelIndex = -1;
 };
 

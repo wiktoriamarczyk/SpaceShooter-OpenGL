@@ -19,7 +19,13 @@ void AsteroidSpawner::update(float deltaTime)
 
 void AsteroidSpawner::spawn()
 {
+    // make sure not to spawn same asteroid model twice in a row
     int randomModelIndex = std::rand() % models.size();
+    if (randomModelIndex == lastModelIndex)
+    {
+        randomModelIndex = (randomModelIndex + 1) % models.size();
+    }
+    lastModelIndex = randomModelIndex;
     shared_ptr<Model> model = models[randomModelIndex];
 
     if (model)
@@ -51,7 +57,7 @@ void AsteroidSpawner::spawn()
 
 glm::vec3 AsteroidSpawner::getRandomSpawnPosition() const
 {
-    float randZ = randomFloat(-70.0f, -50.0f);
+    float randZ = randomFloat(-80.0f, -60.0f);
 
     return glm::vec3(randomCelesticalBodyPosition(-2.f, 2.f), randZ);
 }

@@ -238,13 +238,7 @@ void Engine::createGameObjects()
 
     shared_ptr<AsteroidSpawner> asteroidSpawner = make_shared<AsteroidSpawner>();
 
-    const char* asteroidModelPath1 = "../Data/Models/Asteroids/asteroid/scene.gltf";
-    const char* asteroidModelPath2 = "../Data/Models/Asteroids/asteroid_01/scene.gltf";
-
-    vector<shared_ptr<Model>> asteroidModels;
-    asteroidModels.push_back(getModel(asteroidModelPath1));
-    asteroidModels.push_back(getModel(asteroidModelPath2));
-
+    vector<shared_ptr<Model>> asteroidModels = loadAsteroidModels();
     if (!asteroidModels.empty())
     {
         asteroidSpawner->create(asteroidModels, *defaultModelShader);
@@ -459,6 +453,24 @@ vector<shared_ptr<Texture>> Engine::loadStarsTextures()
     textures.push_back(getTexture(path7));
 
     return textures;
+}
+
+vector<shared_ptr<Model>> Engine::loadAsteroidModels()
+{
+    vector<shared_ptr<Model>> asteroidModels;
+    const char* asteroidModelPath1 = "../Data/Models/Asteroids/asteroid/scene.gltf";
+    const char* asteroidModelPath2 = "../Data/Models/Asteroids/asteroid2/scene.gltf";
+    const char* asteroidModelPath3 = "../Data/Models/Asteroids/meteorite/scene.gltf";
+    const char* asteroidModelPath4 = "../Data/Models/Asteroids/asteroid_01/scene.gltf";
+    const char* asteroidModelPath5 = "../Data/Models/Asteroids/meteorite2/scene.gltf";
+
+    asteroidModels.push_back(getModel(asteroidModelPath1));
+    asteroidModels.push_back(getModel(asteroidModelPath2));
+    asteroidModels.push_back(getModel(asteroidModelPath3));
+    asteroidModels.push_back(getModel(asteroidModelPath4));
+    asteroidModels.push_back(getModel(asteroidModelPath5));
+
+    return asteroidModels;
 }
 
 shared_ptr<VertexBuffer> Engine::GetDefaultVBO()
