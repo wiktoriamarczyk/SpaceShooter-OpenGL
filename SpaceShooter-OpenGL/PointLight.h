@@ -20,8 +20,8 @@ protected:
     shared_ptr<Shader> lightShader;
     shared_ptr<Shader> modelShader;
 
-    glm::vec3 diffuse = glm::vec3(0.55164f, 0.40648f, 0.02648f);
-    glm::vec3 specular = glm::vec3(0.628281f, 0.555802f, 0.366065f);
+    glm::vec3 diffuse = glm::vec3(0.4f, 0.4f, 0.4f);
+    glm::vec3 specular = glm::vec3(0.5f, 0.5f, 0.5f);
     float constant = 1.f;
     float linear = 0.7f;
     float quadratic = 1.8f;

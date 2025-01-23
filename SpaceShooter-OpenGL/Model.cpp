@@ -187,8 +187,14 @@ vector<shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial* mat, aiTextu
     {
         aiString str;
         mat->GetTexture(type, i, &str);
+
+        std::filesystem::path basePath("../Data/Textures");
+        std::filesystem::path modelPath(path);
+        string modelDirName = modelPath.parent_path().filename().string();
+
         // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
-        shared_ptr<Texture> texture = Engine::getTexture( (string("../Data/Textures/") + str.C_Str()).c_str() );
+        std::filesystem::path texturePath = basePath / modelDirName / str.C_Str();
+        shared_ptr<Texture> texture = Engine::getTexture(texturePath.string().c_str());
         if (texture)
         {
             textures.push_back(texture);

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Space Ship WG-02
+* source:	https://sketchfab.com/3d-models/space-ship-wg-02-1eb1570ead654b48a3299180d38bd339
+* author:	Tim-in (https://sketchfab.com/Tim-in)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Space Ship WG-02" (https://sketchfab.com/3d-models/space-ship-wg-02-1eb1570ead654b48a3299180d38bd339) by Tim-in (https://sketchfab.com/Tim-in) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

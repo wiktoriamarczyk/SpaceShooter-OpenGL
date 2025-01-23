@@ -1,0 +1,11 @@
+Model Information:
+* title:	Empire Space Ship
+* source:	https://sketchfab.com/3d-models/empire-space-ship-735684e1f14d4ff8a3d68f4dc5d0ab86
+* author:	Grzybek (https://sketchfab.com/Kapuriada)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. No commercial use.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Empire Space Ship" (https://sketchfab.com/3d-models/empire-space-ship-735684e1f14d4ff8a3d68f4dc5d0ab86) by Grzybek (https://sketchfab.com/Kapuriada) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)

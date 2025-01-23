@@ -6,8 +6,8 @@
 void Player::create(const Model& model, const Shader& shader, const Model& projectileModel)
 {
     ModelObject::create(model, shader);
-    rotation.x = 30.f;
     rotation.y = 180.f;
+    setSize(glm::vec3(0.5f, 0.5f, 0.5f));
     this->projectileModel = projectileModel.getSelf();
 }
 
@@ -45,7 +45,7 @@ void Player::tilt(float deltaTime)
         float tiltAmount = 0.5f;
         rotation.z += movementDirection.x * tiltAmount;
         float maxTilt = 30.0f;
-        rotation.z = glm::clamp(rotation.z,-maxTilt, maxTilt);
+        rotation.z = glm::clamp(rotation.z, -maxTilt, maxTilt);
     }
     else
     {
@@ -56,6 +56,8 @@ void Player::tilt(float deltaTime)
 
 void Player::rotateTheHead(float deltaTime)
 {
+    const float ANGLE_OFFSET = 0.f;
+
     glm::vec2 cursorPosition = Engine::getInstance().getMousePosition();
     glm::vec2 screenSize = Engine::getInstance().getScreenSize();
 
@@ -73,7 +75,7 @@ void Player::rotateTheHead(float deltaTime)
     float angleY = glm::degrees(atan2(directionToCursor.x, directionToCursor.z));
     float angleX = glm::degrees(atan2(directionToCursor.y, glm::length(glm::vec2(directionToCursor.x, directionToCursor.z))));
     // make sure to rotate shortest way
-    float deltaAngleY = angleDifference(rotation.y, angleY);
+    float deltaAngleY = angleDifference(rotation.y, angleY) + ANGLE_OFFSET;
     float deltaAngleX = angleDifference(rotation.x, angleX);
 
     float rotationSpeed = 10.0f;

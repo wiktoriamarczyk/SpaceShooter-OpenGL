@@ -7,12 +7,10 @@ void EnemyUnit::create(const Model& model, const Shader& shader, const Model& pr
     ModelObject::create(model, shader);
     this->projectileModel = projectileModel.getSelf();
 
-    rotation.x = 0.f;
-    rotation.y = 0.f;
     position = glm::vec3(0.0f, 1.0f, -2.0f);
     shootCooldown = shootInterval;
 
-    setSize(glm::vec3(0.1f, 0.1f, 0.1f));
+    setSize(glm::vec3(0.4f, 0.4f, 0.4f));
 
     std::srand(static_cast<unsigned>(std::time(nullptr)));
     remainingShots = 0;

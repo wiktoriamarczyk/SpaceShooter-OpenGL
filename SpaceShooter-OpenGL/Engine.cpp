@@ -232,7 +232,6 @@ void Engine::createGameObjects()
     if (playerModel && modelProjectile)
     {
         player->create(*playerModel, *defaultModelShader, *modelProjectile);
-        player->setSize(glm::vec3(0.1f, 0.1f, 0.1f));
         player->setPosition(glm::vec3(0.0f, 0.0f, -2.0f));
         gameObjects.push_back(player);
     }
