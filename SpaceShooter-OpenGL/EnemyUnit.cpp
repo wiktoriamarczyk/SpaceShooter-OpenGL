@@ -146,7 +146,7 @@ void EnemyUnit::setRandomTargetPosition()
     do {
         newTargetX = static_cast<float>(std::rand() % 200 - 100) / 100.0f;
         newTargetY = static_cast<float>(std::rand() % 200 - 100) / 100.0f;
-        newTargetZ = static_cast<float>(std::rand() % 5 + 3) * -1.0f;
+        newTargetZ = static_cast<float>(std::rand() % 3 + 6) * -1.0f;
     } while (glm::distance(glm::vec3(newTargetX, newTargetY, 0.0f), position) < minDistance);
 
     targetPosition = glm::vec3(newTargetX, newTargetY, newTargetZ);
