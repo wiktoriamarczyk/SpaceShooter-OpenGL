@@ -14,6 +14,7 @@ public:
     }
     void draw(const Shader& shader);
     string getPath() const { return directory; }
+    vector<shared_ptr<Mesh>> getMeshes() const { return meshes; }
 
 private:
     // model data

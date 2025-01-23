@@ -22,6 +22,14 @@ public:
     Mesh() = default;
     bool load(vector<uint8_t> verticesData, uint16_t vertexSize, vector<unsigned int> indices, vector<shared_ptr<Texture>> textures, VertexDefinitionElement flags);
     void draw(const Shader& shader);
+    const vector<Vertex>& getVertices() const
+    {
+        size_t vertexCount = verticesData.size() / sizeof(Vertex);
+        vector<Vertex> vertices(vertexCount);
+        memcpy(vertices.data(), verticesData.data(), verticesData.size());
+        return vertices;
+    }
+
 private:
     //  render data
     shared_ptr<VertexArrayObject> VAO;

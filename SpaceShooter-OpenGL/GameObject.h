@@ -10,6 +10,8 @@ public:
     virtual void render() = 0;
     virtual void onKeyDown(int key) {};
     virtual void onKeyUp(int key) {};
+    virtual void onMouseButtonDown(int button) {};
+    virtual void onMouseButtonUp(int button) {};
     void setPosition(const glm::vec3& position) { this->position = position; }
     void setSize(const glm::vec3& size) { this->size = size; }
     void setRotation(const glm::vec3& rotation) { this->rotation = rotation; }

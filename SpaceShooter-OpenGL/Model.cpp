@@ -72,6 +72,7 @@ shared_ptr<Mesh> Model::processMesh(aiMesh* mesh, const aiScene* scene)
         vector.y = mesh->mVertices[i].y;
         vector.z = mesh->mVertices[i].z;
         vertex.position = vector;
+
         // normals
         if (mesh->HasNormals())
         {
@@ -81,6 +82,7 @@ shared_ptr<Mesh> Model::processMesh(aiMesh* mesh, const aiScene* scene)
             vertex.normal = vector;
             flags |= VertexDefinitionElement::NORMAL;
         }
+
         // colors
         if (mesh->HasVertexColors(0))
         {
@@ -89,8 +91,13 @@ shared_ptr<Mesh> Model::processMesh(aiMesh* mesh, const aiScene* scene)
             color.y = mesh->mColors[0][i].g;
             color.z = mesh->mColors[0][i].b;
             vertex.color = color;
-            flags |= VertexDefinitionElement::COLOR;
         }
+        else
+        {
+            vertex.color = glm::vec3(1.0f);
+        }
+        flags |= VertexDefinitionElement::COLOR;
+
         // texture coordinates
         if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
         {
@@ -117,7 +124,7 @@ shared_ptr<Mesh> Model::processMesh(aiMesh* mesh, const aiScene* scene)
         switch (vertexLayoutInfo.elements[i].index)
         {
         case VertexLayoutIndex::POSITION_INDEX:
-            pSrc = reinterpret_cast<uint8_t*>( &vertices[0].position );
+            pSrc = reinterpret_cast<uint8_t*>(&vertices[0].position);
             break;
         case VertexLayoutIndex::COLOR_INDEX:
             pSrc = reinterpret_cast<uint8_t*>(&vertices[0].color);

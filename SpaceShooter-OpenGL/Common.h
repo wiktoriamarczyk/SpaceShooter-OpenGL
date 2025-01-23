@@ -19,6 +19,7 @@
 #include <memory>
 #include <vector>
 #include <optional>
+#include <algorithm>
 
 using std::string;
 using std::shared_ptr;
@@ -32,6 +33,8 @@ using std::nullopt;
 using std::srand;
 using std::time;
 using std::enable_shared_from_this;
+using std::min;
+using std::max;
 
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
@@ -63,6 +66,18 @@ static glm::vec2 randomCelesticalBodyPosition(float min, float max)
     } while (x > -1.0f && x < 1.0f && y > -1.0f && y < 1.0f);
 
     return glm::vec2(x, y);
+}
+
+static float angleDifference(float angle1, float angle2)
+{
+    // constraint the angles to be in the range [0, 360]
+    float diff = fmod(angle2 - angle1, 360.0);
+    if (diff > 180.0f)
+        diff -= 360.0f;
+    else if (diff < -180.0f)
+        diff += 360.0f;
+
+    return diff;
 }
 
 template<typename T>

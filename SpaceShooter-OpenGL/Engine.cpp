@@ -50,15 +50,27 @@ void Engine::processInput(int key, int scancode, int action, int mods)
 
 void Engine::processMouseInput(GLFWwindow* window, int button, int action, int mods)
 {
+    instance.processMouseInput(button, action, mods);
+}
+
+void Engine::processMouseInput(int button, int action, int mods)
+{
     if (action == GLFW_PRESS)
     {
-
+        for (int i = 0; i < gameObjects.size(); i++)
+        {
+            gameObjects[i]->onMouseButtonDown(button);
+        }
     }
     else if (action == GLFW_RELEASE)
     {
-
+        for (int i = 0; i < gameObjects.size(); i++)
+        {
+            gameObjects[i]->onMouseButtonUp(button);
+        }
     }
 }
+
 
 bool Engine::init()
 {
@@ -194,6 +206,16 @@ bool Engine::createDefaultResources()
     defaultLightingShader->use();
     defaultLightingShader->setMat4("projection", projection);
     defaultLightingShader->setMat4("view", glm::identity<glm::mat4x4>());
+
+
+    // Init default bounding box shader
+    defaultBBoxShader = Shader::create("../Data/Shaders/bbox_shader.vs", "../Data/Shaders/bbox_shader.fs");
+    if (!defaultBBoxShader)
+        return false;
+    defaultBBoxShader->use();
+    defaultBBoxShader->setMat4("projection", projection);
+    defaultBBoxShader->setMat4("view", glm::identity<glm::mat4x4>());
+    defaultBBoxShader->setVec3("color", glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
 void Engine::createGameObjects()
@@ -468,4 +490,23 @@ shared_ptr<Shader> Engine::GetDefaultModelShader()
 shared_ptr<Shader> Engine::GetDefaultLightShader()
 {
     return instance.defaultLightingShader;
+}
+
+shared_ptr<Shader> Engine::GetDefaultBBoxShader()
+{
+    return instance.defaultBBoxShader;
+}
+
+glm::vec2 Engine::getMousePosition()
+{
+    double xpos, ypos;
+    glfwGetCursorPos(instance.window, &xpos, &ypos);
+    return glm::vec2(xpos, ypos);
+}
+
+glm::vec2 Engine::getScreenSize()
+{
+    int width, height;
+    glfwGetWindowSize(instance.window, &width, &height);
+    return glm::vec2(width, height);
 }

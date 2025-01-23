@@ -4,7 +4,7 @@
 
 out vec4 FragColor;
 
-in vec3 ourColor;
+in vec3 Color;
 in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
@@ -66,6 +66,8 @@ void main()
 
     result = min(result, vec3(1.0, 1.0, 1.0));
     result *= texture(texture_diffuse0, TexCoord).rgb;
+	
+	result *= Color;
 
     FragColor = vec4(result, 1.0);
 }

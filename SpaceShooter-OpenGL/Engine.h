@@ -35,12 +35,17 @@ public:
     static shared_ptr<Model> getModel(const char* path);
     static shared_ptr<Shader> getShader(const char* vertexPath, const char* fragmentPath);
 
+    static shared_ptr<VertexArrayObject> GetDefaultVAO();
     static shared_ptr<VertexBuffer> GetDefaultVBO();
     static shared_ptr<IndexBuffer> GetDefaultIBO();
+
     static shared_ptr<Shader> GetDefaultSpriteShader();
     static shared_ptr<Shader> GetDefaultModelShader();
     static shared_ptr<Shader> GetDefaultLightShader();
-    static shared_ptr<VertexArrayObject> GetDefaultVAO();
+    static shared_ptr<Shader> GetDefaultBBoxShader();
+
+    static glm::vec2 getMousePosition();
+    static glm::vec2 getScreenSize();
 
 private:
     Engine() = default;
@@ -49,9 +54,11 @@ private:
     shared_ptr<VertexBuffer> defaultVBO;
     shared_ptr<IndexBuffer> defaultIBO;
     shared_ptr<VertexArrayObject> defaultVAO;
+
     shared_ptr<Shader> defaultSpriteShader;
     shared_ptr<Shader> defaultModelShader;
     shared_ptr<Shader> defaultLightingShader;
+    shared_ptr<Shader> defaultBBoxShader;
 
     GLFWwindow* window = nullptr;
     shared_ptr<Player> player;
@@ -68,6 +75,7 @@ private:
     static void processInputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void processMouseInput(GLFWwindow* window, int button, int action, int mods);
     void processInput(int key, int scancode, int action, int mods);
+    void processMouseInput(int button, int action, int mods);
     void render();
     void update(float deltaTime);
     void createGameObjects();

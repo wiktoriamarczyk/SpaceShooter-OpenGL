@@ -32,7 +32,7 @@ void Mesh::setupMesh()
     VBO->create(verticesData.data(), vertexSize, verticesData.size()/vertexSize);
     EBO->create(indices.data(), true, indices.size());
 
-    VAO->create(*VBO, this->flags );
+    VAO->create(*VBO, this->flags);
 }
 
 void Mesh::draw(const Shader& shader)

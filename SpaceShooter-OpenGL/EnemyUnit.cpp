@@ -25,7 +25,6 @@ void EnemyUnit::create(const Model& model, const Shader& shader, const Model& pr
 void EnemyUnit::update(float deltaTime)
 {
     glm::vec3 playerPosition = Engine::getInstance().getPlayerPosition();
-
     glm::vec3 directionToPlayer = glm::normalize(playerPosition - position);
 
     float angleY = glm::degrees(atan2(directionToPlayer.x, directionToPlayer.z));

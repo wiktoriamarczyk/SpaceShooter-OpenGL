@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "Projectile.h"
 
+#define WORLD_RANGE 5.0f
+
 void Player::create(const Model& model, const Shader& shader, const Model& projectileModel)
 {
     ModelObject::create(model, shader);
@@ -11,7 +13,15 @@ void Player::create(const Model& model, const Shader& shader, const Model& proje
 
 void Player::update(float deltaTime)
 {
-    // movement
+    move(deltaTime);
+    rotateTheHead(deltaTime);
+    tilt(deltaTime);
+
+    ModelObject::update(deltaTime);
+}
+
+void Player::move(float deltaTime)
+{
     const glm::vec2 boundHorizontal = glm::vec2(-1.25f, 1.25f);
     const glm::vec2 boundVertical = glm::vec2(-0.8f, 1.0f);
 
@@ -26,9 +36,51 @@ void Player::update(float deltaTime)
         position.y = boundVertical.x;
     else if (position.y > boundVertical.y)
         position.y = boundVertical.y;
-
-    ModelObject::update(deltaTime);
 }
+
+void Player::tilt(float deltaTime)
+{
+    if (movementDirection.x != 0.0f)
+    {
+        float tiltAmount = 0.5f;
+        rotation.z += movementDirection.x * tiltAmount;
+        float maxTilt = 30.0f;
+        rotation.z = glm::clamp(rotation.z,-maxTilt, maxTilt);
+    }
+    else
+    {
+        float tiltRestorationSpeed = 10.0f;
+        rotation.z = glm::mix(rotation.z, 0.0f, deltaTime * tiltRestorationSpeed);
+    }
+}
+
+void Player::rotateTheHead(float deltaTime)
+{
+    glm::vec2 cursorPosition = Engine::getInstance().getMousePosition();
+    glm::vec2 screenSize = Engine::getInstance().getScreenSize();
+
+    // normalize cursor position to range <-1, 1>
+    float normalizedX = (cursorPosition.x / screenSize.x) * 2.0f - 1.0f;
+    float normalizedY = 1.0f - (cursorPosition.y / screenSize.y) * 2.0f;
+    // calculate world position of cursor
+    float worldX = normalizedX * WORLD_RANGE;
+    float worldY = normalizedY * WORLD_RANGE;
+
+    float cursorDepth = -5.0f;
+    glm::vec3 cursorIn3D(normalizedX, normalizedY, cursorDepth);
+    glm::vec3 directionToCursor = glm::normalize(cursorIn3D - position);
+
+    float angleY = glm::degrees(atan2(directionToCursor.x, directionToCursor.z));
+    float angleX = glm::degrees(atan2(directionToCursor.y, glm::length(glm::vec2(directionToCursor.x, directionToCursor.z))));
+    // make sure to rotate shortest way
+    float deltaAngleY = angleDifference(rotation.y, angleY);
+    float deltaAngleX = angleDifference(rotation.x, angleX);
+
+    float rotationSpeed = 10.0f;
+    rotation.y += deltaAngleY * deltaTime * rotationSpeed;
+    rotation.x += deltaAngleX * deltaTime * rotationSpeed;
+}
+
 
 void Player::render()
 {
@@ -53,10 +105,6 @@ void Player::onKeyDown(int key)
     {
         movementDirection.x = 1.f;
     }
-    else if (key == GLFW_KEY_SPACE)
-    {
-        shootProjectile(glm::vec3(position.x, position.y, -20.0f));
-    }
 }
 
 void Player::onKeyUp(int key)
@@ -76,6 +124,28 @@ void Player::onKeyUp(int key)
     else if (key == GLFW_KEY_D)
     {
         movementDirection.x = 0.f;
+    }
+}
+
+void Player::onMouseButtonDown(int button)
+{
+    if (button == GLFW_MOUSE_BUTTON_LEFT)
+    {
+        glm::vec2 cursorPosition = Engine::getInstance().getMousePosition();
+        glm::vec2 screenSize = Engine::getInstance().getScreenSize();
+
+        float normalizedX = (cursorPosition.x / screenSize.x) * 2.0f - 1.0f;
+        float normalizedY = 1.0f - (cursorPosition.y / screenSize.y) * 2.0f;
+
+        float worldX = normalizedX * WORLD_RANGE;
+        float worldY = normalizedY * WORLD_RANGE;
+
+        float cursorDepth = -20.0f;
+
+        // Tworzymy wektor 3D dla pozycji kursora w przestrzeni œwiata
+        glm::vec3 cursorIn3D(worldX, worldY, cursorDepth);
+
+        shootProjectile(cursorIn3D);
     }
 }
 
