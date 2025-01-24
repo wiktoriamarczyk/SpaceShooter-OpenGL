@@ -145,7 +145,6 @@
     <ClCompile Include="AsteroidSpawner.cpp" />
     <ClCompile Include="Billboard.cpp" />
     <ClCompile Include="ChargingStation.cpp" />
-    <ClCompile Include="ChargingStationSpawner.cpp" />
     <ClCompile Include="EnemySpawner.cpp" />
     <ClCompile Include="EnemyUnit.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -176,7 +175,6 @@
     <ClInclude Include="AsteroidSpawner.h" />
     <ClInclude Include="Billboard.h" />
     <ClInclude Include="ChargingStation.h" />
-    <ClInclude Include="ChargingStationSpawner.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="EnemySpawner.h" />
     <ClInclude Include="EnemyUnit.h" />
