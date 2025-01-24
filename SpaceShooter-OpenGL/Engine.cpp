@@ -17,6 +17,7 @@
 #include "Billboard.h"
 #include "ChargingStation.h"
 #include "ChargingStationSpawner.h"
+#include "HealthBar.h"
 
 Engine Engine::instance;
 
@@ -235,6 +236,11 @@ void Engine::createGameObjects()
         player->setPosition(glm::vec3(0.0f, 0.0f, -2.0f));
         gameObjects.push_back(player);
     }
+
+    shared_ptr<HealthBar> healthBar = make_shared<HealthBar>();  
+
+    // Dodanie paska zdrowia do listy gameObjects
+    gameObjects.push_back(healthBar);;
 
     shared_ptr<AsteroidSpawner> asteroidSpawner = make_shared<AsteroidSpawner>();
 
