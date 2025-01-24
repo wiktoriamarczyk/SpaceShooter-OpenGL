@@ -50,6 +50,7 @@ constexpr const char* PROJECTILE_MODEL_PATH = "../Data/Models/rusty_metal_sphere
 constexpr const char* STATION_MODEL_PATH = "../Data/Models/round_platform/scene.gltf";
 
 constexpr bool WIREFRAME_MODE = false;
+constexpr bool SHOW_BOUNDING_BOX = true;
 
 static float randomFloat(float min, float max)
 {

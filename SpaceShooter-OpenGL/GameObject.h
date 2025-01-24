@@ -21,6 +21,7 @@ public:
     bool isAlive() const { return alive; }
     bool isOffScreen() const;
     void setScreenBoundZ(float z) { screenBoundZ = z; }
+    virtual void updateHealth(float value);
     virtual ~GameObject() = default;
 
 protected:
@@ -33,5 +34,7 @@ protected:
     glm::vec3 size = glm::vec3(1.0f, 1.0f, 1.0f);
     glm::vec3 rotation;
     string name = "GameObject";
+    float maxHealth = 100.0f;
+    float currentHealth = 100.0f;
 };
 

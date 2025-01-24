@@ -17,6 +17,7 @@ class Asteroid;
 class AsteroidSpawner;
 class EnemySpawner;
 class PointLight;
+class HealthBar;
 
 class Engine
 {

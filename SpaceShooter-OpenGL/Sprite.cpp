@@ -38,6 +38,7 @@ void Sprite::draw() const
     model = glm::scale(model, glm::vec3(size, 1.0f));
 
     shader->setMat4("model", model);
+    shader->setVec4("color", color);
 
     if (EBO)
     {

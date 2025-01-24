@@ -20,17 +20,20 @@ public:
     void setPosition(const glm::vec2& position) { this->position = position; }
     void setSize(const glm::vec2& size) { this->size = size; }
     void setRotation(float rotation) { this->rotation = rotation; }
+    void setColor(const glm::vec4& color) { this->color = color; }
 
     ~Sprite() = default;
 
-private:
-    Sprite() = default;
+protected:
     bool initialize(const Texture& Texture, const glm::vec2& position, const glm::vec2& size);
+    Sprite() = default;
+
+private:
     shared_ptr<VertexArrayObject> VAO;
     shared_ptr<VertexBuffer> VBO;
     shared_ptr<IndexBuffer> EBO;
-    shared_ptr<Shader> shader;
     shared_ptr<Texture> texture;
+    shared_ptr<Shader> shader;
 
     glm::vec2 position;
     glm::vec2 size;

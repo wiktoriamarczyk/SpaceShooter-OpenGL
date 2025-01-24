@@ -9,6 +9,9 @@ void Player::create(const Model& model, const Shader& shader, const Model& proje
     rotation.y = 180.f;
     setSize(glm::vec3(0.5f, 0.5f, 0.5f));
     this->projectileModel = projectileModel.getSelf();
+
+    healthBar = make_shared<HealthBar>();
+    healthBar->create(glm::vec2(SCREEN_WIDTH / 2 + 285.0f, SCREEN_HEIGHT - 27.0f), glm::vec2(200.0f, 20.0f), maxHealth);
 }
 
 void Player::update(float deltaTime)
@@ -18,6 +21,9 @@ void Player::update(float deltaTime)
     tilt(deltaTime);
 
     ModelObject::update(deltaTime);
+
+    // decrease health in time for debugging purposes
+    updateHealth(-2.f * deltaTime);
 }
 
 void Player::move(float deltaTime)
@@ -87,6 +93,7 @@ void Player::rotateTheHead(float deltaTime)
 void Player::render()
 {
     ModelObject::render();
+    healthBar->draw();
 }
 
 void Player::onKeyDown(int key)
@@ -154,6 +161,12 @@ void Player::onMouseButtonDown(int button)
 glm::vec3 Player::getPosition() const
 {
     return position;
+}
+
+void Player::updateHealth(float value)
+{
+    ModelObject::updateHealth(value);
+    healthBar->setHealth(currentHealth);
 }
 
 void Player::shootProjectile(const glm::vec3& targetPosition)

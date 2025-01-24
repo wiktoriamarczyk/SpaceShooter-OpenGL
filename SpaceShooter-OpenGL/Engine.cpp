@@ -237,11 +237,6 @@ void Engine::createGameObjects()
         gameObjects.push_back(player);
     }
 
-    shared_ptr<HealthBar> healthBar = make_shared<HealthBar>();  
-
-    // Dodanie paska zdrowia do listy gameObjects
-    gameObjects.push_back(healthBar);;
-
     shared_ptr<AsteroidSpawner> asteroidSpawner = make_shared<AsteroidSpawner>();
 
     vector<shared_ptr<Model>> asteroidModels = loadAsteroidModels();

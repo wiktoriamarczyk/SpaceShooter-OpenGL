@@ -46,9 +46,9 @@ void ModelObject::render()
     {
         model->draw(*shader);
 
-
-        if (bboxVBO != nullptr)
+        if (SHOW_BOUNDING_BOX)
             drawBoundingBox(modelTransform);
+
         return;
     }
 

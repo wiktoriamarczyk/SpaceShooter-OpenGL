@@ -14,3 +14,9 @@ bool GameObject::isOffScreen() const
         || position.x > screenBoundsX.y || position.x < screenBoundsX.x
         || position.z > screenBoundZ;
 }
+
+void GameObject::updateHealth(float value)
+{
+    currentHealth += value;
+    currentHealth = glm::clamp(currentHealth, 0.0f, maxHealth);
+}
