@@ -264,14 +264,15 @@ void Engine::createGameObjects()
         gameObjects.push_back(enemySpawner);
     }
 
-    shared_ptr<ChargingStationSpawner> stationSpawner = make_shared<ChargingStationSpawner>();
+    shared_ptr<ChargingStation> station = make_shared<ChargingStation>();
     vector<shared_ptr<Model>> stationModels;
     stationModels.push_back(getModel(STATION_MODEL_PATH));
 
     if (!stationModels.empty())
     {
-        stationSpawner->create(stationModels, *defaultModelShader);
-        gameObjects.push_back(stationSpawner);
+        shared_ptr<Model> selectedModel = stationModels[0]; 
+        station->create(*selectedModel, *defaultModelShader); 
+        gameObjects.push_back(station);
     }
 }
 

@@ -4,7 +4,7 @@ void ChargingStationSpawner::create(const vector<shared_ptr<Model>> models, cons
 {
     this->models = models;
 
-    spawnInterval = randomFloat(60, 150);
+    spawnInterval = randomFloat(6, 15);
 
     Spawner::create(shader);
 }
@@ -32,5 +32,5 @@ void ChargingStationSpawner::spawn()
     activeObjects.push_back(station);
     Engine::getInstance().addGameObject(station);
 
-    spawnInterval = randomFloat(60, 150);
+    spawnInterval = randomFloat(6, 15);
 }
