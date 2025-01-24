@@ -9,6 +9,8 @@ void ModelObject::create(const Model& model, const Shader& shader)
 {
     this->model = model.getSelf();
     this->shader = shader.getSelf();
+
+    prepareBoundingBox(model.getMinBounds(), model.getMaxBounds());
 }
 
 void ModelObject::create(const Texture& texture, const Shader& shader)
@@ -37,11 +39,16 @@ void ModelObject::render()
     // calculate normal matrix
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelTransform)));
     shader->setMat3("normalMatrix", normalMatrix);
+    shader->setFloat("appTime", (float)glfwGetTime());
 
     // If model is set, draw it
     if (model)
     {
         model->draw(*shader);
+
+
+        if (bboxVBO != nullptr)
+            drawBoundingBox(modelTransform);
         return;
     }
 
@@ -67,35 +74,6 @@ void ModelObject::onKeyUp(int key)
 
 }
 
-void ModelObject::calculateBoundingBox(const glm::mat4 &modelMatrix)
-{
-    if (!model)
-        return;
-
-    minBounds = glm::vec3(FLT_MAX);
-    maxBounds = glm::vec3(-FLT_MAX);
-
-    for (const auto& mesh : model->getMeshes())
-    {
-        const auto& vertices = mesh->getVertices();
-        for (const auto& vertex : vertices)
-        {
-            glm::vec3 pos = vertex.position;
-
-            minBounds.x = std::min(minBounds.x, pos.x);
-            minBounds.y = std::min(minBounds.y, pos.y);
-            minBounds.z = std::min(minBounds.z, pos.z);
-
-            maxBounds.x = std::max(maxBounds.x, pos.x);
-            maxBounds.y = std::max(maxBounds.y, pos.y);
-            maxBounds.z = std::max(maxBounds.z, pos.z);
-        }
-    }
-
-    minBounds = glm::vec3(modelMatrix * glm::vec4(minBounds, 1.0f));
-    maxBounds = glm::vec3(modelMatrix * glm::vec4(maxBounds, 1.0f));
-}
-
 void ModelObject::drawBoundingBox(const glm::mat4& modelMatrix)
 {
     // Use the default bounding box shader
@@ -104,28 +82,28 @@ void ModelObject::drawBoundingBox(const glm::mat4& modelMatrix)
     shader->setMat4("model", modelMatrix);
 
     bboxVAO->bind();
+    bboxIBO->bind();
+
+    //draw lines instead of triangles
     glDrawElements(GL_LINES, 24, GL_UNSIGNED_INT, 0);
 }
 
 void ModelObject::prepareBoundingBox(const glm::vec3& min, const glm::vec3& max)
 {
     // Define the 8 vertices of the bounding box
-    float vertices[72] = {
-        min.x, min.y, min.z,  max.x, min.y, min.z,
-        max.x, min.y, min.z,  max.x, max.y, min.z,
-        max.x, max.y, min.z,  min.x, max.y, min.z,
-        min.x, max.y, min.z,  min.x, min.y, min.z,
-        min.x, min.y, max.z,  max.x, min.y, max.z,
-        max.x, min.y, max.z,  max.x, max.y, max.z,
-        max.x, max.y, max.z,  min.x, max.y, max.z,
-        min.x, max.y, max.z,  min.x, min.y, max.z,
-        min.x, min.y, min.z,  min.x, min.y, max.z,
-        max.x, min.y, min.z,  max.x, min.y, max.z,
-        max.x, max.y, min.z,  max.x, max.y, max.z,
-        min.x, max.y, min.z,  min.x, max.y, max.z,
+    float vertices[] = {
+        min.x, min.y, min.z,
+        max.x, min.y, min.z,
+        max.x, max.y, min.z,
+        min.x, max.y, min.z,
+
+        min.x, min.y, max.z,
+        max.x, min.y, max.z,
+        max.x, max.y, max.z,
+        min.x, max.y, max.z,
     };
 
-    unsigned int indices[24] = {
+    uint32_t indices[] = {
         0, 1,  1, 2,  2, 3,  3, 0,  // Bottom face
         4, 5,  5, 6,  6, 7,  7, 4,  // Top face
         0, 4,  1, 5,  2, 6,  3, 7   // Vertical lines
@@ -133,7 +111,7 @@ void ModelObject::prepareBoundingBox(const glm::vec3& min, const glm::vec3& max)
 
     // Create VAO/VBO
     bboxVBO = make_shared<VertexBuffer>();
-    bboxVBO->create(vertices, 3, sizeof(vertices) / (3 * sizeof(float)));
+    bboxVBO->create(vertices, sizeof(float) * 3, sizeof(vertices) / (3 * sizeof(float)));
 
     bboxIBO = make_shared<IndexBuffer>();
     bboxIBO->create(indices, true, sizeof(indices) / sizeof(unsigned int));

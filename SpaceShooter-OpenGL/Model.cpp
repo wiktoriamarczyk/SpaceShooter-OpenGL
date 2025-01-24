@@ -6,6 +6,8 @@ bool Model::initialize(const char* modelPath, bool gamma = false)
 {
     this->path = modelPath;
     gammaCorrection = gamma;
+    minBounds = glm::vec3(FLT_MAX);
+    maxBounds = glm::vec3(-FLT_MAX);
     if (!loadModel(path))
         return false;
     return true;
@@ -49,6 +51,22 @@ void Model::processNode(aiNode* node, const aiScene* scene)
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
         processNode(node->mChildren[i], scene);
+    }
+}
+
+void Model::updateBoundingBox(const vector<Vertex>& vertices)
+{
+    for (const auto& vertex : vertices)
+    {
+        glm::vec3 pos = vertex.position;
+
+        minBounds.x = std::min(minBounds.x, pos.x);
+        minBounds.y = std::min(minBounds.y, pos.y);
+        minBounds.z = std::min(minBounds.z, pos.z);
+
+        maxBounds.x = std::max(maxBounds.x, pos.x);
+        maxBounds.y = std::max(maxBounds.y, pos.y);
+        maxBounds.z = std::max(maxBounds.z, pos.z);
     }
 }
 
@@ -113,6 +131,8 @@ shared_ptr<Mesh> Model::processMesh(aiMesh* mesh, const aiScene* scene)
         vertices.push_back(vertex);
     }
 
+    updateBoundingBox(vertices);
+
     VertexLayoutInfo vertexLayoutInfo = VertexArrayObject::getLayoutInfo(flags);
 
     vector<uint8_t> vertexData( vertices.size() * vertexLayoutInfo.vertexBytes );
@@ -169,11 +189,14 @@ shared_ptr<Mesh> Model::processMesh(aiMesh* mesh, const aiScene* scene)
     vector<shared_ptr<Texture>> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     // 3. normal maps
-    vector<shared_ptr<Texture>> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+    vector<shared_ptr<Texture>> normalMaps = loadMaterialTextures(material, aiTextureType_NORMALS, "texture_normal");
     textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
     // 4. height maps
     vector<shared_ptr<Texture>> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+    // 5. emissive maps
+    vector<shared_ptr<Texture>> emissiveMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_emissive");
+    textures.insert(textures.end(), emissiveMaps.begin(), emissiveMaps.end());
 
     // return a mesh object created from the extracted mesh data
     meshResult->load(vertexData, vertexLayoutInfo.vertexBytes, indices, textures, flags);
@@ -194,7 +217,7 @@ vector<shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial* mat, aiTextu
 
         // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
         std::filesystem::path texturePath = basePath / modelDirName / str.C_Str();
-        shared_ptr<Texture> texture = Engine::getTexture(texturePath.string().c_str());
+        shared_ptr<Texture> texture = Engine::getTexture(texturePath.string().c_str(), type);
         if (texture)
         {
             textures.push_back(texture);

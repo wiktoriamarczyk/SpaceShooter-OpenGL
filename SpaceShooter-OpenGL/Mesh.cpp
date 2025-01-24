@@ -31,14 +31,15 @@ void Mesh::setupMesh()
 
     VBO->create(verticesData.data(), vertexSize, verticesData.size()/vertexSize);
     EBO->create(indices.data(), true, indices.size());
-
     VAO->create(*VBO, this->flags);
 }
 
 void Mesh::draw(const Shader& shader)
 {
-    unsigned int diffuseNr = 1;
-    unsigned int specularNr = 1;
+    unsigned int diffuseNr = 0;
+    unsigned int normalNr = 0;
+    unsigned int specularNr = 0;
+    unsigned int emissiveNr = 0;
 
     for (unsigned int i = 0; i < textures.size(); i++)
     {
@@ -52,11 +53,20 @@ void Mesh::draw(const Shader& shader)
             number = to_string(diffuseNr++);
             name = "texture_diffuse";
         }
-
+        else if (textures[i]->getType() == aiTextureType::aiTextureType_NORMALS)
+        {
+            number = to_string(normalNr++);
+            name = "texture_normal";
+        }
         else if (textures[i]->getType() == aiTextureType::aiTextureType_SPECULAR)
         {
             number = to_string(specularNr++);
             name = "texture_specular";
+        }
+        else if (textures[i]->getType() == aiTextureType::aiTextureType_EMISSIVE)
+        {
+            number = to_string(emissiveNr++);
+            name = "texture_emissive";
         }
 
         shader.setInt((name + number).c_str(), i);
@@ -66,5 +76,10 @@ void Mesh::draw(const Shader& shader)
     EBO->bind();
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     VAO->unbind();
+
+    for (unsigned int i = 0; i < textures.size(); i++)
+    {
+        textures[i]->unbind(i);
+    }
 }
 

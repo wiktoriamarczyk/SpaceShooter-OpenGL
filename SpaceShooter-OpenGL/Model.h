@@ -16,13 +16,17 @@ public:
     string getPath() const { return directory; }
     vector<shared_ptr<Mesh>> getMeshes() const { return meshes; }
 
+    glm::vec3 getMinBounds() const { return minBounds; }
+    glm::vec3 getMaxBounds() const { return maxBounds; }
 private:
     // model data
     vector<shared_ptr<Mesh>> meshes;
     string directory;
     string path;
+    glm::vec3 minBounds, maxBounds;
     bool gammaCorrection;
 
+    void updateBoundingBox(const vector<Vertex>& vertices);
     bool initialize(const char* modelPath, bool gamma);
     // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
     bool loadModel(string const& path);
