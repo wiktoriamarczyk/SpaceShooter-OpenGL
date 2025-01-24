@@ -154,6 +154,13 @@ void EnemyUnit::setRandomTargetPosition()
 
 void EnemyUnit::shootProjectile(const glm::vec3& playerPosition)
 {
+    float distanceToPlayer = glm::distance(position, playerPosition);
+
+    if (distanceToPlayer > 8.0f) 
+    {
+        return;
+    }
+
     if (shader && projectileModel)
     {
         glm::vec3 projectileStartPos = position;
