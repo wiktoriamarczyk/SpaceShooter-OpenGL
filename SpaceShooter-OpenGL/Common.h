@@ -53,6 +53,14 @@ constexpr const char* CURSOR_PATH = "../Data/Textures/cursor.png";
 constexpr bool WIREFRAME_MODE = false;
 constexpr bool SHOW_BOUNDING_BOX = false;
 
+const int PROJECTILE_DAMAGE = 10;
+
+enum class TEAM
+{
+    PLAYER,
+    ENEMY
+};
+
 
 static float randomFloat(float min, float max)
 {

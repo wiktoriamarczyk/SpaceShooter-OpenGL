@@ -36,6 +36,9 @@ void ModelObject::render()
     shader->use();
     shader->setMat4("model", modelTransform);
 
+    modelMatrix = modelTransform;
+    inverseModelMatrix = glm::inverse(modelTransform);
+
     // calculate normal matrix
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelTransform)));
     shader->setMat3("normalMatrix", normalMatrix);
@@ -62,16 +65,6 @@ void ModelObject::render()
     VAO->bind();
 
     glDrawArrays(GL_TRIANGLES, 0, VBO->getCount());
-}
-
-void ModelObject::onKeyDown(int key)
-{
-
-}
-
-void ModelObject::onKeyUp(int key)
-{
-
 }
 
 void ModelObject::drawBoundingBox(const glm::mat4& modelMatrix)
@@ -105,16 +98,18 @@ void ModelObject::prepareBoundingBox(const glm::vec3& min, const glm::vec3& max)
     };
 
     bboxVertices = {
-        glm::vec3(min.x, min.y, min.z),
-        glm::vec3(max.x, min.y, min.z),
-        glm::vec3(max.x, max.y, min.z),
-        glm::vec3(min.x, max.y, min.z),
-
         glm::vec3(min.x, min.y, max.z),
         glm::vec3(max.x, min.y, max.z),
         glm::vec3(max.x, max.y, max.z),
         glm::vec3(min.x, max.y, max.z),
+
+        glm::vec3(min.x, min.y, min.z),
+        glm::vec3(max.x, min.y, min.z),
+        glm::vec3(max.x, max.y, min.z),
+        glm::vec3(min.x, max.y, min.z),
     };
+
+    bboxCenter = (min + max) / 2.0f;
 
     bboxPlanes = {
         Plane(bboxVertices[0], bboxVertices[1], bboxVertices[2]),
@@ -126,9 +121,9 @@ void ModelObject::prepareBoundingBox(const glm::vec3& min, const glm::vec3& max)
     };
 
     uint32_t indices[] = {
-        0, 1,  1, 2,  2, 3,  3, 0,  // Bottom face
-        4, 5,  5, 6,  6, 7,  7, 4,  // Top face
-        0, 4,  1, 5,  2, 6,  3, 7   // Vertical lines
+        0, 1,  1, 2,  2, 3,  3, 0, // front
+        4, 5,  5, 6,  6, 7,  7, 4, // back
+        0, 4,  1, 5,  2, 6,  3, 7  // sides
     };
 
     // Create VAO/VBO
@@ -142,33 +137,13 @@ void ModelObject::prepareBoundingBox(const glm::vec3& min, const glm::vec3& max)
     bboxVAO->create(*bboxVBO, VertexDefinitionElement::POSITION);
 }
 
-bool ModelObject::isBboxIntersectingBbox(const ModelObject& other)
+bool ModelObject::isVertexInsideBbox(glm::vec3 vertex)
 {
+    glm::vec3 localVertex = glm::vec3(inverseModelMatrix * glm::vec4(vertex, 1.0f));
+
     for (const auto& plane : bboxPlanes)
     {
-        if (!isBboxIntersectingPlane(plane, other.getBoundingBoxVertices()))
-            return false;
-    }
-
-    for (const auto& plane : other.getBoundingBoxPlanes())
-    {
-        if (!isBboxIntersectingPlane(plane, bboxVertices))
-            return false;
-    }
-
-    return true;
-}
-
-bool ModelObject::isBboxIntersectingPlane(const Plane& plane, const std::vector<glm::vec3>& vertices)
-{
-    bool hasFront = false;
-    bool hasBack = false;
-
-    for (const auto& vertex : vertices)
-    {
-        PlaneRelation relation = plane.relation(vertex);
-
-        if (relation != PlaneRelation::PR_FRONT)
+        if (plane.relation(localVertex) != PlaneRelation::PR_BACK)
             return false;
     }
 

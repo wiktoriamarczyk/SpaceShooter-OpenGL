@@ -13,13 +13,13 @@ public:
     virtual void create(const Texture& texture, const Shader& shader);
     void update(float deltaTime) override;
     void render() override;
-    void onKeyDown(int key) override;
-    void onKeyUp(int key) override;
-    vector<glm::vec3> getBoundingBoxVertices() const { return bboxVertices; }
-    vector<Plane> getBoundingBoxPlanes() const { return bboxPlanes; }
-    bool isBboxIntersectingBbox(const ModelObject& other);
+    void onKeyDown(int key) override {};
+    void onKeyUp(int key) override {};
+    vector<glm::vec3> getBboxVertices() const { return bboxVertices; }
+    vector<Plane> getBboxPlanes() const { return bboxPlanes; }
+    glm::vec3 getWorldBboxCenter() const { return glm::vec3(modelMatrix * glm::vec4(bboxCenter, 1.0f)); }
 
-    static bool isBboxIntersectingPlane(const Plane& plane, const std::vector<glm::vec3>& vertices);
+    bool isVertexInsideBbox(glm::vec3 vertex);
 
 protected:
     shared_ptr<Shader> shader;
@@ -31,7 +31,11 @@ protected:
     shared_ptr<IndexBuffer> bboxIBO;
 
     vector<glm::vec3> bboxVertices;
+    glm::vec3 bboxCenter;
     vector<Plane> bboxPlanes;
+
+    glm::mat4 modelMatrix;
+    glm::mat4 inverseModelMatrix;
 
     void drawBoundingBox(const glm::mat4& modelMatrix);
     void prepareBoundingBox(const glm::vec3& minBounds, const glm::vec3& maxBounds);

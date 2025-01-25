@@ -62,7 +62,7 @@ private:
     shared_ptr<Shader> defaultBBoxShader;
 
     GLFWwindow* window = nullptr;
-    shared_ptr<Player> player;
+    weak_ptr<Player> player;
     shared_ptr<ModelObject> DEBUG;
     vector<shared_ptr<GameObject>> gameObjects;
     vector<shared_ptr<Texture>> textures;

@@ -251,7 +251,8 @@ void Engine::createGameObjects()
     shared_ptr<Texture> backgroundTexture = getTexture("../Data/Textures/background.png");
     background = Sprite::create(*backgroundTexture, glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
 
-    player = make_shared<Player>();
+    auto player = make_shared<Player>();
+    this->player = player;
 
     shared_ptr<Model> playerModel = getModel(PLAYER_MODEL_PATH);
     shared_ptr<Model> modelProjectile = getModel(PROJECTILE_MODEL_PATH);
@@ -261,14 +262,6 @@ void Engine::createGameObjects()
         player->setPosition(glm::vec3(0.0f, 0.0f, -2.0f));
         gameObjects.push_back(player);
     }
-
-    DEBUG = make_shared<ModelObject>();
-    DEBUG->create(*modelProjectile, *defaultModelShader);
-    DEBUG->setPosition(glm::vec3(1.0f, -0.5f, -2.0f));
-    DEBUG->setSize(glm::vec3(0.035f, 0.035f, 0.035f));
-    DEBUG->setRotation(glm::vec3(0.0f, 90.0f, 0.0f));
-    gameObjects.push_back(DEBUG);
-
 
     shared_ptr<AsteroidSpawner> asteroidSpawner = make_shared<AsteroidSpawner>();
     vector<shared_ptr<Model>> asteroidModels = loadAsteroidModels();
@@ -300,8 +293,8 @@ void Engine::createGameObjects()
     stationModels.push_back(getModel(STATION_MODEL_PATH));
     if (!stationModels.empty())
     {
-        shared_ptr<Model> selectedModel = stationModels[0]; 
-        station->create(*selectedModel, *defaultModelShader); 
+        shared_ptr<Model> selectedModel = stationModels[0];
+        station->create(*selectedModel, *defaultModelShader);
         gameObjects.push_back(station);
     }
 }
@@ -350,7 +343,7 @@ void Engine::removePointLight(PointLight& pointLight)
 
 glm::vec3 Engine::getPlayerPosition() const
 {
-    if (player)
+    if (auto player = this->player.lock())
     {
         return player->getPosition();
     }
@@ -368,9 +361,57 @@ void Engine::update(float deltaTime)
             gameObjects.erase(gameObjects.begin() + i);
     }
 
-    // check for collisions between player and DEBUG object
-    if (player->isBboxIntersectingBbox(*DEBUG))
-        std::cout << "Collision detected" << std::endl;
+    // Get all projectiles
+    vector<shared_ptr<Projectile>> enemyProjectiles;
+    vector<shared_ptr<Projectile>> playerProjectiles;
+    vector<shared_ptr<EnemyUnit>> enemies;
+
+    for (int i = 0; i < gameObjects.size(); ++i)
+    {
+        auto projectile = dynamic_pointer_cast<Projectile>(gameObjects[i]);
+        if (projectile)
+        {
+            if (projectile->getTeam() == TEAM::ENEMY)
+                enemyProjectiles.push_back(projectile);
+            else
+                playerProjectiles.push_back(projectile);
+
+            continue;
+        }
+        auto enemy = dynamic_pointer_cast<EnemyUnit>(gameObjects[i]);
+        if (enemy)
+        {
+            enemies.push_back(enemy);
+        }
+    }
+
+    // Check for collisions with projectiles
+    for (const auto& projectile : playerProjectiles)
+    {
+        for (const auto& enemy : enemies)
+        {
+            if (enemy->isVertexInsideBbox(projectile->getWorldBboxCenter()))
+            {
+                enemy->updateHealth(-PROJECTILE_DAMAGE);
+                projectile->setAlive(false);
+                printf("Enemy health: %f\n", enemy->getHealth());
+            }
+        }
+    }
+
+    auto player = this->player.lock();
+    if (!player)
+        return;
+
+    for (const auto& projectile : enemyProjectiles)
+    {
+        if (player->isVertexInsideBbox(projectile->getWorldBboxCenter()))
+        {
+            player->updateHealth(-PROJECTILE_DAMAGE);
+            projectile->setAlive(false);
+            printf("Player health: %f\n", player->getHealth());
+        }
+    }
 }
 
 void Engine::render()

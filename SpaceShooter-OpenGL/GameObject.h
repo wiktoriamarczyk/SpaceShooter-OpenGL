@@ -18,10 +18,12 @@ public:
     glm::vec3 getPosition() const { return position; }
     glm::vec3 getSize() const { return size; }
     glm::vec3 getRotation() const { return rotation; }
+    void setAlive(bool isAlive) { alive = isAlive; }
     bool isAlive() const { return alive; }
     bool isOffScreen() const;
     void setScreenBoundZ(float z) { screenBoundZ = z; }
     virtual void updateHealth(float value);
+    float getHealth() const { return currentHealth; }
     virtual ~GameObject() = default;
 
 protected:

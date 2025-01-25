@@ -4,12 +4,13 @@ void ChargingStation::create(const Model& model, const Shader& shader)
 {
     ModelObject::create(model, shader);
     rotation.x = 0.f;
-    rotation.y = 90.f;
+    rotation.y = 110.f;
 
-    setSize(glm::vec3(0.035f, 0.035f, 0.035f));
+    setSize(glm::vec3(0.045f, 0.045f, 0.045f));
 
     startPosition = glm::vec3(3.0f, 0.0f, -2.0f);
     position = startPosition;
+    position.z = -3.5f;
 
     currentSpeed = 0.0f;
 
@@ -17,8 +18,8 @@ void ChargingStation::create(const Model& model, const Shader& shader)
 
     srand(static_cast<unsigned int>(time(0)));
 
-    moveCooldown = getRandomCooldown(60.0f, 150.0f); 
-    timeOnScreen = getRandomCooldown(5.0f, 10.0f);   
+    moveCooldown = getRandomCooldown(60.0f, 150.0f);
+    timeOnScreen = getRandomCooldown(5.0f, 10.0f);
 }
 
 void ChargingStation::update(float deltaTime)
@@ -31,10 +32,10 @@ void ChargingStation::update(float deltaTime)
 
     if (!isAtEdge) {
         if (moveCooldown > 0.0f) {
-            moveCooldown -= deltaTime; 
+            moveCooldown -= deltaTime;
         }
         else {
-            moveToEdge(deltaTime); 
+            moveToEdge(deltaTime);
         }
     }
     else {
@@ -44,13 +45,9 @@ void ChargingStation::update(float deltaTime)
             timeOnScreen -= deltaTime;
         }
         else {
-            moveBack(deltaTime); 
+            moveBack(deltaTime);
         }
     }
-
-    //std::cout << "Charging Station Position: x=" << position.x
-    //    << ", y=" << position.y
-    //    << ", z=" << position.z << std::endl;
 
     ModelObject::update(deltaTime);
 }
@@ -76,7 +73,7 @@ void ChargingStation::moveToEdge(float deltaTime)
         isAtEdge = true;
         currentSpeed = 0.0f;
 
-        timeOnScreen = getRandomCooldown(5.0f, 10.0f); 
+        timeOnScreen = getRandomCooldown(5.0f, 10.0f);
     }
 }
 
@@ -95,7 +92,7 @@ void ChargingStation::moveBack(float deltaTime)
         isAtEdge = false;
         currentSpeed = 0.0f;
 
-        moveCooldown = getRandomCooldown(60.0f, 150.0f); 
+        moveCooldown = getRandomCooldown(60.0f, 150.0f);
     }
 }
 

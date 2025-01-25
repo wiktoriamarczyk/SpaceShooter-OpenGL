@@ -19,4 +19,8 @@ void GameObject::updateHealth(float value)
 {
     currentHealth += value;
     currentHealth = glm::clamp(currentHealth, 0.0f, maxHealth);
+    if (currentHealth <= 0.0f)
+    {
+        alive = false;
+    }
 }

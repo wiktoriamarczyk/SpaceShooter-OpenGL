@@ -175,7 +175,7 @@ void Player::shootProjectile(const glm::vec3& targetPosition)
     {
         glm::vec3 projectileStartPos = position + glm::vec3(0.0f, 0.1f, -0.3f);
         shared_ptr<Projectile> newProjectile = make_shared<Projectile>();
-        newProjectile->create(projectileStartPos, targetPosition, 5.f, *projectileModel, *shader);
+        newProjectile->create(projectileStartPos, targetPosition, TEAM::PLAYER, 5.f, *projectileModel, *shader);
         newProjectile->setScreenBoundZ(20.0f);
         newProjectile->setSize(glm::vec3(0.015f, 0.015f, 0.015f));
         //projectiles.push_back(newProjectile);
