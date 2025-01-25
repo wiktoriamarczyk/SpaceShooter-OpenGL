@@ -93,9 +93,6 @@
     <ClCompile Include="ChargingStation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ChargingStationSpawner.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PointLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -174,9 +171,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ChargingStation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ChargingStationSpawner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PointLight.h">

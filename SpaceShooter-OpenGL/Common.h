@@ -47,7 +47,7 @@ const string FS_FILE_NAME = "../Data/Shaders/shader.fs";
 constexpr const char* PLAYER_MODEL_PATH = "../Data/Models/space_ship_wg-02/scene.gltf";
 constexpr const char* ENEMY_MODEL_PATH = "../Data/Models/empire_space_ship/scene.gltf";
 constexpr const char* PROJECTILE_MODEL_PATH = "../Data/Models/rusty_metal_sphere/scene.gltf";
-constexpr const char* STATION_MODEL_PATH = "../Data/Models/round_platform/scene.gltf";
+constexpr const char* STATION_MODEL_PATH = "../Data/Models/space_ship_-_lost_in_space/scene.gltf";
 constexpr const char* CURSOR_PATH = "../Data/Textures/cursor.png";
 
 constexpr bool WIREFRAME_MODE = false;

@@ -3,46 +3,54 @@
 void ChargingStation::create(const Model& model, const Shader& shader)
 {
     ModelObject::create(model, shader);
-    rotation.x = 15.f;
-    rotation.y = 0.f;
+    rotation.x = 0.f;
+    rotation.y = 90.f;
 
-    setSize(glm::vec3(0.001f, 0.001f, 0.001f));
+    setSize(glm::vec3(0.035f, 0.035f, 0.035f));
 
-    // Pocz¹tkowa losowa pozycja stacji (np. g³êboko w przestrzeni)
-    startPosition = glm::vec3(0.0f, -1.0f, -30.0f);
+    startPosition = glm::vec3(3.0f, 0.0f, -2.0f);
     position = startPosition;
 
-    // Cel przyci¹gania (œrodek ekranu)
-    targetPosition = glm::vec3(0.0f, -1.0f, -2.0f);
-
-    // Ustawienie pocz¹tkowej prêdkoœci na 0
     currentSpeed = 0.0f;
 
-    isAtCenter = false;
-    moveCooldown = 5.0f;
+    isAtEdge = false;
+
+    srand(static_cast<unsigned int>(time(0)));
+
+    moveCooldown = getRandomCooldown(60.0f, 150.0f); 
+    timeOnScreen = getRandomCooldown(5.0f, 10.0f);   
 }
 
 void ChargingStation::update(float deltaTime)
 {
     glm::vec3 playerPosition = Engine::getInstance().getPlayerPosition();
 
-    if (!isAtCenter) {
-        // Przyci¹ganie stacji do œrodka
-        moveToCenter(deltaTime);
+    if (isPlayerNear(playerPosition)) {
+        std::cout << "Player is near the charging station!" << std::endl;
     }
-    else {
-        // Po dotarciu do œrodka, stacja czeka przez czas `moveCooldown` i potem rusza dalej
-        if (moveCooldown > 0.0f) {
-            moveCooldown -= deltaTime;  // Odliczamy czas oczekiwania
-            if (isPlayerNear(Engine::getInstance().getPlayerPosition())) {
-                std::cout << "Charging station: Leczenie w toku!" << std::endl; // Debug komunikat
-            }
 
+    if (!isAtEdge) {
+        if (moveCooldown > 0.0f) {
+            moveCooldown -= deltaTime; 
         }
         else {
-            moveForward(deltaTime);  // Po odczekaniu, ruszamy do przodu
+            moveToEdge(deltaTime); 
         }
     }
+    else {
+        position.y = glm::mix(position.y, playerPosition.y, deltaTime * 2.0f);
+
+        if (timeOnScreen > 0.0f) {
+            timeOnScreen -= deltaTime;
+        }
+        else {
+            moveBack(deltaTime); 
+        }
+    }
+
+    //std::cout << "Charging Station Position: x=" << position.x
+    //    << ", y=" << position.y
+    //    << ", z=" << position.z << std::endl;
 
     ModelObject::update(deltaTime);
 }
@@ -52,42 +60,51 @@ void ChargingStation::render()
     ModelObject::render();
 }
 
-void ChargingStation::moveToCenter(float deltaTime)
+void ChargingStation::moveToEdge(float deltaTime)
 {
-    // Obliczamy kierunek do œrodka
+    glm::vec3 targetPosition = glm::vec3(1.0f, position.y, position.z);
     glm::vec3 direction = glm::normalize(targetPosition - position);
 
-    // Przemieszczamy stacjê w kierunku œrodka
     if (currentSpeed < 5.0f) {
         currentSpeed += acceleration * deltaTime;
         currentSpeed = glm::min(currentSpeed, 5.0f);
     }
 
-    // Zmniejszamy prêdkoœæ w miarê zbli¿ania siê do œrodka
-    float distanceToTarget = glm::distance(position, targetPosition);
-    if (distanceToTarget < decelerationDistance) {
-        currentSpeed = glm::max(currentSpeed * (distanceToTarget / decelerationDistance), 0.5f);
-    }
-
     position += direction * currentSpeed * deltaTime;
 
-    // Sprawdzamy, czy stacja dotar³a do œrodka
-    if (distanceToTarget < 0.1f) {
-        isAtCenter = true;
+    if (glm::distance(position, targetPosition) < 0.1f) {
+        isAtEdge = true;
+        currentSpeed = 0.0f;
+
+        timeOnScreen = getRandomCooldown(5.0f, 10.0f); 
     }
 }
 
-void ChargingStation::moveForward(float deltaTime)
+void ChargingStation::moveBack(float deltaTime)
 {
-    // Kierunek poruszania siê stacji do przodu (wzd³u¿ osi Z)
-    glm::vec3 direction = glm::vec3(0.0f, 0.0f, 1.0f); // Ruch w kierunku pozytywnej osi Z
+    glm::vec3 direction = glm::normalize(startPosition - position);
 
-    // Przemieszczamy stacjê do przodu
+    if (currentSpeed < 5.0f) {
+        currentSpeed += acceleration * deltaTime;
+        currentSpeed = glm::min(currentSpeed, 5.0f);
+    }
+
     position += direction * currentSpeed * deltaTime;
+
+    if (glm::distance(position, startPosition) < 0.1f) {
+        isAtEdge = false;
+        currentSpeed = 0.0f;
+
+        moveCooldown = getRandomCooldown(60.0f, 150.0f); 
+    }
+}
+
+float ChargingStation::getRandomCooldown(float minCooldown, float maxCooldown)
+{
+    return minCooldown + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (maxCooldown - minCooldown)));
 }
 
 bool ChargingStation::isPlayerNear(const glm::vec3& playerPosition)
 {
-    // Sprawdzamy, czy gracz znajduje siê w pobli¿u stacji na osi X (w granicach +/- 1)
-    return (playerPosition.x >= position.x - 1.0f && playerPosition.x <= position.x + 1.0f);
+    return glm::abs(playerPosition.x - position.x) <= 0.8f;
 }
