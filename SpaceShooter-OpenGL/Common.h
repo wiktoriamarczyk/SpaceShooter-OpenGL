@@ -48,15 +48,18 @@ constexpr const char* PLAYER_MODEL_PATH = "../Data/Models/space_ship_wg-02/scene
 constexpr const char* ENEMY_MODEL_PATH = "../Data/Models/empire_space_ship/scene.gltf";
 constexpr const char* PROJECTILE_MODEL_PATH = "../Data/Models/rusty_metal_sphere/scene.gltf";
 constexpr const char* STATION_MODEL_PATH = "../Data/Models/round_platform/scene.gltf";
+constexpr const char* CURSOR_PATH = "../Data/Textures/cursor.png";
 
 constexpr bool WIREFRAME_MODE = false;
-constexpr bool SHOW_BOUNDING_BOX = true;
+constexpr bool SHOW_BOUNDING_BOX = false;
+
 
 static float randomFloat(float min, float max)
 {
     return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
 }
 
+// so ugly ;_; but i don't have time so i'll leave it like this for now (forever)
 static glm::vec2 randomCelesticalBodyPosition(float min, float max)
 {
     float x = 0;
@@ -80,6 +83,17 @@ static float angleDifference(float angle1, float angle2)
         diff += 360.0f;
 
     return diff;
+}
+
+static unsigned char* loadImage(const char* filepath, int* width, int* height, int* channels)
+{
+    unsigned char* data = stbi_load(filepath, width, height, channels, 4);
+    if (!data)
+    {
+        std::cerr << "Failed to load image: " << filepath << std::endl;
+        return nullptr;
+    }
+    return data;
 }
 
 template<typename T>

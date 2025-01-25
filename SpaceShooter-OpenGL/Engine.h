@@ -63,6 +63,7 @@ private:
 
     GLFWwindow* window = nullptr;
     shared_ptr<Player> player;
+    shared_ptr<ModelObject> DEBUG;
     vector<shared_ptr<GameObject>> gameObjects;
     vector<shared_ptr<Texture>> textures;
     vector<shared_ptr<Model>> models;
@@ -77,12 +78,13 @@ private:
     static void processMouseInput(GLFWwindow* window, int button, int action, int mods);
     void processInput(int key, int scancode, int action, int mods);
     void processMouseInput(int button, int action, int mods);
+    bool doInit();
+    void doRun();
     void render();
     void update(float deltaTime);
     void createGameObjects();
     bool createDefaultResources();
-    bool doInit();
-    void doRun();
+    void setCustomCursor();
     vector<shared_ptr<Texture>> loadStarsTextures();
     vector<shared_ptr<Model>> loadAsteroidModels();
 };

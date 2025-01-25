@@ -20,14 +20,14 @@ void EnemySpawner::update(float deltaTime)
 
 void EnemySpawner::spawn()
 {
-    int randomModelIndex = std::rand() % models.size();
-    std::shared_ptr<Model> model = models[randomModelIndex];
+    int randomModelIndex = rand() % models.size();
+    shared_ptr<Model> model = models[randomModelIndex];
 
     if (model && projectileModel) {
 
         glm::vec3 spawnPosition = getRandomSpawnPosition();
 
-        std::shared_ptr<EnemyUnit> newEnemy = std::make_shared<EnemyUnit>();
+        shared_ptr<EnemyUnit> newEnemy = make_shared<EnemyUnit>();
         newEnemy->create(*model, *shader, *projectileModel);
         newEnemy->setPosition(spawnPosition);
 
@@ -41,8 +41,8 @@ void EnemySpawner::spawn()
 
 glm::vec3 EnemySpawner::getRandomSpawnPosition() const
 {
-    float x = static_cast<float>(std::rand() % 200 - 100) / 100.0f;
-    float y = static_cast<float>(std::rand() % 200 - 100) / 100.0f;
+    float x = static_cast<float>(rand() % 200 - 100) / 100.0f;
+    float y = static_cast<float>(rand() % 200 - 100) / 100.0f;
 
     return glm::vec3(x, y, -50.0f);
 }

@@ -10,7 +10,6 @@ public:
     void update(float deltaTime) override;
     void render() override;
 private:
-    std::vector<shared_ptr<Projectile>> projectiles;
     shared_ptr<Model> projectileModel;
 
     float speed = 2.f;

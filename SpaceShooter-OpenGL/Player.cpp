@@ -23,7 +23,7 @@ void Player::update(float deltaTime)
     ModelObject::update(deltaTime);
 
     // decrease health in time for debugging purposes
-    updateHealth(-2.f * deltaTime);
+    // updateHealth(-2.f * deltaTime);
 }
 
 void Player::move(float deltaTime)
@@ -177,7 +177,7 @@ void Player::shootProjectile(const glm::vec3& targetPosition)
         shared_ptr<Projectile> newProjectile = make_shared<Projectile>();
         newProjectile->create(projectileStartPos, targetPosition, 5.f, *projectileModel, *shader);
         newProjectile->setScreenBoundZ(20.0f);
-        newProjectile->setSize(glm::vec3(0.02f, 0.02f, 0.02f));
+        newProjectile->setSize(glm::vec3(0.015f, 0.015f, 0.015f));
         //projectiles.push_back(newProjectile);
         Engine::getInstance().addGameObject(newProjectile);
     }

@@ -126,9 +126,36 @@ bool Engine::doInit()
         return false;
     }
 
+    setCustomCursor();
     createGameObjects();
 
     return true;
+}
+
+void Engine::setCustomCursor()
+{
+    int width, height, channels;
+    unsigned char* cursorImage = loadImage(CURSOR_PATH, &width, &height, &channels);
+    if (!cursorImage)
+    {
+        std::cout << "Failed to load cursor image" << std::endl;
+        return;
+    }
+
+    GLFWimage image;
+    image.width = width;
+    image.height = height;
+    image.pixels = cursorImage;
+
+    GLFWcursor* customCursor = glfwCreateCursor(&image, width / 2, height / 2); // width/2, height/2 to hotspot
+    if (!customCursor)
+    {
+        std::cerr << "Failed to create custom cursor!" << std::endl;
+        stbi_image_free(cursorImage);
+        return;
+    }
+
+    glfwSetCursor(window, customCursor);
 }
 
 bool Engine::createDefaultResources()
@@ -229,7 +256,6 @@ void Engine::createGameObjects()
 
     shared_ptr<Model> playerModel = getModel(PLAYER_MODEL_PATH);
     shared_ptr<Model> modelProjectile = getModel(PROJECTILE_MODEL_PATH);
-
     if (playerModel && modelProjectile)
     {
         player->create(*playerModel, *defaultModelShader, *modelProjectile);
@@ -237,8 +263,15 @@ void Engine::createGameObjects()
         gameObjects.push_back(player);
     }
 
-    shared_ptr<AsteroidSpawner> asteroidSpawner = make_shared<AsteroidSpawner>();
+    DEBUG = make_shared<ModelObject>();
+    DEBUG->create(*modelProjectile, *defaultModelShader);
+    DEBUG->setPosition(glm::vec3(1.0f, -0.5f, -2.0f));
+    DEBUG->setSize(glm::vec3(0.035f, 0.035f, 0.035f));
+    DEBUG->setRotation(glm::vec3(0.0f, 90.0f, 0.0f));
+    gameObjects.push_back(DEBUG);
 
+
+    shared_ptr<AsteroidSpawner> asteroidSpawner = make_shared<AsteroidSpawner>();
     vector<shared_ptr<Model>> asteroidModels = loadAsteroidModels();
     if (!asteroidModels.empty())
     {
@@ -257,7 +290,6 @@ void Engine::createGameObjects()
     shared_ptr<EnemySpawner> enemySpawner = make_shared<EnemySpawner>();
     vector<shared_ptr<Model>> enemyModels;
     enemyModels.push_back(getModel(ENEMY_MODEL_PATH));
-
     if (!enemyModels.empty() && modelProjectile)
     {
         enemySpawner->create(enemyModels, *defaultModelShader, *modelProjectile);
@@ -267,7 +299,6 @@ void Engine::createGameObjects()
     shared_ptr<ChargingStationSpawner> stationSpawner = make_shared<ChargingStationSpawner>();
     vector<shared_ptr<Model>> stationModels;
     stationModels.push_back(getModel(STATION_MODEL_PATH));
-
     if (!stationModels.empty())
     {
         stationSpawner->create(stationModels, *defaultModelShader);
@@ -336,6 +367,10 @@ void Engine::update(float deltaTime)
         else
             gameObjects.erase(gameObjects.begin() + i);
     }
+
+    // check for collisions between player and DEBUG object
+    if (player->isBboxIntersectingBbox(*DEBUG))
+        std::cout << "Collision detected" << std::endl;
 }
 
 void Engine::render()
