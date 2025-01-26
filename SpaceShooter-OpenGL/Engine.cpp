@@ -360,6 +360,13 @@ glm::vec3 Engine::getPlayerPosition() const
     return glm::vec3(0.0f);
 }
 
+void Engine::setPlayerHealth(float newHealth) {
+    auto player = this->player.lock(); // Sprawdza, czy gracz istnieje
+    if (!player)
+        return;
+    player->updateHealth(newHealth);
+}
+
 void Engine::update(float deltaTime)
 {
     // Update game objects

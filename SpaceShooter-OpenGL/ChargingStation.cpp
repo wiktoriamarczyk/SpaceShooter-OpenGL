@@ -27,7 +27,8 @@ void ChargingStation::update(float deltaTime)
     glm::vec3 playerPosition = Engine::getInstance().getPlayerPosition();
 
     if (isPlayerNear(playerPosition)) {
-        std::cout << "Player is near the charging station!" << std::endl;
+        //std::cout << "Player is near the charging station!" << std::endl;
+        Engine::getInstance().setPlayerHealth(0.05f);
     }
 
     if (!isAtEdge) {

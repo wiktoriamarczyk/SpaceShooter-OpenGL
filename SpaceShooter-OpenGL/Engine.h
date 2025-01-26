@@ -29,6 +29,7 @@ public:
     void addGameObject(shared_ptr<GameObject> gameObject);
     void addPointLight(shared_ptr<PointLight> pointLight);
     void removePointLight(PointLight& pointLight);
+    void setPlayerHealth(float newHealth);
     glm::vec3 getPlayerPosition() const;
     glm::vec3 getCameraPosition() const { return cameraPosition; };
     static Engine& getInstance() { return instance; }
