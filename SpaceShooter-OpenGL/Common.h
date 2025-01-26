@@ -36,6 +36,7 @@ using std::time;
 using std::enable_shared_from_this;
 using std::min;
 using std::max;
+using std::function;
 
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
@@ -64,6 +65,13 @@ enum class TEAM
 {
     PLAYER,
     ENEMY
+};
+
+enum class GAME_STATE
+{
+    MENU,
+    IN_GAME,
+    GAME_OVER
 };
 
 

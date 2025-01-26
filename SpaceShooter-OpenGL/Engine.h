@@ -18,6 +18,7 @@ class AsteroidSpawner;
 class EnemySpawner;
 class PointLight;
 class HealthBar;
+class Button;
 
 class Engine
 {
@@ -46,11 +47,15 @@ public:
     static shared_ptr<Shader> GetDefaultBBoxShader();
 
     static glm::vec2 getMousePosition();
+    static glm::vec2 getMousePositionInUISpace();
     static glm::vec2 getScreenSize();
 
 private:
     Engine() = default;
     static Engine instance;
+
+    shared_ptr<Button> button;
+    GAME_STATE gameState = GAME_STATE::IN_GAME;
 
     shared_ptr<VertexBuffer> defaultVBO;
     shared_ptr<IndexBuffer> defaultIBO;
@@ -63,12 +68,12 @@ private:
 
     GLFWwindow* window = nullptr;
     weak_ptr<Player> player;
+    shared_ptr<Sprite> background;
     vector<shared_ptr<GameObject>> gameObjects;
     vector<shared_ptr<Texture>> textures;
     vector<shared_ptr<Model>> models;
     vector<shared_ptr<Shader>> shaders;
     vector<weak_ptr<PointLight>> pointLights;
-    shared_ptr<Sprite> background;
 
     double lastFrame = 0;
     const glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -84,6 +89,9 @@ private:
     void createGameObjects();
     bool createDefaultResources();
     void setCustomCursor();
+    void setupInGameState();
+    void setupMenuState();
+    void setupGameOverState();
     vector<shared_ptr<Texture>> loadStarsTextures();
     vector<shared_ptr<Model>> loadAsteroidModels();
 };

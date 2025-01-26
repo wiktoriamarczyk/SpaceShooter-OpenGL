@@ -16,7 +16,7 @@
 #include "EnemySpawner.h"
 #include "Billboard.h"
 #include "ChargingStation.h"
-#include "HealthBar.h"
+#include "Button.h"
 
 Engine Engine::instance;
 
@@ -60,6 +60,7 @@ void Engine::processMouseInput(int button, int action, int mods)
         for (int i = 0; i < gameObjects.size(); i++)
         {
             gameObjects[i]->onMouseButtonDown(button);
+            this->button->onMouseButtonDown(button);
         }
     }
     else if (action == GLFW_RELEASE)
@@ -67,6 +68,7 @@ void Engine::processMouseInput(int button, int action, int mods)
         for (int i = 0; i < gameObjects.size(); i++)
         {
             gameObjects[i]->onMouseButtonUp(button);
+            this->button->onMouseButtonUp(button);
         }
     }
 }
@@ -298,6 +300,13 @@ void Engine::createGameObjects()
         station->create(*selectedModel, *defaultModelShader);
         gameObjects.push_back(station);
     }
+
+    button = make_shared<Button>();
+    button->create(glm::vec2(200,50), glm::vec2(200.0f, 50.0f), "Play", [player=this->player]()
+        {
+            if (auto p = player.lock())
+                p->updateHealth(-10.f);
+        });
 }
 
 void Engine::addGameObject(shared_ptr<GameObject> gameObject)
@@ -361,6 +370,8 @@ void Engine::update(float deltaTime)
         else
             gameObjects.erase(gameObjects.begin() + i);
     }
+
+    button->update(deltaTime);
 
     // Get all projectiles
     vector<shared_ptr<Projectile>> enemyProjectiles;
@@ -426,6 +437,8 @@ void Engine::render()
     {
         gameObjects[i]->render();
     }
+
+    button->render();
 
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     glfwSwapBuffers(window);
@@ -587,6 +600,13 @@ glm::vec2 Engine::getMousePosition()
     double xpos, ypos;
     glfwGetCursorPos(instance.window, &xpos, &ypos);
     return glm::vec2(xpos, ypos);
+}
+
+glm::vec2 Engine::getMousePositionInUISpace()
+{
+    glm::vec2 mousePos = getMousePosition();
+    glm::vec2 uiScale = glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT) / getScreenSize();
+    return glm::vec2(0,SCREEN_HEIGHT) + glm::vec2(1,-1)*(mousePos * uiScale);
 }
 
 glm::vec2 Engine::getScreenSize()

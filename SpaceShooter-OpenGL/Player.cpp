@@ -9,7 +9,7 @@ void Player::create(const Model& model, const Shader& shader, const Model& proje
     rotation.y = 180.f;
     setSize(glm::vec3(0.5f, 0.5f, 0.5f));
     this->projectileModel = projectileModel.getSelf();
-
+    maxHealth = currentHealth = 200.f;
     healthBar = make_shared<HealthBar>();
     healthBar->create(glm::vec2(SCREEN_WIDTH / 2 + 285.0f, SCREEN_HEIGHT - 27.0f), glm::vec2(200.0f, 20.0f), maxHealth);
 }
