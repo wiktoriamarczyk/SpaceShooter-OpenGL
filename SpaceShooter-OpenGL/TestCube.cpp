@@ -54,7 +54,7 @@ TestCube::TestCube()
     VBO.create(vertices, sizeof(vertices[0]) , sizeof(vertices) / sizeof(vertices[0]));
     VAO.create(VBO, VertexDefinitionElement::POSITION | VertexDefinitionElement::TEXTURE_COORD);
 
-    shader = Engine::getShader(VS_FILE_NAME.c_str(), FS_FILE_NAME.c_str());
+    shader = Engine::getShader(VS_FILE_NAME, FS_FILE_NAME);
 
     texture = Engine::getTexture("../Data/Textures/container.jpg");
     if (texture == nullptr)

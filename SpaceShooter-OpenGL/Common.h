@@ -48,16 +48,16 @@ const unsigned int SCREEN_HEIGHT = 600;
 
 constexpr const char* WINDOW_NAME = "Space Shooter";
 
-const string VS_FILE_NAME = "../Data/shaders/shader.vs";
-const string FS_FILE_NAME = "../Data/shaders/shader.fs";
-const string VS_SPRITE_FILE_NAME = "../Data/shaders/sprite_shader.vs";
-const string FS_SPRITE_FILE_NAME = "../Data/shaders/sprite_shader.fs";
-const string VS_EMISSIVE_FILE_NAME = "../Data/shaders/emissive_shader.vs";
-const string FS_EMISSIVE_FILE_NAME = "../Data/shaders/emissive_shader.fs";
-const string VS_BBOX_FILE_NAME = "../Data/shaders/bbox_shader.vs";
-const string FS_BBOX_FILE_NAME = "../Data/shaders/bbox_shader.fs";
-const string VS_TEXT_FILE_NAME = "../Data/shaders/text_shader.vs";
-const string FS_TEXT_FILE_NAME = "../Data/shaders/text_shader.fs";
+constexpr const char* VS_FILE_NAME = "../Data/shaders/shader.vs";
+constexpr const char* FS_FILE_NAME = "../Data/shaders/shader.fs";
+constexpr const char* VS_SPRITE_FILE_NAME = "../Data/shaders/sprite_shader.vs";
+constexpr const char* FS_SPRITE_FILE_NAME = "../Data/shaders/sprite_shader.fs";
+constexpr const char* VS_EMISSIVE_FILE_NAME = "../Data/shaders/emissive_shader.vs";
+constexpr const char* FS_EMISSIVE_FILE_NAME = "../Data/shaders/emissive_shader.fs";
+constexpr const char* VS_BBOX_FILE_NAME = "../Data/shaders/bbox_shader.vs";
+constexpr const char* FS_BBOX_FILE_NAME = "../Data/shaders/bbox_shader.fs";
+constexpr const char* VS_TEXT_FILE_NAME = "../Data/shaders/text_shader.vs";
+constexpr const char* FS_TEXT_FILE_NAME = "../Data/shaders/text_shader.fs";
 
 constexpr const char* PLAYER_MODEL_PATH = "../Data/Models/space_ship_wg-02/scene.gltf";
 constexpr const char* ENEMY_MODEL_PATH = "../Data/Models/empire_space_ship/scene.gltf";

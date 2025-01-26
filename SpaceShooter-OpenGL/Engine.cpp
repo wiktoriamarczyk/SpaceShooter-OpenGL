@@ -133,7 +133,7 @@ bool Engine::doInit()
     }
 
     music.openFromFile(MUSIC_PATH);
-    music.setVolume(100); 
+    music.setVolume(50);
     music.setLoop(true);
     music.play();
 
@@ -210,7 +210,7 @@ bool Engine::freeTypeInit()
     glBindTexture(GL_TEXTURE_2D, 0);
 
     textVBO = make_shared<VertexBuffer>();
-    textVBO->create(nullptr, sizeof(float) * 6, 4, GL_DYNAMIC_DRAW); // 4 vertices, 6 floats per vertex
+    textVBO->create(nullptr, sizeof(float) * 5, 6, GL_DYNAMIC_DRAW); // 6 vertices, 4 floats per vertex
 
     textVAO = make_shared<VertexArrayObject>();
     textVAO->create(*textVBO, VertexDefinitionElement::POSITION | VertexDefinitionElement::TEXTURE_COORD);
@@ -281,7 +281,7 @@ bool Engine::createDefaultResources()
 
 
     // Init default sprite resources
-    defaultSpriteShader = Shader::create(VS_SPRITE_FILE_NAME.c_str(), FS_SPRITE_FILE_NAME.c_str());
+    defaultSpriteShader = Shader::create(VS_SPRITE_FILE_NAME, FS_SPRITE_FILE_NAME);
     if (!defaultSpriteShader)
         return false;
     defaultSpriteShader->use();
@@ -293,7 +293,7 @@ bool Engine::createDefaultResources()
 
 
     // Init default model resources
-    defaultModelShader = Shader::create(VS_FILE_NAME.c_str(), FS_FILE_NAME.c_str());
+    defaultModelShader = Shader::create(VS_FILE_NAME, FS_FILE_NAME);
     if (!defaultModelShader)
         return false;
     defaultModelShader->use();
@@ -319,7 +319,7 @@ bool Engine::createDefaultResources()
 
 
     // Init default lighting shader
-    defaultEmissiveShader = Shader::create(VS_EMISSIVE_FILE_NAME.c_str(), FS_EMISSIVE_FILE_NAME.c_str());
+    defaultEmissiveShader = Shader::create(VS_EMISSIVE_FILE_NAME, FS_EMISSIVE_FILE_NAME);
     if (!defaultEmissiveShader)
         return false;
     defaultEmissiveShader->use();
@@ -328,7 +328,7 @@ bool Engine::createDefaultResources()
 
 
     // Init default bounding box shader
-    defaultBBoxShader = Shader::create(VS_BBOX_FILE_NAME.c_str(), FS_BBOX_FILE_NAME.c_str());
+    defaultBBoxShader = Shader::create(VS_BBOX_FILE_NAME, FS_BBOX_FILE_NAME);
     if (!defaultBBoxShader)
         return false;
     defaultBBoxShader->use();
@@ -338,7 +338,7 @@ bool Engine::createDefaultResources()
 
 
     // Init default text shader
-    defaultTextShader = Shader::create(VS_TEXT_FILE_NAME.c_str(), FS_TEXT_FILE_NAME.c_str());
+    defaultTextShader = Shader::create(VS_TEXT_FILE_NAME, FS_TEXT_FILE_NAME);
     if (!defaultTextShader)
         return false;
     defaultTextShader->use();
@@ -476,19 +476,19 @@ void Engine::renderText(string text, glm::vec2 position, float scale, glm::vec3 
         float w = ch.Size.x * scale;
         float h = ch.Size.y * scale;
         // update VBO for each character
-        float vertices[6][4] = {
-            { xpos,     ypos + h,   0.0f, 0.0f },
-            { xpos,     ypos,       0.0f, 1.0f },
-            { xpos + w, ypos,       1.0f, 1.0f },
+        float vertices[6][5] = {
+            { xpos,     ypos + h,   0 , 0.0f, 0.0f },
+            { xpos,     ypos,       0 , 0.0f, 1.0f },
+            { xpos + w, ypos,       0 , 1.0f, 1.0f },
 
-            { xpos,     ypos + h,   0.0f, 0.0f },
-            { xpos + w, ypos,       1.0f, 1.0f },
-            { xpos + w, ypos + h,   1.0f, 0.0f }
+            { xpos,     ypos + h,   0 , 0.0f, 0.0f },
+            { xpos + w, ypos,       0 , 1.0f, 1.0f },
+            { xpos + w, ypos + h,   0 , 1.0f, 0.0f }
         };
 
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);
         // update content of VBO memory
-        textVBO->updateData(vertices, sizeof(vertices[0])*6, 4);
+        textVBO->updateData(vertices, sizeof(vertices[0][0])*5, 6);
         // render quad
         glDrawArrays(GL_TRIANGLES, 0, 6);
         // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
@@ -517,7 +517,6 @@ void Engine::update(float deltaTime)
     }
 
     button->update(deltaTime);
-    renderText("DUPA", glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 
     // Get all projectiles
     vector<shared_ptr<Projectile>> enemyProjectiles;
@@ -585,6 +584,7 @@ void Engine::render()
     }
 
     button->render();
+    renderText("DUPA", glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     glfwSwapBuffers(window);
