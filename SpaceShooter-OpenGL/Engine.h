@@ -102,5 +102,6 @@ private:
     void setupGameOverState();
     vector<shared_ptr<Texture>> loadStarsTextures();
     vector<shared_ptr<Model>> loadAsteroidModels();
+    sf::Music music;
 };
 

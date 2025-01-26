@@ -14,6 +14,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include<SFML/Audio.hpp>
+
 #include <iostream>
 #include <string>
 #include <memory>
@@ -62,6 +64,7 @@ constexpr const char* ENEMY_MODEL_PATH = "../Data/Models/empire_space_ship/scene
 constexpr const char* PROJECTILE_MODEL_PATH = "../Data/Models/rusty_metal_sphere/scene.gltf";
 constexpr const char* STATION_MODEL_PATH = "../Data/Models/space_ship_-_lost_in_space/scene.gltf";
 constexpr const char* CURSOR_PATH = "../Data/Textures/cursor.png";
+constexpr const char* MUSIC_PATH = "../Data/Audio/Stealer.ogg";
 
 constexpr bool WIREFRAME_MODE = false;
 constexpr bool SHOW_BOUNDING_BOX = false;

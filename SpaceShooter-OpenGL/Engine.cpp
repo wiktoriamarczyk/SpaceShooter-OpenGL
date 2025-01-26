@@ -132,6 +132,11 @@ bool Engine::doInit()
         return false;
     }
 
+    music.openFromFile(MUSIC_PATH);
+    music.setVolume(100); 
+    music.setLoop(true);
+    music.play();
+
     if (!freeTypeInit())
     {
         std::cout << "Failed to initialize FreeType" << std::endl;
