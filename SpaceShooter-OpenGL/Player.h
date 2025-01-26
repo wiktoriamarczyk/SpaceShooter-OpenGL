@@ -17,6 +17,8 @@ public:
 
 private:
     float speed = 3.f;
+    float maxHealth = 200.0f;
+    float currentHealth = 200.0f;
     glm::vec3 movementDirection = glm::vec3(0.f);
     shared_ptr<Model> projectileModel;
     shared_ptr<HealthBar> healthBar;

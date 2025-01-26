@@ -5,8 +5,11 @@ in vec3 ourColor;
 in vec2 TexCoord;
 
 uniform sampler2D texture_diffuse0;
+uniform vec3 color;
 
 void main()
 {
-    FragColor = texture(texture_diffuse0, TexCoord);
+    vec4 result = texture(texture_diffuse0, TexCoord);
+	result.xyz *= color;
+	FragColor = result;
 }

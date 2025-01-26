@@ -5,8 +5,9 @@
 class Projectile : public ModelObject
 {
 public:
-    void create(const glm::vec3& startPosition, const glm::vec3& targetPosition, TEAM team, float speed, const Model& model, const Shader& shader);
+    void create(const glm::vec3& startPosition, const glm::vec3& targetPosition, TEAM team, float speed, const Model& model);
     void update(float deltaTime) override;
+    void render() override;
     TEAM getTeam() const { return team; }
 
 private:

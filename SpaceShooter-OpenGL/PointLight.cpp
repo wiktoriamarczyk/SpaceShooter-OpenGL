@@ -9,7 +9,6 @@ PointLight::~PointLight()
 void PointLight::create(int index)
 {
     shaderArrayIndex = index;
-    lightShader = Engine::GetDefaultLightShader();
     modelShader = Engine::GetDefaultModelShader();
 
     updateLightParameters();

@@ -44,6 +44,8 @@ uniform DirLight dirLight;
 uniform int pointLightsCount;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform float appTime;
+uniform vec3 color;
+uniform vec3 emissiveColor;
 
 uniform sampler2D texture_diffuse0;
 uniform sampler2D texture_emissive0;
@@ -83,7 +85,9 @@ void main()
     result *= texture(texture_diffuse0, TexCoord).rgb;
     result += texture(texture_emissive0, TexCoord).rgb * (sin(appTime*20)*0.5f+0.5);
 
-	result *= Color;
+	result *= color;
+	result += emissiveColor;
+	result = min(vec3(1,1,1), result); 
 
     FragColor = vec4(result, 1.0);
 }

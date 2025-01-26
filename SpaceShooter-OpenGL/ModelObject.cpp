@@ -22,6 +22,10 @@ void ModelObject::create(const Texture& texture, const Shader& shader)
 void ModelObject::update(float deltaTime)
 {
     GameObject::update(deltaTime);
+
+    float animSpeed = 15.f;
+    hitAnimation -= deltaTime * animSpeed;
+    hitAnimation = glm::max(hitAnimation, 0.0f);
 }
 
 void ModelObject::render()
@@ -43,6 +47,10 @@ void ModelObject::render()
     glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelTransform)));
     shader->setMat3("normalMatrix", normalMatrix);
     shader->setFloat("appTime", (float)glfwGetTime());
+
+    glm::vec3 currentColor = glm::mix(glm::vec3(0,0,0), hitColor, sin(hitAnimation));
+    this->shader->setVec3("color", color);
+    this->shader->setVec3("emissiveColor", currentColor);
 
     // if model is set, draw it
     if (model)
@@ -148,4 +156,11 @@ bool ModelObject::isVertexInsideBbox(glm::vec3 vertex)
     }
 
     return true;
+}
+
+void ModelObject::updateHealth(float value)
+{
+    GameObject::updateHealth(value);
+
+    hitAnimation = glm::pi<float>();
 }

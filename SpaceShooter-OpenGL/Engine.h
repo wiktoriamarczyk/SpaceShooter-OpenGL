@@ -42,7 +42,7 @@ public:
 
     static shared_ptr<Shader> GetDefaultSpriteShader();
     static shared_ptr<Shader> GetDefaultModelShader();
-    static shared_ptr<Shader> GetDefaultLightShader();
+    static shared_ptr<Shader> GetDefaultEmissiveShader();
     static shared_ptr<Shader> GetDefaultBBoxShader();
 
     static glm::vec2 getMousePosition();
@@ -58,12 +58,11 @@ private:
 
     shared_ptr<Shader> defaultSpriteShader;
     shared_ptr<Shader> defaultModelShader;
-    shared_ptr<Shader> defaultLightingShader;
+    shared_ptr<Shader> defaultEmissiveShader;
     shared_ptr<Shader> defaultBBoxShader;
 
     GLFWwindow* window = nullptr;
     weak_ptr<Player> player;
-    shared_ptr<ModelObject> DEBUG;
     vector<shared_ptr<GameObject>> gameObjects;
     vector<shared_ptr<Texture>> textures;
     vector<shared_ptr<Model>> models;

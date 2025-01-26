@@ -62,8 +62,6 @@ void Player::tilt(float deltaTime)
 
 void Player::rotateTheHead(float deltaTime)
 {
-    const float ANGLE_OFFSET = 0.f;
-
     glm::vec2 cursorPosition = Engine::getInstance().getMousePosition();
     glm::vec2 screenSize = Engine::getInstance().getScreenSize();
 
@@ -81,14 +79,13 @@ void Player::rotateTheHead(float deltaTime)
     float angleY = glm::degrees(atan2(directionToCursor.x, directionToCursor.z));
     float angleX = glm::degrees(atan2(directionToCursor.y, glm::length(glm::vec2(directionToCursor.x, directionToCursor.z))));
     // make sure to rotate shortest way
-    float deltaAngleY = angleDifference(rotation.y, angleY) + ANGLE_OFFSET;
+    float deltaAngleY = angleDifference(rotation.y, angleY);
     float deltaAngleX = angleDifference(rotation.x, angleX);
 
     float rotationSpeed = 10.0f;
     rotation.y += deltaAngleY * deltaTime * rotationSpeed;
     rotation.x += deltaAngleX * deltaTime * rotationSpeed;
 }
-
 
 void Player::render()
 {
@@ -175,7 +172,7 @@ void Player::shootProjectile(const glm::vec3& targetPosition)
     {
         glm::vec3 projectileStartPos = position + glm::vec3(0.0f, 0.1f, -0.3f);
         shared_ptr<Projectile> newProjectile = make_shared<Projectile>();
-        newProjectile->create(projectileStartPos, targetPosition, TEAM::PLAYER, 5.f, *projectileModel, *shader);
+        newProjectile->create(projectileStartPos, targetPosition, TEAM::PLAYER, 5.f, *projectileModel);
         newProjectile->setScreenBoundZ(20.0f);
         newProjectile->setSize(glm::vec3(0.015f, 0.015f, 0.015f));
         //projectiles.push_back(newProjectile);

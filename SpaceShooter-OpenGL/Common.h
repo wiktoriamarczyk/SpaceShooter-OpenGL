@@ -42,8 +42,12 @@ const unsigned int SCREEN_HEIGHT = 600;
 
 constexpr const char* WINDOW_NAME = "Space Shooter";
 
-const string VS_FILE_NAME = "../Data/Shaders/shader.vs";
-const string FS_FILE_NAME = "../Data/Shaders/shader.fs";
+const string VS_FILE_NAME = "../Data/shaders/shader.vs";
+const string FS_FILE_NAME = "../Data/shaders/shader.fs";
+const string VS_EMISSIVE_FILE_NAME = "../Data/shaders/emissive_shader.vs";
+const string FS_EMISSIVE_FILE_NAME = "../Data/shaders/emissive_shader.fs";
+const string VS_BBOX_FILE_NAME = "../Data/shaders/bbox_shader.vs";
+const string FS_BBOX_FILE_NAME = "../Data/shaders/bbox_shader.fs";
 constexpr const char* PLAYER_MODEL_PATH = "../Data/Models/space_ship_wg-02/scene.gltf";
 constexpr const char* ENEMY_MODEL_PATH = "../Data/Models/empire_space_ship/scene.gltf";
 constexpr const char* PROJECTILE_MODEL_PATH = "../Data/Models/rusty_metal_sphere/scene.gltf";
@@ -53,7 +57,8 @@ constexpr const char* CURSOR_PATH = "../Data/Textures/cursor.png";
 constexpr bool WIREFRAME_MODE = false;
 constexpr bool SHOW_BOUNDING_BOX = false;
 
-const int PROJECTILE_DAMAGE = 10;
+const int PROJECTILE_DAMAGE = 5;
+constexpr glm::vec3 WHITE_COLOR = glm::vec3(1.0f, 1.0f, 1.0f);
 
 enum class TEAM
 {

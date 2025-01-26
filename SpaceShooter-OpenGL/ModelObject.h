@@ -18,8 +18,8 @@ public:
     vector<glm::vec3> getBboxVertices() const { return bboxVertices; }
     vector<Plane> getBboxPlanes() const { return bboxPlanes; }
     glm::vec3 getWorldBboxCenter() const { return glm::vec3(modelMatrix * glm::vec4(bboxCenter, 1.0f)); }
-
     bool isVertexInsideBbox(glm::vec3 vertex);
+    void updateHealth(float value) override;
 
 protected:
     shared_ptr<Shader> shader;
@@ -32,6 +32,9 @@ protected:
 
     vector<glm::vec3> bboxVertices;
     glm::vec3 bboxCenter;
+    glm::vec3 color = WHITE_COLOR;
+    glm::vec3 hitColor = glm::vec3(1, 1, 0);
+    float hitAnimation = 0;
     vector<Plane> bboxPlanes;
 
     glm::mat4 modelMatrix;

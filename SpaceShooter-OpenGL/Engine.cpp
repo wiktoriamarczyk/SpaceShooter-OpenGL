@@ -212,12 +212,13 @@ bool Engine::createDefaultResources()
     defaultModelShader->setMat4("projection", projection);
     defaultModelShader->setMat4("view",glm::identity<glm::mat4x4>());
     defaultModelShader->setVec3("viewPos", glm::vec3(0.0f, 0.0f, 0.0f));
+    defaultModelShader->setVec3("color", WHITE_COLOR);
     defaultModelShader->setVec3("ambient", glm::vec3(0.15f, 0.15f, 0.15f));
 
     // set material properties
-    defaultModelShader->setVec3("material.ambient", glm::vec3(1.0f, 1.0f, 1.0f));
-    defaultModelShader->setVec3("material.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
-    defaultModelShader->setVec3("material.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    defaultModelShader->setVec3("material.ambient", WHITE_COLOR);
+    defaultModelShader->setVec3("material.diffuse", WHITE_COLOR);
+    defaultModelShader->setVec3("material.specular", WHITE_COLOR);
     defaultModelShader->setFloat("material.shininess", 64.0f);
 
     // set light properties
@@ -227,16 +228,16 @@ bool Engine::createDefaultResources()
 
 
     // Init default lighting shader
-    defaultLightingShader = Shader::create("../Data/Shaders/light_source_shader.vs", "../Data/shaders/light_source_shader.fs");
-    if (!defaultLightingShader)
+    defaultEmissiveShader = Shader::create(VS_EMISSIVE_FILE_NAME.c_str(), FS_EMISSIVE_FILE_NAME.c_str());
+    if (!defaultEmissiveShader)
         return false;
-    defaultLightingShader->use();
-    defaultLightingShader->setMat4("projection", projection);
-    defaultLightingShader->setMat4("view", glm::identity<glm::mat4x4>());
+    defaultEmissiveShader->use();
+    defaultEmissiveShader->setMat4("projection", projection);
+    defaultEmissiveShader->setMat4("view", glm::identity<glm::mat4x4>());
 
 
     // Init default bounding box shader
-    defaultBBoxShader = Shader::create("../Data/Shaders/bbox_shader.vs", "../Data/Shaders/bbox_shader.fs");
+    defaultBBoxShader = Shader::create(VS_BBOX_FILE_NAME.c_str(), FS_BBOX_FILE_NAME.c_str());
     if (!defaultBBoxShader)
         return false;
     defaultBBoxShader->use();
@@ -275,7 +276,7 @@ void Engine::createGameObjects()
     vector<shared_ptr<Texture>> starTextures = loadStarsTextures();
     if (!starTextures.empty())
     {
-        starSpawner->create(starTextures, *defaultLightingShader);
+        starSpawner->create(starTextures, *defaultEmissiveShader);
         gameObjects.push_back(starSpawner);
     }
 
@@ -573,9 +574,9 @@ shared_ptr<Shader> Engine::GetDefaultModelShader()
     return instance.defaultModelShader;
 }
 
-shared_ptr<Shader> Engine::GetDefaultLightShader()
+shared_ptr<Shader> Engine::GetDefaultEmissiveShader()
 {
-    return instance.defaultLightingShader;
+    return instance.defaultEmissiveShader;
 }
 
 shared_ptr<Shader> Engine::GetDefaultBBoxShader()

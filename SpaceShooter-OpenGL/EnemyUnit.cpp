@@ -156,7 +156,7 @@ void EnemyUnit::shootProjectile(const glm::vec3& playerPosition)
     {
         glm::vec3 projectileStartPos = position;
         shared_ptr<Projectile> newProjectile = make_shared<Projectile>();
-        newProjectile->create(projectileStartPos, playerPosition, TEAM::ENEMY, 5.0f, *projectileModel, *shader);
+        newProjectile->create(projectileStartPos, playerPosition, TEAM::ENEMY, 5.0f, *projectileModel);
         newProjectile->setSize(glm::vec3(0.01f, 0.01f, 0.01f));
         Engine::getInstance().addGameObject(newProjectile);
     }
