@@ -33,7 +33,7 @@ protected:
     vector<glm::vec3> bboxVertices;
     glm::vec3 bboxCenter;
     glm::vec3 color = WHITE_COLOR;
-    glm::vec3 hitColor = glm::vec3(1, 1, 0);
+    glm::vec3 hitColor = glm::vec3(0.8, 0.8, 0.8);
     float hitAnimation = 0;
     vector<Plane> bboxPlanes;
 

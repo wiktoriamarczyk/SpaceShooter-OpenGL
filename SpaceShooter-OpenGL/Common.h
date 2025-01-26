@@ -21,6 +21,7 @@
 #include <optional>
 #include <algorithm>
 #include <filesystem>
+#include <map>
 
 using std::string;
 using std::shared_ptr;
@@ -37,6 +38,8 @@ using std::enable_shared_from_this;
 using std::min;
 using std::max;
 using std::function;
+using std::map;
+using std::pair;
 
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
@@ -45,10 +48,15 @@ constexpr const char* WINDOW_NAME = "Space Shooter";
 
 const string VS_FILE_NAME = "../Data/shaders/shader.vs";
 const string FS_FILE_NAME = "../Data/shaders/shader.fs";
+const string VS_SPRITE_FILE_NAME = "../Data/shaders/sprite_shader.vs";
+const string FS_SPRITE_FILE_NAME = "../Data/shaders/sprite_shader.fs";
 const string VS_EMISSIVE_FILE_NAME = "../Data/shaders/emissive_shader.vs";
 const string FS_EMISSIVE_FILE_NAME = "../Data/shaders/emissive_shader.fs";
 const string VS_BBOX_FILE_NAME = "../Data/shaders/bbox_shader.vs";
 const string FS_BBOX_FILE_NAME = "../Data/shaders/bbox_shader.fs";
+const string VS_TEXT_FILE_NAME = "../Data/shaders/text_shader.vs";
+const string FS_TEXT_FILE_NAME = "../Data/shaders/text_shader.fs";
+
 constexpr const char* PLAYER_MODEL_PATH = "../Data/Models/space_ship_wg-02/scene.gltf";
 constexpr const char* ENEMY_MODEL_PATH = "../Data/Models/empire_space_ship/scene.gltf";
 constexpr const char* PROJECTILE_MODEL_PATH = "../Data/Models/rusty_metal_sphere/scene.gltf";
@@ -74,6 +82,13 @@ enum class GAME_STATE
     GAME_OVER
 };
 
+struct Character
+{
+    unsigned int TextureID;  // ID handle of the glyph texture
+    glm::ivec2   Size;       // Size of glyph
+    glm::ivec2   Bearing;    // Offset from baseline to left/top of glyph
+    unsigned int Advance;    // Offset to advance to next glyph
+};
 
 static float randomFloat(float min, float max)
 {

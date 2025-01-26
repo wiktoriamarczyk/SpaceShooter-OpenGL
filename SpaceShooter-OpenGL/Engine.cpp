@@ -1,3 +1,6 @@
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #include "Engine.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
@@ -114,21 +117,102 @@ bool Engine::doInit()
 
     // Configure global opengl state
     glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     if (WIREFRAME_MODE)
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
-    // Create default object
     if (!createDefaultResources())
     {
         std::cout << "Failed to create default resources" << std::endl;
         return false;
     }
 
+    if (!freeTypeInit())
+    {
+        std::cout << "Failed to initialize FreeType" << std::endl;
+        return false;
+    }
+
     setCustomCursor();
     createGameObjects();
+
+    return true;
+}
+
+bool Engine::freeTypeInit()
+{
+    FT_Library ft;
+    if (FT_Init_FreeType(&ft))
+    {
+        std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
+        return false;
+    }
+    // load font as face
+    FT_Face face;
+    if (FT_New_Face(ft, "../Data/BRLNSB.ttf", 0, &face))
+    {
+        std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
+        return false;
+    }
+    // set size to load glyphs as
+    FT_Set_Pixel_Sizes(face, 0, 48);
+    // disable byte-alignment restriction
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    // load first 128 characters of ASCII set
+    for (unsigned char c = 0; c < 128; c++)
+    {
+        // load character glyph
+        if (FT_Load_Char(face, c, FT_LOAD_RENDER))
+        {
+            std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
+            continue;
+        }
+        // generate texture
+        unsigned int texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_RED,
+            face->glyph->bitmap.width,
+            face->glyph->bitmap.rows,
+            0,
+            GL_RED,
+            GL_UNSIGNED_BYTE,
+            face->glyph->bitmap.buffer
+        );
+        // set texture options
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        // now store character for later use
+        Character character = {
+            texture,
+            glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+            glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+            static_cast<unsigned int>(face->glyph->advance.x)
+        };
+        characters.insert(pair<char, Character>(c, character));
+    }
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    textVBO = make_shared<VertexBuffer>();
+    textVBO->create(nullptr, sizeof(float) * 6, 4, GL_DYNAMIC_DRAW); // 4 vertices, 6 floats per vertex
+
+    textVAO = make_shared<VertexArrayObject>();
+    textVAO->create(*textVBO, VertexDefinitionElement::POSITION | VertexDefinitionElement::TEXTURE_COORD);
+
+    // destroy FreeType
+    FT_Done_Face(face);
+    FT_Done_FreeType(ft);
 
     return true;
 }
@@ -192,7 +276,7 @@ bool Engine::createDefaultResources()
 
 
     // Init default sprite resources
-    defaultSpriteShader = Shader::create("../Data/Shaders/sprite_shader.vs", "../Data/shaders/sprite_shader.fs");
+    defaultSpriteShader = Shader::create(VS_SPRITE_FILE_NAME.c_str(), FS_SPRITE_FILE_NAME.c_str());
     if (!defaultSpriteShader)
         return false;
     defaultSpriteShader->use();
@@ -204,7 +288,7 @@ bool Engine::createDefaultResources()
 
 
     // Init default model resources
-    defaultModelShader = Shader::create("../Data/Shaders/shader.vs", "../Data/shaders/shader.fs");
+    defaultModelShader = Shader::create(VS_FILE_NAME.c_str(), FS_FILE_NAME.c_str());
     if (!defaultModelShader)
         return false;
     defaultModelShader->use();
@@ -246,6 +330,14 @@ bool Engine::createDefaultResources()
     defaultBBoxShader->setMat4("projection", projection);
     defaultBBoxShader->setMat4("view", glm::identity<glm::mat4x4>());
     defaultBBoxShader->setVec3("color", glm::vec3(1.0f, 0.0f, 0.0f));
+
+
+    // Init default text shader
+    defaultTextShader = Shader::create(VS_TEXT_FILE_NAME.c_str(), FS_TEXT_FILE_NAME.c_str());
+    if (!defaultTextShader)
+        return false;
+    defaultTextShader->use();
+    defaultTextShader->setMat4("projection", ortho);
 }
 
 void Engine::createGameObjects()
@@ -360,6 +452,47 @@ glm::vec3 Engine::getPlayerPosition() const
     return glm::vec3(0.0f);
 }
 
+void Engine::renderText(string text, glm::vec2 position, float scale, glm::vec3 color)
+{
+    defaultTextShader->use();
+    defaultTextShader->setVec3("textColor", color);
+    glActiveTexture(GL_TEXTURE0);
+    textVAO->bind();
+
+    // iterate through all characters
+    string::const_iterator c;
+    for (c = text.begin(); c != text.end(); c++)
+    {
+        Character ch = characters[*c];
+
+        float xpos = position.x + ch.Bearing.x * scale;
+        float ypos = position.y - (ch.Size.y - ch.Bearing.y) * scale;
+
+        float w = ch.Size.x * scale;
+        float h = ch.Size.y * scale;
+        // update VBO for each character
+        float vertices[6][4] = {
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos,     ypos,       0.0f, 1.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+            { xpos + w, ypos + h,   1.0f, 0.0f }
+        };
+
+        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+        // update content of VBO memory
+        textVBO->updateData(vertices, sizeof(vertices[0])*6, 4);
+        // render quad
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+        position.x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+    }
+    textVAO->unbind();
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void Engine::setPlayerHealth(float newHealth) {
     auto player = this->player.lock(); // Sprawdza, czy gracz istnieje
     if (!player)
@@ -379,6 +512,7 @@ void Engine::update(float deltaTime)
     }
 
     button->update(deltaTime);
+    renderText("DUPA", glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 
     // Get all projectiles
     vector<shared_ptr<Projectile>> enemyProjectiles;

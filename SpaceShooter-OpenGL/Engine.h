@@ -32,6 +32,8 @@ public:
     void setPlayerHealth(float newHealth);
     glm::vec3 getPlayerPosition() const;
     glm::vec3 getCameraPosition() const { return cameraPosition; };
+    void renderText(string text, glm::vec2 position, float scale=1.f, glm::vec3 color = WHITE_COLOR);
+
     static Engine& getInstance() { return instance; }
 
     static shared_ptr<Texture> getTexture(const char* path, aiTextureType type = aiTextureType::aiTextureType_DIFFUSE);
@@ -61,11 +63,14 @@ private:
     shared_ptr<VertexBuffer> defaultVBO;
     shared_ptr<IndexBuffer> defaultIBO;
     shared_ptr<VertexArrayObject> defaultVAO;
+    shared_ptr<VertexBuffer> textVBO;
+    shared_ptr<VertexArrayObject> textVAO;
 
     shared_ptr<Shader> defaultSpriteShader;
     shared_ptr<Shader> defaultModelShader;
     shared_ptr<Shader> defaultEmissiveShader;
     shared_ptr<Shader> defaultBBoxShader;
+    shared_ptr<Shader> defaultTextShader;
 
     GLFWwindow* window = nullptr;
     weak_ptr<Player> player;
@@ -75,6 +80,7 @@ private:
     vector<shared_ptr<Model>> models;
     vector<shared_ptr<Shader>> shaders;
     vector<weak_ptr<PointLight>> pointLights;
+    map<char, Character> characters;
 
     double lastFrame = 0;
     const glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -87,6 +93,7 @@ private:
     void doRun();
     void render();
     void update(float deltaTime);
+    bool freeTypeInit();
     void createGameObjects();
     bool createDefaultResources();
     void setCustomCursor();
