@@ -4,7 +4,7 @@ void ChargingStation::create(const Model& model, const Shader& shader)
 {
     ModelObject::create(model, shader);
     rotation.x = 0.f;
-    rotation.y = 110.f;
+    rotation.y = 130.f;
 
     setSize(glm::vec3(0.045f, 0.045f, 0.045f));
 

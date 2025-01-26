@@ -395,7 +395,6 @@ void Engine::update(float deltaTime)
             {
                 enemy->updateHealth(-PROJECTILE_DAMAGE);
                 projectile->setAlive(false);
-                printf("Enemy health: %f\n", enemy->getHealth());
             }
         }
     }
@@ -410,7 +409,6 @@ void Engine::update(float deltaTime)
         {
             player->updateHealth(-PROJECTILE_DAMAGE);
             projectile->setAlive(false);
-            printf("Player health: %f\n", player->getHealth());
         }
     }
 }
