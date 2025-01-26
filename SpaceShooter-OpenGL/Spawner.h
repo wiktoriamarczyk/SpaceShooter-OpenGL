@@ -16,7 +16,7 @@ protected:
     virtual glm::vec3 getRandomSpawnPosition() const { return glm::vec3(0, 0, 0); };
     virtual glm::vec3 getRandomInitialSpawnPosition() const { return glm::vec3(0, 0, 0); };
     virtual void spawnInitialObjects();
-    void eraseInactiveObjects();
+    virtual void eraseInactiveObjects();
 
     vector<shared_ptr<T>> activeObjects;
     shared_ptr<Shader> shader;

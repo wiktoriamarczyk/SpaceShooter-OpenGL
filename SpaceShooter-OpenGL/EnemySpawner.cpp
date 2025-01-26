@@ -7,7 +7,7 @@ void EnemySpawner::create(const vector<shared_ptr<Model>> models, const Shader& 
     this->models = models;
 
     spawnInterval = 3.0f;
-    maxActiveObjects = 3;
+    maxActiveObjects = 1;
 
     Spawner::create(shader);
 }
@@ -45,4 +45,27 @@ glm::vec3 EnemySpawner::getRandomSpawnPosition() const
     float y = static_cast<float>(rand() % 200 - 100) / 100.0f;
 
     return glm::vec3(x, y, -50.0f);
+}
+
+void EnemySpawner::eraseInactiveObjects()
+{
+    int removedEnemies = 0;
+
+    for (int i = 0; i < activeObjects.size();)
+    {
+        if (!activeObjects[i]->isAlive())
+        {
+            activeObjects.erase(activeObjects.begin() + i);
+            removedEnemies++;
+        }
+        else
+        {
+            i++;
+        }
+    }
+
+    if (removedEnemies > 0)
+    {
+        maxActiveObjects = std::min(maxActiveObjects.value_or(0) + removedEnemies, maxPossibleObjects);
+    }
 }

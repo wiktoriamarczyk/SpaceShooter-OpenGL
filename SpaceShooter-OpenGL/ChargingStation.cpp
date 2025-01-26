@@ -8,9 +8,8 @@ void ChargingStation::create(const Model& model, const Shader& shader)
 
     setSize(glm::vec3(0.045f, 0.045f, 0.045f));
 
-    startPosition = glm::vec3(3.0f, 0.0f, -2.0f);
+    startPosition = glm::vec3(4.0f, 0.0f, -3.5f);
     position = startPosition;
-    position.z = -3.5f;
 
     currentSpeed = 0.0f;
 
@@ -60,7 +59,7 @@ void ChargingStation::render()
 
 void ChargingStation::moveToEdge(float deltaTime)
 {
-    glm::vec3 targetPosition = glm::vec3(1.0f, position.y, position.z);
+    glm::vec3 targetPosition = glm::vec3(2.0f, position.y, position.z);
     glm::vec3 direction = glm::normalize(targetPosition - position);
 
     if (currentSpeed < 5.0f) {
@@ -104,5 +103,5 @@ float ChargingStation::getRandomCooldown(float minCooldown, float maxCooldown)
 
 bool ChargingStation::isPlayerNear(const glm::vec3& playerPosition)
 {
-    return glm::abs(playerPosition.x - position.x) <= 0.8f;
+    return glm::abs(playerPosition.x - position.x) <= 1.2f;
 }

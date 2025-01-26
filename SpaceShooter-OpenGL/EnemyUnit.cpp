@@ -127,7 +127,7 @@ void EnemyUnit::render()
 void EnemyUnit::setRandomIdleTime()
 {
     idleTime = static_cast<float>(rand() % 3 + 1);
-    postShotCooldown = 1.0f;
+    postShotCooldown = 0.5f;
 }
 
 void EnemyUnit::setRandomTargetPosition()
@@ -135,8 +135,8 @@ void EnemyUnit::setRandomTargetPosition()
     float newTargetX, newTargetY, newTargetZ;
 
     do {
-        newTargetX = static_cast<float>(rand() % 200 - 100) / 100.0f;
-        newTargetY = static_cast<float>(rand() % 200 - 100) / 100.0f;
+        newTargetX = static_cast<float>(rand() % 600 - 300) / 100.0f;
+        newTargetY = static_cast<float>(rand() % 400 - 200) / 100.0f;
         newTargetZ = static_cast<float>(rand() % 3 + 6) * -1.0f;
     } while (glm::distance(glm::vec3(newTargetX, newTargetY, 0.0f), position) < minDistance);
 
@@ -145,11 +145,11 @@ void EnemyUnit::setRandomTargetPosition()
 
 void EnemyUnit::shootProjectile(const glm::vec3& playerPosition)
 {
-    float distanceToPlayer = glm::distance(position, playerPosition);
+    float distanceToPlayer = std::abs(position.z - playerPosition.z);
 
-    if (distanceToPlayer > 8.0f)
+    if (distanceToPlayer > 40.0f)
     {
-        return;
+        return; 
     }
 
     if (shader && projectileModel)

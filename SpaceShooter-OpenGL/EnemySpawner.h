@@ -8,6 +8,7 @@ public:
     void create(const vector<shared_ptr<Model>> models, const Shader& shader, const Model& projectileModel);
     void update(float deltaTime) override;
     void render() override {};
+    void eraseInactiveObjects() override;
 
 private:
     void spawn() override;
@@ -19,5 +20,7 @@ private:
     const float spawnMargin = 0.5f;
     const float windowHalfSize = 3.5f;
     const float minEnemyDistance = 1.0f;
+
+    int maxPossibleObjects = 10;
 };
 
