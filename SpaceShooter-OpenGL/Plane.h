@@ -15,12 +15,35 @@ public:
     Plane(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3);
 
     float distanceToPoint(const glm::vec3& v)const;
+    bool rayIntersection(const glm::vec3& start, const glm::vec3& dir, float& scale)const;
+    optional<const glm::vec3> rayIntersection(const glm::vec3& start, const glm::vec3& dir)const;
     PlaneRelation relation(const glm::vec3& v, float epsilon = 0.0001f)const;
 
 private:
     glm::vec3 normal = { 0 , 0 , 1 };
     float d = 0;
 };
+
+
+inline bool Plane::rayIntersection(const glm::vec3& start, const glm::vec3& dir, float& scale)const
+{
+    float d1 = glm::dot(normal, start) + d;
+    float d2 = glm::dot(normal, dir);
+    if (d2 == 0.0f)
+        return false;
+    scale = -(d1 / d2);
+    return true;
+}
+
+inline optional<const glm::vec3> Plane::rayIntersection(const glm::vec3& start, const glm::vec3& dir)const
+{
+    float scale = 0;
+    if (rayIntersection(start, dir, scale))
+    {
+        return start + dir * scale;
+    }
+    return nullopt;
+}
 
 
 inline Plane::Plane(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3)

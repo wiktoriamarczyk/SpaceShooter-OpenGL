@@ -290,7 +290,7 @@ bool Engine::createDefaultResources()
     defaultModelShader->use();
 
     // set perspective projection matrix
-    auto projection = glm::perspective(glm::radians(60.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+    auto projection = projectionMatrix = glm::perspective(glm::radians(60.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
     defaultModelShader->setMat4("projection", projection);
     defaultModelShader->setMat4("view",glm::identity<glm::mat4x4>());
     defaultModelShader->setVec3("viewPos", glm::vec3(0.0f, 0.0f, 0.0f));
@@ -517,6 +517,32 @@ void Engine::render()
 
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     glfwSwapBuffers(window);
+}
+
+glm::vec3 Engine::getMouseWorldRayDirection()const
+{
+    glm::vec2 mouse_pos = getMousePositionInUISpace();
+    glm::vec3 ray_nds;
+
+    ray_nds.x = (2.0f * mouse_pos.x) / SCREEN_WIDTH - 1.0f;
+    ray_nds.y = 1.0f - (2.0f * mouse_pos.y) / SCREEN_HEIGHT;
+    ray_nds.y = -ray_nds.y;
+    ray_nds.z = 1.0f;
+
+    glm::vec4 ray_clip = glm::vec4(ray_nds.x, ray_nds.y, -1.0, 1.0);
+    glm::vec4 ray_wrld = glm::inverse(projectionMatrix) * ray_clip;
+    // don't forget to normalize the vector at some point
+    return glm::normalize(ray_wrld);
+};
+
+glm::vec3 Engine::getMouseWorldPosOnTestPlane(float TestPlaneZ)const
+{
+    Plane testPlane(glm::vec3(-1.0f, -1.0f, TestPlaneZ), glm::vec3(1.0f, -1.0f, TestPlaneZ), glm::vec3(-1.0f, 1.0f, TestPlaneZ));
+
+    if (auto point = testPlane.rayIntersection(glm::vec3(0.0f, 0.0f, 0.0f), getMouseWorldRayDirection()))
+        return *point;
+
+    return glm::vec3(0.0f);
 }
 
 shared_ptr<Texture> Engine::getTexture(const char* path, aiTextureType type)

@@ -62,18 +62,7 @@ void Player::tilt(float deltaTime)
 
 void Player::rotateTheHead(float deltaTime)
 {
-    glm::vec2 cursorPosition = Engine::getInstance().getMousePosition();
-    glm::vec2 screenSize = Engine::getInstance().getScreenSize();
-
-    // normalize cursor position to range <-1, 1>
-    float normalizedX = (cursorPosition.x / screenSize.x) * 2.0f - 1.0f;
-    float normalizedY = 1.0f - (cursorPosition.y / screenSize.y) * 2.0f;
-    // calculate world position of cursor
-    float worldX = normalizedX * WORLD_RANGE;
-    float worldY = normalizedY * WORLD_RANGE;
-
-    float cursorDepth = -5.0f;
-    glm::vec3 cursorIn3D(normalizedX, normalizedY, cursorDepth);
+    glm::vec3 cursorIn3D = Engine::getInstance().getMouseWorldPosOnTestPlane();
     glm::vec3 directionToCursor = glm::normalize(cursorIn3D - position);
 
     float angleY = glm::degrees(atan2(directionToCursor.x, directionToCursor.z));
@@ -137,19 +126,7 @@ void Player::onMouseButtonDown(int button)
 {
     if (button == GLFW_MOUSE_BUTTON_LEFT)
     {
-        glm::vec2 cursorPosition = Engine::getInstance().getMousePosition();
-        glm::vec2 screenSize = Engine::getInstance().getScreenSize();
-
-        float normalizedX = (cursorPosition.x / screenSize.x) * 2.0f - 1.0f;
-        float normalizedY = 1.0f - (cursorPosition.y / screenSize.y) * 2.0f;
-
-        float worldX = normalizedX * WORLD_RANGE;
-        float worldY = normalizedY * WORLD_RANGE;
-
-        float cursorDepth = -20.0f;
-
-        // Tworzymy wektor 3D dla pozycji kursora w przestrzeni œwiata
-        glm::vec3 cursorIn3D(worldX, worldY, cursorDepth);
+        glm::vec3 cursorIn3D = Engine::getInstance().getMouseWorldPosOnTestPlane();
 
         shootProjectile(cursorIn3D);
     }

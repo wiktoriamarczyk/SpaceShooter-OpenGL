@@ -38,6 +38,8 @@ public:
     void playSound(const char* path);
     vector<shared_ptr<Texture>> loadStarsTextures();
     vector<shared_ptr<Model>> loadAsteroidModels();
+    glm::vec3 getMouseWorldRayDirection()const;
+    glm::vec3 getMouseWorldPosOnTestPlane(float TestPlaneZ=-7.f)const;
 
     static Engine& getInstance() { return instance; }
 
@@ -91,6 +93,7 @@ private:
     double lastFrame = 0;
     bool initializing = true;
     const glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::mat4 projectionMatrix;
 
     static void processInputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void processMouseInput(GLFWwindow* window, int button, int action, int mods);
@@ -101,7 +104,6 @@ private:
     void render();
     void update(float deltaTime);
     bool freeTypeInit();
-    void createGameObjects();
     bool createDefaultResources();
     void setCustomCursor();
 };

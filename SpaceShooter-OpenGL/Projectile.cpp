@@ -14,6 +14,8 @@ void Projectile::create(const glm::vec3& startPosition, const glm::vec3& targetP
     position = startPosition;
     offScreenDeathEnabled = true;
     movementDirection = glm::normalize(targetPosition - startPosition);
+    this->screenBoundsX = glm::vec2(-4.5f, 4.5f);
+    this->screenBoundsY = glm::vec2(-4.5f, 4.5f);
 }
 
 void Projectile::update(float deltaTime)
