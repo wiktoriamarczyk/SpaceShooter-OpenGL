@@ -8,13 +8,13 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Sprite.h"
-#include "TestCube.h"
 #include "Model.h"
 #include "ModelObject.h"
 #include "Player.h"
+#include "PointLight.h"
 #include "MainMenuState.h"
 #include "InGameState.h"
-#include "PointLight.h"
+#include "GameOverState.h"
 
 Engine Engine::instance;
 
@@ -227,17 +227,11 @@ void Engine::setCustomCursor()
 
     allStates.push_back(make_unique<MainMenuState>());
     allStates.push_back(make_unique<InGameState>());
+    allStates.push_back(make_unique<GameOverState>());
     changeGameState(GAME_STATE::MENU);
 
     glfwSetCursor(window, customCursor);
 }
-
-//shared_ptr<Button> button = make_shared<Button>();
-//button->create(glm::vec2(200, 50), glm::vec2(200.0f, 50.0f), "Play", [player = this->player]()
-//    {
-//        if (auto p = player.lock())
-//            p->updateHealth(-10.f);
-//    });
 
 bool Engine::createDefaultResources()
 {

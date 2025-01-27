@@ -13,6 +13,16 @@ InGameState::InGameState() : GameState(GAME_STATE::IN_GAME) {}
 
 void InGameState::update(float deltaTime)
 {
+    auto player = this->player.lock();
+    if (!player)
+        return;
+
+    if (player->getHealth() <= 0)
+    {
+        GameState::gameOver = true;
+        Engine::getInstance().changeGameState(GAME_STATE::GAME_OVER);
+    }
+
     GameState::update(deltaTime);
 
     // Get all projectiles
@@ -52,10 +62,6 @@ void InGameState::update(float deltaTime)
         }
     }
 
-    auto player = this->player.lock();
-    if (!player)
-        return;
-
     for (const auto& projectile : enemyProjectiles)
     {
         if (player->isVertexInsideBbox(projectile->getWorldBboxCenter()))
@@ -69,12 +75,15 @@ void InGameState::update(float deltaTime)
 void InGameState::render()
 {
     GameState::render();
+
     string killedEnemies = "Points: " + to_string(EnemySpawner::getRemovedEnemiesCount());
     Engine::getInstance().renderText(killedEnemies, glm::vec2(10.0f, SCREEN_HEIGHT - 40.f));
 }
 
 void InGameState::onEnter()
 {
+    GameState::onEnter();
+
     auto player = make_shared<Player>();
     this->player = player;
 

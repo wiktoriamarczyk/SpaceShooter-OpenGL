@@ -21,9 +21,12 @@ void MainMenuState::render()
 
 void MainMenuState::onEnter()
 {
+    GameState::onEnter();
+    renderLoadingText = false;
+
     glm::vec2 buttonSize = glm::vec2(200.0f, 50.0f);
     shared_ptr<Button> buttonPlay = make_shared<Button>();
-    buttonPlay->create(glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), buttonSize, "Play", [this]()
+    buttonPlay->create(glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), buttonSize, "PLAY", [this]()
         {
             renderLoadingText = true;
             Engine::getInstance().changeGameState(GAME_STATE::IN_GAME);
@@ -32,7 +35,7 @@ void MainMenuState::onEnter()
     gameObjects.push_back(buttonPlay);
 
     shared_ptr<Button> buttonExit = make_shared<Button>();
-    buttonExit->create(glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 2 * buttonSize.y), buttonSize, "Exit", [this]()
+    buttonExit->create(glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 2 * buttonSize.y), buttonSize, "EXIT", [this]()
         {
             Engine::getInstance().exitGame();
         });

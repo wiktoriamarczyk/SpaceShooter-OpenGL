@@ -10,6 +10,7 @@ public:
     void render() override {};
     void eraseInactiveObjects() override;
     static int getRemovedEnemiesCount() { return removedEnemies; }
+    static void resetRemovedEnemiesCount() { removedEnemies = 0; }
 
 private:
     void spawn() override;

@@ -149,7 +149,7 @@ void EnemyUnit::shootProjectile(const glm::vec3& playerPosition)
 
     if (distanceToPlayer > 40.0f)
     {
-        return; 
+        return;
     }
 
     if (shader && projectileModel)
@@ -159,6 +159,7 @@ void EnemyUnit::shootProjectile(const glm::vec3& playerPosition)
         newProjectile->create(projectileStartPos, playerPosition, TEAM::ENEMY, 5.0f, *projectileModel);
         newProjectile->setSize(glm::vec3(0.01f, 0.01f, 0.01f));
         Engine::getInstance().addGameObject(newProjectile);
+        Engine::getInstance().playSound(SHOOT_SOUND_PATH);
     }
     else {
         std::cerr << "Shader or model was destroyed or never initialized!" << std::endl;
