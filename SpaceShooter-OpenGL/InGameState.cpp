@@ -69,6 +69,8 @@ void InGameState::update(float deltaTime)
 void InGameState::render()
 {
     GameState::render();
+    string killedEnemies = "Points: " + to_string(EnemySpawner::getRemovedEnemiesCount());
+    Engine::getInstance().renderText(killedEnemies, glm::vec2(10.0f, SCREEN_HEIGHT - 40.f));
 }
 
 void InGameState::onEnter()

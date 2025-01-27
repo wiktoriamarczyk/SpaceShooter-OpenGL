@@ -1,7 +1,9 @@
 #include "EnemySpawner.h"
 #include "Engine.h"
 
-void EnemySpawner::create(const vector<shared_ptr<Model>> models, const Shader& shader, const Model& projectileModel)
+int EnemySpawner::removedEnemies = 0;
+
+void EnemySpawner::create(const vector<shared_ptr<Model>>& models, const Shader& shader, const Model& projectileModel)
 {
     this->projectileModel = projectileModel.getSelf();
     this->models = models;
@@ -49,14 +51,12 @@ glm::vec3 EnemySpawner::getRandomSpawnPosition() const
 
 void EnemySpawner::eraseInactiveObjects()
 {
-    int removedEnemies = 0;
-
     for (int i = 0; i < activeObjects.size();)
     {
         if (!activeObjects[i]->isAlive())
         {
             activeObjects.erase(activeObjects.begin() + i);
-            removedEnemies++;
+            EnemySpawner::removedEnemies++;
         }
         else
         {
@@ -64,7 +64,7 @@ void EnemySpawner::eraseInactiveObjects()
         }
     }
 
-    if (removedEnemies > 0)
+    if (EnemySpawner::removedEnemies > 0)
     {
         maxActiveObjects = std::min(maxActiveObjects.value_or(0) + removedEnemies, maxPossibleObjects);
     }
