@@ -175,8 +175,8 @@ void Player::shootProjectile(const glm::vec3& targetPosition)
         newProjectile->create(projectileStartPos, targetPosition, TEAM::PLAYER, 5.f, *projectileModel);
         newProjectile->setScreenBoundZ(20.0f);
         newProjectile->setSize(glm::vec3(0.015f, 0.015f, 0.015f));
-        //projectiles.push_back(newProjectile);
         Engine::getInstance().addGameObject(newProjectile);
+        Engine::getInstance().playSound(SHOOT_SOUND_PATH);
     }
     else {
         std::cerr << "Shader or model was destroyed or never initialized!" << std::endl;

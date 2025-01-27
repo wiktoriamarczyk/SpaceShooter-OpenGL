@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "Engine.h"
 
 void GameObject::update(float deltaTime)
 {
@@ -22,5 +23,6 @@ void GameObject::updateHealth(float value)
     if (currentHealth <= 0.0f)
     {
         alive = false;
+        Engine::getInstance().playSound(EXPLOSION_SOUND_PATH);
     }
 }

@@ -38,6 +38,9 @@ void Button::render()
     sprite->setPosition(position);
     sprite->setSize(size);
     sprite->draw();
+
+    glm::vec2 textPos = glm::vec2(position.x - size.x / 8.0f, position.y - size.y / 8.0f);
+    Engine::getInstance().renderText(text, textPos, 0.5f, glm::vec3(0, 0, 0));
 }
 
 void Button::onMouseButtonDown(int button)

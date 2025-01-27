@@ -12,14 +12,9 @@
 #include "Model.h"
 #include "ModelObject.h"
 #include "Player.h"
-#include "EnemyUnit.h"
-#include "Projectile.h"
-#include "AsteroidSpawner.h"
-#include "StarSpawner.h"
-#include "EnemySpawner.h"
-#include "Billboard.h"
-#include "ChargingStation.h"
-#include "Button.h"
+#include "MainMenuState.h"
+#include "InGameState.h"
+#include "PointLight.h"
 
 Engine Engine::instance;
 
@@ -34,17 +29,12 @@ void Engine::processInput(int key, int scancode, int action, int mods)
 {
     if (action == GLFW_PRESS)
     {
-        for (int i=0; i<gameObjects.size(); i++)
-        {
-            gameObjects[i]->onKeyDown(key);
-        }
+        currentState->onKeyDown(key);
     }
     else if (action == GLFW_RELEASE)
     {
-        for (int i=0; i<gameObjects.size(); i++)
-        {
-            gameObjects[i]->onKeyUp(key);
-        }
+        currentState->onKeyUp(key);
+
         // If the escape key is pressed, close the window
         if (key == GLFW_KEY_ESCAPE)
             glfwSetWindowShouldClose(window, true);
@@ -60,22 +50,13 @@ void Engine::processMouseInput(int button, int action, int mods)
 {
     if (action == GLFW_PRESS)
     {
-        for (int i = 0; i < gameObjects.size(); i++)
-        {
-            gameObjects[i]->onMouseButtonDown(button);
-            this->button->onMouseButtonDown(button);
-        }
+        currentState->onMouseButtonDown(button);
     }
     else if (action == GLFW_RELEASE)
     {
-        for (int i = 0; i < gameObjects.size(); i++)
-        {
-            gameObjects[i]->onMouseButtonUp(button);
-            this->button->onMouseButtonUp(button);
-        }
+        currentState->onMouseButtonUp(button);
     }
 }
-
 
 bool Engine::init()
 {
@@ -133,7 +114,7 @@ bool Engine::doInit()
     }
 
     music.openFromFile(MUSIC_PATH);
-    music.setVolume(50);
+    music.setVolume(25);
     music.setLoop(true);
     music.play();
 
@@ -144,7 +125,6 @@ bool Engine::doInit()
     }
 
     setCustomCursor();
-    createGameObjects();
 
     return true;
 }
@@ -245,8 +225,19 @@ void Engine::setCustomCursor()
         return;
     }
 
+    allStates.push_back(make_unique<MainMenuState>());
+    allStates.push_back(make_unique<InGameState>());
+    changeGameState(GAME_STATE::MENU);
+
     glfwSetCursor(window, customCursor);
 }
+
+//shared_ptr<Button> button = make_shared<Button>();
+//button->create(glm::vec2(200, 50), glm::vec2(200.0f, 50.0f), "Play", [player = this->player]()
+//    {
+//        if (auto p = player.lock())
+//            p->updateHealth(-10.f);
+//    });
 
 bool Engine::createDefaultResources()
 {
@@ -343,72 +334,16 @@ bool Engine::createDefaultResources()
         return false;
     defaultTextShader->use();
     defaultTextShader->setMat4("projection", ortho);
-}
 
-void Engine::createGameObjects()
-{
+
     // Draw background sprite
-    shared_ptr<Texture> backgroundTexture = getTexture("../Data/Textures/background.png");
+    shared_ptr<Texture> backgroundTexture = getTexture(BACKGROUND_PATH);
     background = Sprite::create(*backgroundTexture, glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
-
-    auto player = make_shared<Player>();
-    this->player = player;
-
-    shared_ptr<Model> playerModel = getModel(PLAYER_MODEL_PATH);
-    shared_ptr<Model> modelProjectile = getModel(PROJECTILE_MODEL_PATH);
-    if (playerModel && modelProjectile)
-    {
-        player->create(*playerModel, *defaultModelShader, *modelProjectile);
-        player->setPosition(glm::vec3(0.0f, 0.0f, -2.0f));
-        gameObjects.push_back(player);
-    }
-
-    shared_ptr<AsteroidSpawner> asteroidSpawner = make_shared<AsteroidSpawner>();
-    vector<shared_ptr<Model>> asteroidModels = loadAsteroidModels();
-    if (!asteroidModels.empty())
-    {
-        asteroidSpawner->create(asteroidModels, *defaultModelShader);
-        gameObjects.push_back(asteroidSpawner);
-    }
-
-    shared_ptr<StarSpawner> starSpawner = make_shared<StarSpawner>();
-    vector<shared_ptr<Texture>> starTextures = loadStarsTextures();
-    if (!starTextures.empty())
-    {
-        starSpawner->create(starTextures, *defaultEmissiveShader);
-        gameObjects.push_back(starSpawner);
-    }
-
-    shared_ptr<EnemySpawner> enemySpawner = make_shared<EnemySpawner>();
-    vector<shared_ptr<Model>> enemyModels;
-    enemyModels.push_back(getModel(ENEMY_MODEL_PATH));
-    if (!enemyModels.empty() && modelProjectile)
-    {
-        enemySpawner->create(enemyModels, *defaultModelShader, *modelProjectile);
-        gameObjects.push_back(enemySpawner);
-    }
-
-    shared_ptr<ChargingStation> station = make_shared<ChargingStation>();
-    vector<shared_ptr<Model>> stationModels;
-    stationModels.push_back(getModel(STATION_MODEL_PATH));
-    if (!stationModels.empty())
-    {
-        shared_ptr<Model> selectedModel = stationModels[0];
-        station->create(*selectedModel, *defaultModelShader);
-        gameObjects.push_back(station);
-    }
-
-    button = make_shared<Button>();
-    button->create(glm::vec2(200,50), glm::vec2(200.0f, 50.0f), "Play", [player=this->player]()
-        {
-            if (auto p = player.lock())
-                p->updateHealth(-10.f);
-        });
 }
 
 void Engine::addGameObject(shared_ptr<GameObject> gameObject)
 {
-    gameObjects.push_back(gameObject);
+    currentState->addGameObject(gameObject);
 }
 
 void Engine::addPointLight(shared_ptr<PointLight> pointLight)
@@ -450,11 +385,22 @@ void Engine::removePointLight(PointLight& pointLight)
 
 glm::vec3 Engine::getPlayerPosition() const
 {
-    if (auto player = this->player.lock())
+    if (currentState->getState() != GAME_STATE::IN_GAME)
+        return glm::vec3(0.0f);
+
+    if (auto player = currentState->asInGameState()->player.lock())
     {
         return player->getPosition();
     }
     return glm::vec3(0.0f);
+}
+
+void Engine::setPlayerHealth(float newHealth)
+{
+    auto player = currentState->asInGameState()->player.lock();
+    if (!player)
+        return;
+    player->updateHealth(newHealth);
 }
 
 void Engine::renderText(string text, glm::vec2 position, float scale, glm::vec3 color)
@@ -463,6 +409,7 @@ void Engine::renderText(string text, glm::vec2 position, float scale, glm::vec3 
     defaultTextShader->setVec3("textColor", color);
     glActiveTexture(GL_TEXTURE0);
     textVAO->bind();
+    glDisable(GL_DEPTH_TEST);
 
     // iterate through all characters
     string::const_iterator c;
@@ -496,95 +443,77 @@ void Engine::renderText(string text, glm::vec2 position, float scale, glm::vec3 
     }
     textVAO->unbind();
     glBindTexture(GL_TEXTURE_2D, 0);
+    glEnable(GL_DEPTH_TEST);
 }
 
-void Engine::setPlayerHealth(float newHealth) {
-    auto player = this->player.lock(); // Sprawdza, czy gracz istnieje
-    if (!player)
-        return;
-    player->updateHealth(newHealth);
+void Engine::changeGameState(GAME_STATE newState)
+{
+    if (initializing)
+        initializing = false;
+    else
+        render();
+
+    for (int i = 0; i < allStates.size(); ++i)
+    {
+        if (allStates[i]->getState() == newState)
+        {
+            currentState = allStates[i].get();
+            currentState->onEnter();
+            return;
+        }
+    }
+}
+
+void Engine::exitGame()
+{
+    glfwSetWindowShouldClose(window, true);
+}
+
+void Engine::playSound(const char* path)
+{
+    if (soundBuffers.find(path) == soundBuffers.end())
+    {
+        sf::SoundBuffer buffer;
+        if (!buffer.loadFromFile(path))
+        {
+            std::cerr << "Failed to load sound file: " << path << std::endl;
+            return;
+        }
+
+        soundBuffers[path] = std::move(buffer);
+    }
+
+    auto sound = make_shared<sf::Sound>();
+    sound->setBuffer(soundBuffers[path]);
+    sound->setVolume(70);
+    sound->play();
+
+    activeSounds.push_back(sound);
 }
 
 void Engine::update(float deltaTime)
 {
-    // Update game objects
-    for (int i = 0; i < gameObjects.size();)
-    {
-        if (gameObjects[i]->isAlive())
-            gameObjects[i++]->update(deltaTime);
-        else
-            gameObjects.erase(gameObjects.begin() + i);
-    }
+    currentState->update(deltaTime);
 
-    button->update(deltaTime);
-
-    // Get all projectiles
-    vector<shared_ptr<Projectile>> enemyProjectiles;
-    vector<shared_ptr<Projectile>> playerProjectiles;
-    vector<shared_ptr<EnemyUnit>> enemies;
-
-    for (int i = 0; i < gameObjects.size(); ++i)
-    {
-        auto projectile = dynamic_pointer_cast<Projectile>(gameObjects[i]);
-        if (projectile)
-        {
-            if (projectile->getTeam() == TEAM::ENEMY)
-                enemyProjectiles.push_back(projectile);
-            else
-                playerProjectiles.push_back(projectile);
-
-            continue;
-        }
-        auto enemy = dynamic_pointer_cast<EnemyUnit>(gameObjects[i]);
-        if (enemy)
-        {
-            enemies.push_back(enemy);
-        }
-    }
-
-    // Check for collisions with projectiles
-    for (const auto& projectile : playerProjectiles)
-    {
-        for (const auto& enemy : enemies)
-        {
-            if (enemy->isVertexInsideBbox(projectile->getWorldBboxCenter()))
-            {
-                enemy->updateHealth(-PROJECTILE_DAMAGE);
-                projectile->setAlive(false);
-            }
-        }
-    }
-
-    auto player = this->player.lock();
-    if (!player)
-        return;
-
-    for (const auto& projectile : enemyProjectiles)
-    {
-        if (player->isVertexInsideBbox(projectile->getWorldBboxCenter()))
-        {
-            player->updateHealth(-PROJECTILE_DAMAGE);
-            projectile->setAlive(false);
-        }
-    }
+    activeSounds.erase(
+        std::remove_if(
+            activeSounds.begin(),
+            activeSounds.end(),
+            [](const shared_ptr<sf::Sound>& sound) { return sound->getStatus() == sf::Sound::Stopped; }
+        ),
+        activeSounds.end()
+    );
 }
 
 void Engine::render()
 {
-    //glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     // clear the color buffer and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     background->draw();
     // clear the depth buffer after drawing the background
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    for (int i = 0; i < gameObjects.size(); ++i)
-    {
-        gameObjects[i]->render();
-    }
-
-    button->render();
-    renderText("DUPA", glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
+    currentState->render();
 
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     glfwSwapBuffers(window);
@@ -706,6 +635,27 @@ vector<shared_ptr<Model>> Engine::loadAsteroidModels()
     return asteroidModels;
 }
 
+glm::vec2 Engine::getMousePosition()
+{
+    double xpos, ypos;
+    glfwGetCursorPos(instance.window, &xpos, &ypos);
+    return glm::vec2(xpos, ypos);
+}
+
+glm::vec2 Engine::getMousePositionInUISpace()
+{
+    glm::vec2 mousePos = getMousePosition();
+    glm::vec2 uiScale = glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT) / getScreenSize();
+    return glm::vec2(0, SCREEN_HEIGHT) + glm::vec2(1, -1) * (mousePos * uiScale);
+}
+
+glm::vec2 Engine::getScreenSize()
+{
+    int width, height;
+    glfwGetWindowSize(instance.window, &width, &height);
+    return glm::vec2(width, height);
+}
+
 shared_ptr<VertexBuffer> Engine::GetDefaultVBO()
 {
     return instance.defaultVBO;
@@ -739,25 +689,4 @@ shared_ptr<Shader> Engine::GetDefaultEmissiveShader()
 shared_ptr<Shader> Engine::GetDefaultBBoxShader()
 {
     return instance.defaultBBoxShader;
-}
-
-glm::vec2 Engine::getMousePosition()
-{
-    double xpos, ypos;
-    glfwGetCursorPos(instance.window, &xpos, &ypos);
-    return glm::vec2(xpos, ypos);
-}
-
-glm::vec2 Engine::getMousePositionInUISpace()
-{
-    glm::vec2 mousePos = getMousePosition();
-    glm::vec2 uiScale = glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT) / getScreenSize();
-    return glm::vec2(0,SCREEN_HEIGHT) + glm::vec2(1,-1)*(mousePos * uiScale);
-}
-
-glm::vec2 Engine::getScreenSize()
-{
-    int width, height;
-    glfwGetWindowSize(instance.window, &width, &height);
-    return glm::vec2(width, height);
 }

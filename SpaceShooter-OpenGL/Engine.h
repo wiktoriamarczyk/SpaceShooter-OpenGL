@@ -2,6 +2,7 @@
 
 #include "Common.h"
 #include "GameObject.h"
+#include "GameState.h"
 
 class VertexBuffer;
 class IndexBuffer;
@@ -18,7 +19,6 @@ class AsteroidSpawner;
 class EnemySpawner;
 class PointLight;
 class HealthBar;
-class Button;
 
 class Engine
 {
@@ -33,6 +33,11 @@ public:
     glm::vec3 getPlayerPosition() const;
     glm::vec3 getCameraPosition() const { return cameraPosition; };
     void renderText(string text, glm::vec2 position, float scale=1.f, glm::vec3 color = WHITE_COLOR);
+    void changeGameState(GAME_STATE newState);
+    void exitGame();
+    void playSound(const char* path);
+    vector<shared_ptr<Texture>> loadStarsTextures();
+    vector<shared_ptr<Model>> loadAsteroidModels();
 
     static Engine& getInstance() { return instance; }
 
@@ -57,8 +62,8 @@ private:
     Engine() = default;
     static Engine instance;
 
-    shared_ptr<Button> button;
-    GAME_STATE gameState = GAME_STATE::IN_GAME;
+    GameState* currentState = nullptr;
+    vector<unique_ptr<GameState>>  allStates;
 
     shared_ptr<VertexBuffer> defaultVBO;
     shared_ptr<IndexBuffer> defaultIBO;
@@ -73,9 +78,10 @@ private:
     shared_ptr<Shader> defaultTextShader;
 
     GLFWwindow* window = nullptr;
-    weak_ptr<Player> player;
+    sf::Music music;
+    unordered_map<string, sf::SoundBuffer> soundBuffers;
+    vector<shared_ptr<sf::Sound>> activeSounds;
     shared_ptr<Sprite> background;
-    vector<shared_ptr<GameObject>> gameObjects;
     vector<shared_ptr<Texture>> textures;
     vector<shared_ptr<Model>> models;
     vector<shared_ptr<Shader>> shaders;
@@ -83,6 +89,7 @@ private:
     map<char, Character> characters;
 
     double lastFrame = 0;
+    bool initializing = true;
     const glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 
     static void processInputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -97,11 +104,5 @@ private:
     void createGameObjects();
     bool createDefaultResources();
     void setCustomCursor();
-    void setupInGameState();
-    void setupMenuState();
-    void setupGameOverState();
-    vector<shared_ptr<Texture>> loadStarsTextures();
-    vector<shared_ptr<Model>> loadAsteroidModels();
-    sf::Music music;
 };
 

@@ -42,6 +42,9 @@ using std::max;
 using std::function;
 using std::map;
 using std::pair;
+using std::unique_ptr;
+using std::make_unique;
+using std::unordered_map;
 
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
@@ -59,12 +62,15 @@ constexpr const char* FS_BBOX_FILE_NAME = "../Data/shaders/bbox_shader.fs";
 constexpr const char* VS_TEXT_FILE_NAME = "../Data/shaders/text_shader.vs";
 constexpr const char* FS_TEXT_FILE_NAME = "../Data/shaders/text_shader.fs";
 
+constexpr const char* BACKGROUND_PATH = "../Data/Textures/background.png";
 constexpr const char* PLAYER_MODEL_PATH = "../Data/Models/space_ship_wg-02/scene.gltf";
 constexpr const char* ENEMY_MODEL_PATH = "../Data/Models/empire_space_ship/scene.gltf";
 constexpr const char* PROJECTILE_MODEL_PATH = "../Data/Models/rusty_metal_sphere/scene.gltf";
 constexpr const char* STATION_MODEL_PATH = "../Data/Models/space_ship_-_lost_in_space/scene.gltf";
 constexpr const char* CURSOR_PATH = "../Data/Textures/cursor.png";
 constexpr const char* MUSIC_PATH = "../Data/Audio/Stealer.ogg";
+constexpr const char* SHOOT_SOUND_PATH = "../Data/Audio/laser.mp3";
+constexpr const char* EXPLOSION_SOUND_PATH = "../Data/Audio/explosion.mp3";
 
 constexpr bool WIREFRAME_MODE = false;
 constexpr bool SHOW_BOUNDING_BOX = false;
@@ -82,7 +88,8 @@ enum class GAME_STATE
 {
     MENU,
     IN_GAME,
-    GAME_OVER
+    GAME_OVER,
+    UNKNOWN
 };
 
 struct Character

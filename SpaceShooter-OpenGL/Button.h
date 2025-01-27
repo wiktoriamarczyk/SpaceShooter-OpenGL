@@ -4,7 +4,7 @@
 #include "GameObject.h"
 #include "Sprite.h"
 
-class Button : GameObject
+class Button : public GameObject
 {
 public:
     void create(const glm::vec2& position, const glm::vec2& size, string text, function<void()> callback);
