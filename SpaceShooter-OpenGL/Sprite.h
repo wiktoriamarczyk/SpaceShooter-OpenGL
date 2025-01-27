@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Common.h"
+#include "Shader.h"
 
 class Texture;
 class VertexBuffer;
 class IndexBuffer;
-class Shader;
 class VertexArrayObject;
 
 class Sprite : public SelfHelper<Sprite>
@@ -21,6 +21,7 @@ public:
     void setSize(const glm::vec2& size) { this->size = size; }
     void setRotation(float rotation) { this->rotation = rotation; }
     void setColor(const glm::vec4& color) { this->color = color; }
+    void setShader(const Shader& shader) { this->shader = shader.getSelf(); }
     const glm::vec2 getPosition() const { return position; }
     const glm::vec2 getSize() const { return size; }
 

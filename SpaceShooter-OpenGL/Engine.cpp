@@ -58,6 +58,18 @@ void Engine::processMouseInput(int button, int action, int mods)
     }
 }
 
+void Engine::onWindowSizeChanged(GLFWwindow* window, int width, int height)
+{
+    instance.onWindowSizeChanged(width, height);
+}
+
+void Engine::onWindowSizeChanged(int width, int height)
+{
+    windowWidth = width;
+    windowHeight = height;
+    recreateFramebuffer();
+}
+
 bool Engine::init()
 {
     return instance.doInit();
@@ -123,8 +135,9 @@ bool Engine::doInit()
         std::cout << "Failed to initialize FreeType" << std::endl;
         return false;
     }
-
+    glfwSetWindowSizeCallback(window, onWindowSizeChanged);
     setCustomCursor();
+    recreateFramebuffer();
 
     return true;
 }
@@ -233,6 +246,37 @@ void Engine::setCustomCursor()
     glfwSetCursor(window, customCursor);
 }
 
+void Engine::deleteFramebuffer()
+{
+    if (renderTextureframebufferID)
+        glDeleteFramebuffers(1, &renderTextureframebufferID);
+    if (renderTextureDepthBufferID)
+        glDeleteRenderbuffers(1, &renderTextureDepthBufferID);
+}
+
+void Engine::recreateFramebuffer()
+{
+    deleteFramebuffer();
+
+    glGenFramebuffers(1, &renderTextureframebufferID);
+    glBindFramebuffer(GL_FRAMEBUFFER, renderTextureframebufferID);
+
+    glGenRenderbuffers(1, &renderTextureDepthBufferID);
+    glBindRenderbuffer(GL_RENDERBUFFER, renderTextureDepthBufferID);
+
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, windowWidth, windowHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderTextureDepthBufferID);
+
+    renderTexture = Texture::create(windowWidth, windowHeight);
+    renderTexture->attachToFramebuffer(renderTextureframebufferID);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    fullscreenQuad = Sprite::create(*renderTexture, glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
+    fullscreenQuad->setShader(*postprocessShader);
+}
+
 bool Engine::createDefaultResources()
 {
     // Create quad for sprite rendering
@@ -328,6 +372,15 @@ bool Engine::createDefaultResources()
         return false;
     defaultTextShader->use();
     defaultTextShader->setMat4("projection", ortho);
+
+
+    // Init postprocess shaader
+    postprocessShader = Shader::create(VS_POSTPROCESS_FILE_NAME, FS_POSTPROCESS_FILE_NAME);
+    if (!postprocessShader)
+        return false;
+
+    postprocessShader->use();
+    postprocessShader->setMat4("projection", ortho);
 
 
     // Draw background sprite

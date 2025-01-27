@@ -61,6 +61,8 @@ constexpr const char* VS_BBOX_FILE_NAME = "../Data/shaders/bbox_shader.vs";
 constexpr const char* FS_BBOX_FILE_NAME = "../Data/shaders/bbox_shader.fs";
 constexpr const char* VS_TEXT_FILE_NAME = "../Data/shaders/text_shader.vs";
 constexpr const char* FS_TEXT_FILE_NAME = "../Data/shaders/text_shader.fs";
+constexpr const char* VS_POSTPROCESS_FILE_NAME = "../Data/shaders/postprocess_shader.vs";
+constexpr const char* FS_POSTPROCESS_FILE_NAME = "../Data/shaders/postprocess_shader.fs";
 
 constexpr const char* BACKGROUND_PATH = "../Data/Textures/background.png";
 constexpr const char* PLAYER_MODEL_PATH = "../Data/Models/space_ship_wg-02/scene.gltf";

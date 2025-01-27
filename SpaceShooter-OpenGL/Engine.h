@@ -78,6 +78,7 @@ private:
     shared_ptr<Shader> defaultEmissiveShader;
     shared_ptr<Shader> defaultBBoxShader;
     shared_ptr<Shader> defaultTextShader;
+    shared_ptr<Shader> postprocessShader;
 
     GLFWwindow* window = nullptr;
     sf::Music music;
@@ -94,11 +95,21 @@ private:
     bool initializing = true;
     const glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::mat4 projectionMatrix;
+    unsigned int renderTextureframebufferID = 0;
+    unsigned int renderTextureDepthBufferID = 0;
+    unsigned int windowWidth = SCREEN_WIDTH;
+    unsigned int windowHeight = SCREEN_HEIGHT;
+    shared_ptr<Texture> renderTexture;
+    shared_ptr<Sprite> fullscreenQuad;
 
     static void processInputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void processMouseInput(GLFWwindow* window, int button, int action, int mods);
+    static void onWindowSizeChanged(GLFWwindow* window, int width, int height);
     void processInput(int key, int scancode, int action, int mods);
     void processMouseInput(int button, int action, int mods);
+    void onWindowSizeChanged(int width, int height);
+    void deleteFramebuffer();
+    void recreateFramebuffer();
     bool doInit();
     void doRun();
     void render();
