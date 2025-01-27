@@ -7,7 +7,10 @@ void Projectile::create(const glm::vec3& startPosition, const glm::vec3& targetP
 
     light = make_shared<PointLight>();
     Engine::getInstance().addPointLight(light);
-    light->setParameters(glm::vec3(1.f, 0.f, 0.f), glm::vec3(1.0f, 0.0f, 0.0f), 1.4, 2.8);
+    if (team == TEAM::ENEMY)
+        light->setParameters(glm::vec3(1.f, 0.f, 0.f), glm::vec3(1.0f, 0.0f, 0.0f), 1.4, 2.8);
+    else
+        light->setParameters(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.0f, 0.0f, 1.0f), 1.4, 2.8);
     this->speed = speed;
     this->team = team;
     this->color = team == TEAM::PLAYER ? glm::vec3(0.0f, 0.0f, 1.0f) : glm::vec3(1.0f, 0.0f, 0.0f);

@@ -74,7 +74,6 @@ constexpr const char* MUSIC_PATH = "../Data/Audio/Stealer.ogg";
 constexpr const char* SHOOT_SOUND_PATH = "../Data/Audio/laser.mp3";
 constexpr const char* EXPLOSION_SOUND_PATH = "../Data/Audio/explosion.mp3";
 
-constexpr bool WIREFRAME_MODE = false;
 constexpr bool SHOW_BOUNDING_BOX = false;
 
 const int PROJECTILE_DAMAGE = 5;

@@ -136,3 +136,13 @@ void InGameState::onEnter()
         gameObjects.push_back(station);
     }
 }
+
+void InGameState::onKeyDown(int key)
+{
+    GameState::onKeyDown(key);
+
+    if (key == GLFW_KEY_1)
+    {
+        Engine::getInstance().toggleWireframeMode();
+    }
+}

@@ -35,9 +35,11 @@ void Engine::processInput(int key, int scancode, int action, int mods)
     {
         currentState->onKeyUp(key);
 
-        // If the escape key is pressed, close the window
         if (key == GLFW_KEY_ESCAPE)
-            glfwSetWindowShouldClose(window, true);
+            if (currentState->getState() == GAME_STATE::IN_GAME)
+                changeGameState(GAME_STATE::MENU);
+            else
+                glfwSetWindowShouldClose(window, true);
     }
 }
 
@@ -113,11 +115,6 @@ bool Engine::doInit()
     //glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    if (WIREFRAME_MODE)
-    {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    }
 
     if (!createDefaultResources())
     {
@@ -554,6 +551,12 @@ void Engine::update(float deltaTime)
 
 void Engine::render()
 {
+    if (wireframeMode)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    else
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+
     glBindFramebuffer(GL_FRAMEBUFFER, renderTextureframebufferID);
 
     // clear the color buffer and depth buffer
@@ -574,6 +577,7 @@ void Engine::render()
         if (auto player = game->player.lock())
             saturation = player->getHealth() / player->getMaxHealth();
 
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     postprocessShader->use();
     postprocessShader->setFloat("saturation", saturation);
     fullscreenQuad->draw();

@@ -12,6 +12,7 @@ public:
     void update(float deltaTime)override;
     void render()override;
     void onEnter() override;
+    void onKeyDown(int key) override;
 
 protected:
     weak_ptr<Player> player;

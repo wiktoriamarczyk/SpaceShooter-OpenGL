@@ -40,6 +40,7 @@ public:
     vector<shared_ptr<Model>> loadAsteroidModels();
     glm::vec3 getMouseWorldRayDirection()const;
     glm::vec3 getMouseWorldPosOnTestPlane(float TestPlaneZ=-7.f)const;
+    void toggleWireframeMode() { wireframeMode = !wireframeMode; }
 
     static Engine& getInstance() { return instance; }
 
@@ -93,6 +94,7 @@ private:
 
     double lastFrame = 0;
     bool initializing = true;
+    bool wireframeMode = false;
     const glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::mat4 projectionMatrix;
     unsigned int renderTextureframebufferID = 0;
