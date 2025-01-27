@@ -16,7 +16,7 @@ void MainMenuState::render()
     Engine::getInstance().renderText("Space Shooter", glm::vec2(SCREEN_WIDTH / 2 - 150.f, SCREEN_HEIGHT / 2 + 200.f));
 
     if (renderLoadingText)
-        Engine::getInstance().renderText("Loading...", glm::vec2(SCREEN_WIDTH / 2 - 125.f, SCREEN_HEIGHT / 2 + 100.f), 1.f, glm::vec3(0, 0.4, 1));
+        Engine::getInstance().renderText("Loading...", glm::vec2(SCREEN_WIDTH / 2 - 125.f, SCREEN_HEIGHT / 2 + 100.f), 0.5f, glm::vec3(0, 0.4, 1));
 }
 
 void MainMenuState::onEnter()

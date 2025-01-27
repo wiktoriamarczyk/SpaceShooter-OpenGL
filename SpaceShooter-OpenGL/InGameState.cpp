@@ -77,12 +77,14 @@ void InGameState::render()
     GameState::render();
 
     string killedEnemies = "Points: " + to_string(EnemySpawner::getRemovedEnemiesCount());
-    Engine::getInstance().renderText(killedEnemies, glm::vec2(10.0f, SCREEN_HEIGHT - 40.f));
+    Engine::getInstance().renderText(killedEnemies, glm::vec2(10.0f, SCREEN_HEIGHT - 40.f), 0.25f);
 }
 
 void InGameState::onEnter()
 {
     GameState::onEnter();
+
+    EnemySpawner::resetRemovedEnemiesCount();
 
     auto player = make_shared<Player>();
     this->player = player;

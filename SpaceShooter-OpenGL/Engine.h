@@ -32,7 +32,7 @@ public:
     void setPlayerHealth(float newHealth);
     glm::vec3 getPlayerPosition() const;
     glm::vec3 getCameraPosition() const { return cameraPosition; };
-    void renderText(string text, glm::vec2 position, float scale=1.f, glm::vec3 color = WHITE_COLOR);
+    void renderText(string text, glm::vec2 position, float scale=0.5f, glm::vec3 color = WHITE_COLOR);
     void changeGameState(GAME_STATE newState);
     void exitGame();
     void playSound(const char* path);

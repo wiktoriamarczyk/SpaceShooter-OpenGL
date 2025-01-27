@@ -158,7 +158,7 @@ bool Engine::freeTypeInit()
         return false;
     }
     // set size to load glyphs as
-    FT_Set_Pixel_Sizes(face, 0, 48);
+    FT_Set_Pixel_Sizes(face, 0, 96);
     // disable byte-alignment restriction
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     // load first 128 characters of ASCII set
@@ -554,6 +554,8 @@ void Engine::update(float deltaTime)
 
 void Engine::render()
 {
+    glBindFramebuffer(GL_FRAMEBUFFER, renderTextureframebufferID);
+
     // clear the color buffer and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     background->draw();
@@ -561,6 +563,20 @@ void Engine::render()
     glClear(GL_DEPTH_BUFFER_BIT);
 
     currentState->render();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    // clear the depth buffer after drawing the background
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // desaturation effect when on low life
+    float saturation = 1.0f;
+    if (auto game = currentState->asInGameState())
+        if (auto player = game->player.lock())
+            saturation = player->getHealth() / player->getMaxHealth();
+
+    postprocessShader->use();
+    postprocessShader->setFloat("saturation", saturation);
+    fullscreenQuad->draw();
 
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     glfwSwapBuffers(window);

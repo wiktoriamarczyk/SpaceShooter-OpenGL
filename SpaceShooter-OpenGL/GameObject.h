@@ -24,6 +24,7 @@ public:
     void setScreenBoundZ(float z) { screenBoundZ = z; }
     virtual void updateHealth(float value);
     float getHealth() const { return currentHealth; }
+    float getMaxHealth() const { return maxHealth; }
     virtual ~GameObject() = default;
 
 protected:

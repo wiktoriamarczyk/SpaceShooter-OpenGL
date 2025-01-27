@@ -24,8 +24,6 @@ void GameOverState::onEnter()
 {
     GameState::onEnter();
 
-    EnemySpawner::resetRemovedEnemiesCount();
-
     glm::vec2 buttonSize = glm::vec2(200.0f, 50.0f);
     shared_ptr<Button> buttonReturn = make_shared<Button>();
     buttonReturn->create(glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), buttonSize, "MENU", [this]()
