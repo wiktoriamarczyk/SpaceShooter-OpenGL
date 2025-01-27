@@ -51,12 +51,14 @@ glm::vec3 EnemySpawner::getRandomSpawnPosition() const
 
 void EnemySpawner::eraseInactiveObjects()
 {
+    int localRemovedEnemies = 0;
+
     for (int i = 0; i < activeObjects.size();)
     {
         if (!activeObjects[i]->isAlive())
         {
             activeObjects.erase(activeObjects.begin() + i);
-            EnemySpawner::removedEnemies++;
+            localRemovedEnemies++;
         }
         else
         {
@@ -64,8 +66,10 @@ void EnemySpawner::eraseInactiveObjects()
         }
     }
 
-    if (EnemySpawner::removedEnemies > 0)
+    EnemySpawner::removedEnemies += localRemovedEnemies;
+
+    if (localRemovedEnemies > 0)
     {
-        maxActiveObjects = std::min(maxActiveObjects.value_or(0) + removedEnemies, maxPossibleObjects);
+        maxActiveObjects = std::min(maxActiveObjects.value_or(0) + localRemovedEnemies, maxPossibleObjects);
     }
 }
