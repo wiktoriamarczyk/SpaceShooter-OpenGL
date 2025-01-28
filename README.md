@@ -1,4 +1,4 @@
-# SpaceShooter2D-Pygame
+# Space shooter - 3D game in OpenGL
 
 <b>Game</b>
 
