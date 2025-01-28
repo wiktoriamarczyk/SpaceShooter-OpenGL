@@ -30,5 +30,5 @@
 
 <b>Menu</b>
 
-WSA![obraz](https://github.com/user-attachments/assets/99e7a1b4-46a3-4008-b683-5f5e9f8d6cd1)
+s![obraz](https://github.com/user-attachments/assets/99e7a1b4-46a3-4008-b683-5f5e9f8d6cd1)
 
