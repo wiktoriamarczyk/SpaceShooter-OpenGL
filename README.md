@@ -1,8 +1,9 @@
-# SpaceShooter2D-Pygame
+# Space shooter - 3D game in OpenGL
 
 <b>Game</b>
 
-![obraz](https://github.com/user-attachments/assets/3234b243-6d96-483e-ab09-de92d7ffb5dd)
+![obraz](https://github.com/user-attachments/assets/0b09f6e7-d98a-41b6-b78d-957522c9e28b)
+
 
 ![obraz](https://github.com/user-attachments/assets/2cb513d5-59d6-434c-87bd-c0e54f8ddf31)
 
@@ -29,4 +30,5 @@
 
 <b>Menu</b>
 
-![obraz](https://github.com/user-attachments/assets/16be1bb5-bca3-47b3-9927-24f75561804e)
+WSA![obraz](https://github.com/user-attachments/assets/99e7a1b4-46a3-4008-b683-5f5e9f8d6cd1)
+
