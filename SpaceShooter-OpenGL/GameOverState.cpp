@@ -17,7 +17,7 @@ void GameOverState::render()
 
     Engine::getInstance().renderText("GAME OVER", glm::vec2(SCREEN_WIDTH / 2 - 150.f, SCREEN_HEIGHT / 2 + 200.f));
     string scoreText = "Score: " + to_string(EnemySpawner::getRemovedEnemiesCount());
-    Engine::getInstance().renderText(scoreText, glm::vec2(SCREEN_WIDTH / 2 - 100.f, SCREEN_HEIGHT / 2 + 100.f));
+    Engine::getInstance().renderText(scoreText, glm::vec2(SCREEN_WIDTH / 2 - 100.f, SCREEN_HEIGHT / 2 + 100.f), 0.5f, glm::vec3(0, 0.4, 1));
 }
 
 void GameOverState::onEnter()
